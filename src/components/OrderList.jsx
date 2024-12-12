@@ -830,7 +830,7 @@ export default function OrderList() {
                       >
                         <option value="Simple">Simple</option>
                         <option value="Normal">Normal</option>
-                        <option value="Detail">Detail</option>
+                        <option  value="Detail">Detail</option>
                       </select>
                     </div>
                   </div>

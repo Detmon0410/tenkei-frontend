@@ -8,6 +8,7 @@ import PurchaseContextProvider from "./contexts/PurchaseContext.jsx";
 import PlanContextProvider from "./contexts/PlanContext";
 import ResultContextProvider from "./contexts/ResultContext.jsx";
 import CostContextProvider from "./contexts/CostContext.jsx";
+import CostListContextProvider from "./contexts/CostListContext.jsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -19,7 +20,9 @@ createRoot(document.getElementById("root")).render(
             <PlanContextProvider>
               <ResultContextProvider>
                 <CostContextProvider>
+                <CostListContextProvider>
                   <App />
+                </CostListContextProvider>
                 </CostContextProvider>
               </ResultContextProvider>
             </PlanContextProvider>
