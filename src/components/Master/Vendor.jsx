@@ -10,11 +10,11 @@ export function Vendor() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchVendor = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/vendor/fetch-vendor"
+        `${apiUrl4}/vendor/fetch-vendor`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.vendor || []);
@@ -68,7 +68,7 @@ export function Vendor() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/vendor/update-vendor",
+          `${apiUrl4}/vendor/update-vendor`,
           payload
         );
 

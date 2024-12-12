@@ -10,11 +10,11 @@ export function Process() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchAllProcess = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/process/fetch-all-process"
+        `${apiUrl4}/process/fetch-all-process`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.process || []);
@@ -68,7 +68,7 @@ export function Process() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/process/update-process",
+          `${apiUrl4}/process/update-process`,
           payload
         );
 

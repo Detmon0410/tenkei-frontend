@@ -10,10 +10,10 @@ export function None_WI_Data() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/order/td-orders");
+      const response = await axios.get(`${apiUrl4}/order/td-orders`);
       // console.log("Fetched data:", response.data);
       setData(response.data.data.orders || []);
     } catch (error) {
@@ -79,7 +79,7 @@ export function None_WI_Data() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/order/edit-order",
+          `${apiUrl4}/order/edit-order`,
           payload
         );
 

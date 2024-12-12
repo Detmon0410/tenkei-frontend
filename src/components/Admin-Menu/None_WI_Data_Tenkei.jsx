@@ -10,11 +10,11 @@ export function None_WI_Data_Tenkei() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchNAVWI = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/NAVWI/fetch-navwi"
+        `${apiUrl4}/NAVWI/fetch-navwi`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.NAVWI || []);
@@ -81,7 +81,7 @@ export function None_WI_Data_Tenkei() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/navwi/update-navwi",
+          `${apiUrl4}/navwi/update-navwi`,
           payload
         );
 

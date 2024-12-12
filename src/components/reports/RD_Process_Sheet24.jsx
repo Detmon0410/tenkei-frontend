@@ -1144,7 +1144,7 @@ export default function RD_Process_Sheet24() {
                             </tr>
                         </table>
                         <div className='flex justify-end'>
-                            <label className="font-bold text-blue-700 font-medium text-xs text-center">FTC-FR-PDS-03-10(dd-mm-yyyy)</label>
+                            <label className=" text-blue-700 font-medium text-xs text-center">FTC-FR-PDS-03-10(dd-mm-yyyy)</label>
                         </div>
                     </div>
                 </div>

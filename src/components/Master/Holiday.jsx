@@ -10,11 +10,11 @@ export function Holiday() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchSet = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/holiday/fetch-holiday"
+        `${apiUrl4}/holiday/fetch-holiday`
       );
       const formattedData = response.data.data.holiday.map((row) => ({
         ...row,
@@ -85,7 +85,7 @@ export function Holiday() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/holiday/update-holiday",
+          `${apiUrl4}/holiday/update-holiday`,
           payload
         );
 

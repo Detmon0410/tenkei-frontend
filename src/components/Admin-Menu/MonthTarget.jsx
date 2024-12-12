@@ -10,11 +10,12 @@ export function MonthTarget() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchWorkG = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/workg/fetch-workg"
+        // const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
+        `${apiUrl4}/workg/fetch-workg`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.workg || []);
@@ -68,7 +69,7 @@ export function MonthTarget() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/workg/update-workg",
+          `${apiUrl4}/workg/update-workg`,
           payload
         );
 

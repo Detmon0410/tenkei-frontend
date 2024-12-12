@@ -10,11 +10,11 @@ export function None_FG_Data_Tenkei() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchNAVFG = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/NAVFG/fetch-navfg"
+        `${apiUrl4}/NAVFG/fetch-navfg`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.NAVFG || []);
@@ -81,7 +81,7 @@ export function None_FG_Data_Tenkei() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/navfg/update-navfg",
+          `${apiUrl4}/navfg/update-navfg`,
           payload
         );
 

@@ -10,11 +10,11 @@ export function Coating() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchCoating = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/coating/fetch-coating"
+        `${apiUrl4}/coating/fetch-coating`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.coating || []);
@@ -66,7 +66,7 @@ export function Coating() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/coating/update-coating",
+          `${apiUrl4}/coating/update-coating`,
           payload
         );
 

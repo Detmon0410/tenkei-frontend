@@ -10,10 +10,10 @@ export function Worker() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchWorker = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/order/worker");
+      const response = await axios.get(`${apiUrl4}/order/worker`);
       // console.log("Fetched data:", response.data);
       setData(response.data.data.worker || []);
     } catch (error) {
@@ -66,7 +66,7 @@ export function Worker() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/order/update-worker",
+          `${apiUrl4}/order/update-worker`,
           payload
         );
 
