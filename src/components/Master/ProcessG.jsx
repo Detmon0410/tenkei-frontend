@@ -10,11 +10,11 @@ export function ProcessG() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchProcessg = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/processg/fetch-processg"
+        `${apiUrl4}/processg/fetch-processg`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.processg || []);
@@ -70,7 +70,7 @@ export function ProcessG() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/processg/update-processg",
+          `${apiUrl4}/processg/update-processg`,
           payload
         );
 

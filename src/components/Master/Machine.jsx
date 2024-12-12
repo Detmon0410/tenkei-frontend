@@ -10,11 +10,11 @@ export function Machine() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchResource = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/resource/fetch-resource"
+        `${apiUrl4}/resource/fetch-resource`
       );
       // console.log("Fetched data:", response.data);
       setData(response.data.data.resource || []);
@@ -70,7 +70,7 @@ export function Machine() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/resource/update-resource",
+          `${apiUrl4}/resource/update-resource`,
           payload
         );
 

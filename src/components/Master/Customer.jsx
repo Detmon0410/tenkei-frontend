@@ -10,10 +10,10 @@ export function Customer() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchCustomer = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/order/customer");
+      const response = await axios.get(`${apiUrl4}/order/customer`);
       // console.log("Fetched data:", response.data);
       setData(response.data.data.customer || []);
     } catch (error) {
@@ -66,7 +66,7 @@ export function Customer() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/order/update-customer",
+          `${apiUrl4}/order/update-customer`,
           payload
         );
 

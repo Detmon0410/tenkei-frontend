@@ -10,10 +10,10 @@ export function WeekTargetSetting() {
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
-
+  const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchSet = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/set/fetch-set");
+      const response = await axios.get(`${apiUrl4}/set/fetch-set`);
       const formattedData = response.data.data.set.map((row) => ({
         ...row,
         St_Target_Week1: formatDateForInput(row.St_Target_Week1),
@@ -92,7 +92,7 @@ export function WeekTargetSetting() {
         };
 
         const response = await axios.put(
-          "http://localhost:4000/set/update-set",
+          `${apiUrl4}/set/update-set`,
           payload
         );
 
