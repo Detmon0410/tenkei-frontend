@@ -520,14 +520,14 @@ export function FG_Amount() {
       width: "180px",
     },
     {
-      name: "TT_NAV_Od_FG_Unit_Price",
+      name: "TD_Order_Unit_Price",
       selector: (row, index) => (
         <input
           className="w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
-          value={row.TT_NAV_Od_FG_Unit_Price}
+          value={row.TD_Order_Unit_Price}
           onChange={(e) =>
-            handleEdit(index, "TT_NAV_Od_FG_Unit_Price", e.target.value)
+            handleEdit(index, "TD_Order_Unit_Price", e.target.value)
           }
         />
       ),

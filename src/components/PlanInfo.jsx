@@ -626,7 +626,7 @@ export default function PlanInfo() {
                       </label>
                       <select
                         id="Search_Parts_No"
-                        value={selectedPlanNo || ""}
+                        value={selectedPlanNo.length > 0 ? selectedPlanNo[0].Parts_No : ""}
                         onChange={handlePlanInputChange}
                         className="border-2 border-gray-500 rounded-md px-2 py-1 text-xs bg-[#ccffff] w-18"
                       >

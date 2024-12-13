@@ -1,7 +1,6 @@
 import React from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { IoIosArrowRoundForward } from "react-icons/io";
 
 export default function SalesInfo() {
   return (
@@ -416,10 +415,10 @@ export default function SalesInfo() {
                       <div className="flex items-center">
                         <input
                           type="checkbox"
-                          id="checkbox1"
+                          id="checkbox2"
                           className="w-4 h-4 rounded-full"
                         />
-                        <label htmlFor="checkbox1" className="text-sm pl-2">
+                        <label htmlFor="checkbox2" className="text-sm pl-2">
                           SOrder Pending
                         </label>
                       </div>
@@ -427,10 +426,10 @@ export default function SalesInfo() {
                       <div className="flex items-center">
                         <input
                           type="checkbox"
-                          id="checkbox2"
+                          id="checkbox3"
                           className="w-4 h-4 rounded-full"
                         />
-                        <label htmlFor="checkbox2" className="text-sm pl-2">
+                        <label htmlFor="checkbox3" className="text-sm pl-2">
                           Temporary Shipment
                         </label>
                       </div>
@@ -486,10 +485,10 @@ export default function SalesInfo() {
                       <div className="flex items-center">
                         <input
                           type="checkbox"
-                          id="checkbox1"
+                          id="checkbox4"
                           className="w-4 h-4 rounded-full"
                         />
-                        <label htmlFor="checkbox1" className="text-sm pl-2">
+                        <label htmlFor="checkbox4" className="text-sm pl-2">
                           Stock
                         </label>
                       </div>
@@ -691,10 +690,10 @@ export default function SalesInfo() {
                       <div className="flex items-center">
                         <input
                           type="checkbox"
-                          id="checkbox1"
+                          id="checkbox5"
                           className="w-4 h-4 rounded-full"
                         />
-                        <label htmlFor="checkbox1" className="text-sm pl-2">
+                        <label htmlFor="checkbox5" className="text-sm pl-2">
                           SOrder Identification1
                         </label>
                       </div>
@@ -702,10 +701,10 @@ export default function SalesInfo() {
                       <div className="flex items-center">
                         <input
                           type="checkbox"
-                          id="checkbox2"
+                          id="checkbox6"
                           className="w-4 h-4 rounded-full"
                         />
-                        <label htmlFor="checkbox2" className="text-sm pl-2">
+                        <label htmlFor="checkbox6" className="text-sm pl-2">
                           SOrder Identification2
                         </label>
                       </div>
@@ -769,10 +768,10 @@ export default function SalesInfo() {
                       <div className="flex items-center">
                         <input
                           type="checkbox"
-                          id="checkbox2"
+                          id="checkbox7"
                           className="w-4 h-4 rounded-full"
                         />
-                        <label htmlFor="checkbox2" className="text-sm pl-2">
+                        <label htmlFor="checkbox7" className="text-sm pl-2">
                           SOrder Identification3
                         </label>
                       </div>

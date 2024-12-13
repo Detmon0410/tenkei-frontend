@@ -1454,8 +1454,9 @@ export default function ResultInfo() {
                               <select
                                 id="Move_Range"
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
+                                defaultValue="Plan_Exclude"
                               >
-                                <option selected value="Plan_Exclude">
+                                <option value="Plan_Exclude">
                                   Plan_Exclude
                                 </option>
                                 <option value="Plan_Include">
