@@ -1,9 +1,98 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { IoIosArrowRoundForward } from "react-icons/io";
-
+import { useOrder } from "../hooks/use-order";
+import Swal from "sweetalert2";
 export default function CalcComplete() {
+  const currentDate = new Date().toISOString().split("T")[0];
+  const {
+    CalcData,
+    setCalcData,
+    searchCalcData,
+    CustomerData,
+    UnitData,
+    OdProgressData,
+    PriceData,
+    editCalc,
+  } = useOrder();
+  const [searchValue, setSearchValue] = useState(
+    [...Array(10)].reduce((acc, _, index) => {
+      acc[`Action_Od_No${index + 1}`] = "";
+      return acc;
+    }, {})
+  );
+
+  const handleInputChange = (event) => {
+    const { id, value, type, checked } = event.target;
+
+    setCalcData((prevCalcData) => ({
+      ...prevCalcData,
+      [id]:
+        type === "checkbox"
+          ? checked
+          : type === "date" && value !== ""
+          ? new Date(`${value}T00:00:00.000Z`).toISOString()
+          : value === ""
+          ? null
+          : value,
+    }));
+
+    [...Array(10)].forEach((_, index) => {
+      if (id === `Action_Od_No${index + 1}`) {
+        setSearchValue((prevSearchValue) => ({
+          ...prevSearchValue,
+          [id]: value,
+        }));
+      }
+    });
+  };
+
+  const handleSearch_Order_NoChange = async () => {
+    const orderNos = Object.keys(searchValue).reduce((acc, key) => {
+      if (searchValue[key] !== "") {
+        acc[key] = searchValue[key];
+      }
+      return acc;
+    }, {});
+
+    if (Object.keys(orderNos).length > 0) {
+      await searchCalcData(orderNos);
+    }
+  };
+
+  const handleF9Click = async () => {
+    try {
+      const result = await Swal.fire({
+        title: "ต้องการแก้ไขข้อมูลหรือไม่",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "ใช่",
+        cancelButtonText: "ไม่ใช่",
+      });
+
+      if (result.isConfirmed) {
+       
+        await editCalc();
+  
+      }
+    } catch (error) {
+      console.error("Error in handleF9Click:", error);
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: "กรุณาติดต่อผู้ดูแลระบบ",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (Object.keys(searchValue).some((key) => searchValue[key] !== "")) {
+      handleSearch_Order_NoChange();
+    }
+  }, [searchValue]);
+
   return (
     <div className="flex bg-[#E9EFEC] h-[100vh]">
       <Sidebar />
@@ -21,984 +110,290 @@ export default function CalcComplete() {
                 <label className="font-medium text-xs">Date</label>
               </div>
               <input
-                type="text"
+                type="date"
                 className="bg-white border border-gray-500 rounded-md px-2 py-0.5 w-[200px]"
                 name="txtProcessing_Date"
+                value={currentDate}
+                readOnly
               />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mx-5">
-              <div className="flex flex-col items-start">
-                <label className="font-medium text-xs mb-2">
-                  lblAction_Pd_Remark_LBL
-                </label>
-                <input
-                  type="text"
-                  className="bg-[#ccffff] border-solid border-2 border-gray-500 rounded-md px-2 py-0.5 w-full"
-                />
-              </div>
-
-              <div className="flex flex-col items-start">
-                <label className="font-medium text-xs mb-2">
-                  lblAction_Pd_Remark_LBL
-                </label>
-                <input
-                  type="text"
-                  className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-2 py-0.5 w-full"
-                />
-              </div>
-
-              <div className="flex flex-col items-start">
-                <label className="font-medium text-xs mb-2">
-                  lblAction_Shipment_Date_LBL
-                </label>
-                <input
-                  type="text"
-                  className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-2 py-0.5 w-full"
-                />
-              </div>
-
-              <div className="flex flex-col items-start">
-                <label className="font-medium text-xs mb-2">
-                  lblAction_Pd_Calc_Date_LBL
-                </label>
-                <div className="flex w-full">
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md py-0.5 w-1/3"
-                    name="txtAction_Pd_Calc_Date"
-                  />
-                  <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-1/3">
-                    <option value=""></option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border-solid border-2 border-gray-500 rounded-md w-1/3"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md w-full"
-                    name="txtAction_Pd_Calc_Date"
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mx-5">
               <div className="flex flex-col items-center">
                 <label className="font-medium text-xs mb-2">Calc Date</label>
                 <input
-                  type="text"
+                  id="Pd_Calc_Date"
+                  value={
+                    CalcData?.[`Pd_Calc_Date`]
+                      ? new Date(CalcData[`Pd_Calc_Date`])
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
+                  onChange={handleInputChange}
+                  type="date"
                   className="bg-[#cc99ff] border-solid border-2 border-gray-500 rounded-md px-2 py-0.5 w-full lg:w-96"
-                  name="txtCalc_Date"
+                  name="Pd_Calc_Date"
                 />
               </div>
               <div className="flex flex-col items-center">
                 <label className="font-medium text-xs mb-2">Input Date</label>
                 <input
-                  type="text"
+                  id="Calc_Process_Date"
+                  value={
+                    CalcData?.[`Calc_Process_Date`]
+                      ? new Date(CalcData[`Calc_Process_Date`])
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
+                  onChange={handleInputChange}
+                  type="date"
                   className="bg-[#cc99ff] border-solid border-2 border-gray-500 rounded-md px-2 py-0.5 w-full lg:w-96"
                   name="txtInput_Date"
                 />
               </div>
             </div>
 
-            <div className="w-full mt-5 overflow-x-auto">
-              <div className="min-w-[1850px] w-full mb-5">
+            <div className="w-full mt-5">
+              <div className="w-full mb-5">
                 {/* Header row */}
                 <div className="flex p-1">
-                  <div className="w-[200px] text-center font-medium text-xs">
+                  <div className="w-[150px] text-center font-medium text-xs">
                     Order_No
                   </div>
-                  <div className="w-[200px] text-center font-medium text-xs">
+                  <div className="w-[150px] text-center font-medium text-xs">
                     Customer
                   </div>
-                  <div className="w-[400px] text-center font-medium text-xs">
+                  <div className="w-[250px] text-center font-medium text-xs">
                     Abb
                   </div>
-                  <div className="w-[590px] text-center font-medium text-xs">
+                  <div className="w-[250px] text-center font-medium text-xs">
                     NAV_Goods_Name
                   </div>
-                  <div className="w-56 text-center font-medium text-xs">
+                  <div className="w-52 text-center font-medium text-xs">
                     Qty
                   </div>
-                  <div className="w-[200px] text-center font-medium text-xs">
+                  <div className="w-16 text-center font-medium text-xs">
                     Progress
                   </div>
                 </div>
+                {[...Array(10)].map((_, index) => {
+                  const CustomerKey = CalcData?.[`Customer_CD${index + 1}`];
+                  const CustomerAbbForRow = (CustomerData || [])
+                    .filter((Customer) => Customer.Customer_CD === CustomerKey)
+                    .map((Customer) => Customer.Customer_Abb);
+                  const UnitKey = CalcData?.[`Unit_CD${index + 1}`];
+                  const UnitAbbForRow = (UnitData || [])
+                    .filter((Unit) => Unit.Unit_CD === UnitKey)
+                    .map((Unit) => Unit.Unit_Abb);
+                  const OdProgressKey =
+                    CalcData?.[`Od_Progress_CD${index + 1}`];
+                  const OdProgressForRow = (OdProgressData || [])
+                    .filter(
+                      (OdProgress) =>
+                        OdProgress.Od_Progress_CD === OdProgressKey
+                    )
+                    .map((OdProgress) => OdProgress.Od_Progress_Symbol);
+                  const PriceKey = CalcData?.[`Price_CD${index + 1}`];
+                  const PriceForRow = (PriceData || [])
+                    .filter((Price) => Price.Price_CD === PriceKey)
+                    .map((Price) => Price.Price_Symbol);
 
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
+                  return (
+                    <div key={index}>
+                      {/* First Row of Inputs */}
+                      <div className="flex p-1 gap-2 items-center">
+                        <input
+                          id={`Action_Od_No${index + 1}`}
+                          value={
+                            searchValue?.[`Action_Od_No${index + 1}`] || ""
+                          }
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[150px]"
+                        />
+                        <input
+                          disabled
+                          id={`Order_No${index + 1}`}
+                          value={CalcData?.[`Order_No${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="hidden"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-[150px]"
+                        />
+                        <input
+                          readOnly
+                          id={`Customer_CD${index + 1}`}
+                          value={CalcData?.[`Customer_CD${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-[150px]"
+                        />
+                        <input
+                          readOnly
+                          id={`Action_Customer_Abb${index + 1}`}
+                          value={CustomerAbbForRow || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
+                        />
+                        <input
+                          readOnly
+                          id={`NAV_Name${index + 1}`}
+                          value={CalcData?.[`NAV_Name${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
+                        />
+                        <input
+                          readOnly
+                          id={`Quantity${index + 1}`}
+                          value={CalcData?.[`Quantity${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-16"
+                        />
+                        <input
+                          readOnly
+                          id={`Action_Unit${index + 1}`}
+                          value={UnitAbbForRow || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-16"
+                        />
+                        <input
+                          readOnly
+                          id={`Od_Progress_CD${index + 1}`}
+                          value={CalcData?.[`Od_Progress_CD${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-16"
+                        />
+                        <input
+                          readOnly
+                          id={`Action_Od_Progress_Abb${index + 1}`}
+                          value={OdProgressForRow || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-16"
+                        />
+                      </div>
 
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
-
-                <div className="flex p-1">
-                  <input
-                    type="text"
-                    className="bg-[#ccffff] border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[400px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[590px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-16"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[200px]"
-                  />
-                </div>
-
-                <div className="flex pl-5">
-                  <div className="px-2 w-24 text-center">
-                    <label className="font-medium text-xs">Pd_Remark</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[320px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">QC</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-16 text-right">
-                    <label className="font-medium text-xs">Ship</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-[69px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Calc</label>
-                  </div>
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[190px]"
-                  />
-                  <div className="px-2 w-24 text-right">
-                    <label className="font-medium text-xs">Price</label>
-                  </div>
-                  <select className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16">
-                    <option value=""></option>
-                    <option value="Price">Price</option>
-                    <option value="Discount">Discount</option>
-                    <option value="Total">Total</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-500 rounded-md px-2 w-24"
-                  />
-                  <input
-                    type="text"
-                    className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[263px]"
-                  />
-                </div>
+                      {/* Second Row with Labels and Inputs */}
+                      <div className="flex p-1 gap-2 items-center">
+                        <div className="px-2 text-center w-[150px]">
+                          <label className="font-medium text-xs">
+                            Pd_Remark
+                          </label>
+                        </div>
+                        <input
+                          id={`Pd_Remark${index + 1}`}
+                          value={CalcData?.[`Pd_Remark${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[200px]"
+                        />
+                        <div className="px-2 text-center w-[80px]">
+                          <label className="font-medium text-xs">QC</label>
+                        </div>
+                        <input
+                          id={`I_Completed_Date${index + 1}`}
+                          value={
+                            CalcData?.[`I_Completed_Date${index + 1}`]
+                              ? new Date(
+                                  CalcData[`I_Completed_Date${index + 1}`]
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                          }
+                          onChange={handleInputChange}
+                          type="date"
+                          className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[140px]"
+                        />
+                        <div className="px-2 text-center w-[80px]">
+                          <label className="font-medium text-xs">Ship</label>
+                        </div>
+                        <input
+                          id={`Shipment_Date${index + 1}`}
+                          value={
+                            CalcData?.[`Shipment_Date${index + 1}`]
+                              ? new Date(CalcData[`Shipment_Date${index + 1}`])
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                          }
+                          onChange={handleInputChange}
+                          type="date"
+                          className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[140px]"
+                        />
+                        <input
+                          readOnly
+                          id={`Temp_Shipment${index + 1}`}
+                          value={CalcData?.[`Temp_Shipment${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-16"
+                        />
+                        <div className="px-2 text-center w-[80px]">
+                          <label className="font-medium text-xs">Calc</label>
+                        </div>
+                        <input
+                          id={`Pd_Calc_Date${index + 1}`}
+                          value={
+                            CalcData?.[`Pd_Calc_Date${index + 1}`]
+                              ? new Date(CalcData[`Pd_Calc_Date${index + 1}`])
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                          }
+                          onChange={handleInputChange}
+                          type="date"
+                          className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[140px]"
+                        />
+                        <div className="px-2 text-center w-[80px]">
+                          <label className="font-medium text-xs">Price</label>
+                        </div>
+                        <select
+                          id={`Price_CD${index + 1}`}
+                          value={CalcData?.[`Price_CD${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          className="border border-gray-500 rounded-md bg-[#ffff99] px-2 w-16"
+                        >
+                          <option
+                            value={CalcData?.[`Price_CD${index + 1}`] || ""}
+                          >
+                            {CalcData?.[`Price_CD${index + 1}`] || ""}
+                          </option>
+                          {Array.isArray(PriceData) && PriceData.length > 0 ? (
+                            PriceData.map((item, index) => (
+                              <option key={index} value={item.Price_CD}>
+                                {item.Price_CD}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">ไม่มีข้อมูล</option>
+                          )}
+                        </select>
+                        <input
+                          readOnly
+                          id={`Action_Price_Abb${index + 1}`}
+                          value={PriceForRow || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-white border border-gray-500 rounded-md px-2 w-16"
+                        />
+                        <input
+                          id={`Unit_Price${index + 1}`}
+                          value={CalcData?.[`Unit_Price${index + 1}`] || ""}
+                          onChange={handleInputChange}
+                          type="text"
+                          className="bg-[#ffff99] border border-gray-500 rounded-md px-2 w-[125px]"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -1006,53 +401,47 @@ export default function CalcComplete() {
               <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div className="grid grid-cols-4 gap-2">
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Search <br />
-                    検索 (F1)
+                    (F1)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Setting <br />
-                    設定 (F2)
+                    (F2)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Show <br />
-                    照会 (F3)
+                    (F3)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Target <br />
-                    対象 (F4)
+                    (F4)
                   </button>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Product <br />
-                    部門 (F5)
+                    (F5)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Calc <br />
-                    生産 (F6)
+                    (F6)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    List <br />一 覽 (F7)
+                    (F7)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    Data <br />
-                    データ (F8)
+                    (F8)
                   </button>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                    <label className="flex justify-center items-center">
-                      <IoIosArrowRoundForward className="font-medium text-2xl" />{" "}
-                      CSV{" "}
-                    </label>
-                    (F9)
+                  <button
+                    onClick={handleF9Click}
+                    className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  >
+                    Action
+                    <br />
+                    実行(F9)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
                     (F10)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white">
-                    Clear <br />
-                    クリア (F11)
+                    NextInput <br />
+                    次へ (F11)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
                     Exit <br />

@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function SystemSet() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -137,7 +138,165 @@ export function SystemSet() {
   const filteredData = data.filter((row) =>
     String(row.ID).toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
+  // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      ID: row.ID,
+      Use: row.Use,
+      Version: row.Version,
+      Password: row.Password,
+      Language: row.Language,
+      Od_No_Digits: row.Od_No_Digits,
+      SV_Name: row.SV_Name,
+      TENKEI: row.TENKEI,
+      Sales_Docu: row.Sales_Docu,
+      Product_Docu: row.Product_Docu,
+      Product_Docu_Type: row.Product_Docu_Type,
+      Procure_Docu: row.Procure_Docu,
+      Procure_Docu_Type: row.Procure_Docu_Type,
+      Outside_Docu: row.Outside_Docu,
+      Outside_Docu_Type: row.Outside_Docu_Type,
+      Inspect_Docu: row.Inspect_Docu,
+      Inspect_Docu_Type: row.Inspect_Docu_Type,
+      Send_Docu: row.Send_Docu,
+      Send_Docu_Type: row.Send_Docu_Type,
+      Supple_Docu: row.Supple_Docu,
+      Supple_Docu_Type: row.Supple_Docu_Type,
+      SOrder_CSV: row.SOrder_CSV,
+      SOrder_CSV_BK: row.SOrder_CSV_BK,
+      SOrder_CSV_CP: row.SOrder_CSV_CP,
+      Order_CSV: row.Order_CSV,
+      Order_CSV_BK: row.Order_CSV_BK,
+      Order_CSV_CP: row.Order_CSV_CP,
+      Procure_CSV: row.Procure_CSV,
+      Procure_CSV_BK: row.Procure_CSV_BK,
+      Procure_CSV_CP: row.Procure_CSV_CP,
+      Cost_CSV: row.Cost_CSV,
+      Cost_Save: row.Cost_Save,
+      Cost_Save_Time: row.Cost_Save_Time,
+      Cost_Write: row.Cost_Write,
+      Cost_Write_Time: row.Cost_Write_Time,
+      WIP_CSV: row.WIP_CSV,
+      WIP_CSV_Writing: row.WIP_CSV_Writing,
+      TENKEI_CSV: row.TENKEI_CSV,
+      Delivery_CSV: row.Delivery_CSV,
+      Label_CSV: row.Label_CSV,
+      Label_CSV_FG: row.Label_CSV_FG,
+      ASPROVA: row.ASPROVA,
+      As_Operation_Csv: row.As_Operation_Csv,
+      As_Resource_Csv: row.As_Resource_Csv,
+      As_Plan_Csv: row.As_Plan_Csv,
+      As_Use_Csv: row.As_Use_Csv,
+      As_Input_Csv: row.As_Input_Csv,
+      As_Schedule_Csv: row.As_Schedule_Csv,
+      Us_Group_CD: row.Us_Group_CD,
+      Us_Group_Name: row.Us_Group_Name,
+      Us_Group_Abb: row.Us_Group_Abb,
+      Us_Group_Symbol: row.Us_Group_Symbol,
+      Us_Group_Mark: row.Us_Group_Mark,
+      Us_Group_TEL: row.Us_Group_TEL,
+      Us_Group_FAX: row.Us_Group_FAX,
+      Us_Office_CD: row.Us_Office_CD,
+      Us_Office_Name: row.Us_Office_Name,
+      Us_Office_Abb: row.Us_Office_Abb,
+      Us_Office_Symbol: row.Us_Office_Symbol,
+      Us_Office_Mark: row.Us_Office_Mark,
+      St_Target_Week1: row.St_Target_Week1,
+      Ed_Target_Week1: row.Ed_Target_Week1,
+      St_Target_Week2: row.St_Target_Week2,
+      Ed_Target_Week2: row.Ed_Target_Week2,
+      St_Target_Week3: row.St_Target_Week3,
+      Ed_Target_Week3: row.Ed_Target_Week3,
+      St_Target_Week4: row.St_Target_Week4,
+      Ed_Target_Week4: row.Ed_Target_Week4,
+      St_Target_Week5: row.St_Target_Week5,
+      Ed_Target_Week5: row.Ed_Target_Week5,
+      Od_DrawNo_Reflect: row.Od_DrawNo_Reflect,
+      Pl_Quote_Delivery: row.Pl_Quote_Delivery,
+      Pl_Abst_St_Days: row.Pl_Abst_St_Days,
+      Pl_Abst_Ed_Days: row.Pl_Abst_Ed_Days,
+      Sc_Make_Type: row.Sc_Make_Type,
+      Sc_Stagnat_Time: row.Sc_Stagnat_Time,
+      Sc_Stagnat_Scale: row.Sc_Stagnat_Scale,
+      Sc_Person_Scale: row.Sc_Person_Scale,
+      Sc_Machine_Scale: row.Sc_Machine_Scale,
+      Sc_Outside_Scale: row.Sc_Outside_Scale,
+      Sc_ManHour_Scale: row.Sc_ManHour_Scale,
+      Ps_Delivery1: row.Ps_Delivery1,
+      Ps_Delivery2: row.Ps_Delivery2,
+      Ps_Delivery3: row.Ps_Delivery3,
+      Ps_Delivery4: row.Ps_Delivery4,
+      Ps_Draw_No_View: row.Ps_Draw_No_View,
+      Ps_Entry_Text1: row.Ps_Entry_Text1,
+      Ps_Entry_Text2: row.Ps_Entry_Text2,
+      Ps_Entry_Text3: row.Ps_Entry_Text3,
+      Ps_Under_Text: row.Ps_Under_Text,
+      Rs_BarCode_Input: row.Rs_BarCode_Input,
+      Rs_Move_Range: row.Rs_Move_Range,
+      Rs_Time_Input: row.Rs_Time_Input,
+      Rs_Auto_Finish: row.Rs_Auto_Finish,
+      Od_List_ViewW: row.Od_List_ViewW,
+      Od_List_ViewH: row.Od_List_ViewH,
+      Pc_List_ViewW: row.Pc_List_ViewW,
+      Pc_List_ViewH: row.Pc_List_ViewH,
+      Pl_List_ViewW: row.Pl_List_ViewW,
+      Pl_List_ViewH: row.Pl_List_ViewH,
+      Rs_List_ViewW: row.Rs_List_ViewW,
+      Rs_List_ViewH: row.Rs_List_ViewH,
+      Od_Search_ViewW: row.Od_Search_ViewW,
+      Od_Search_ViewH: row.Od_Search_ViewH,
+      Pl_Search_ViewW: row.Pl_Search_ViewW,
+      Pl_Search_ViewH: row.Pl_Search_ViewH,
+      Pc_Change_Page: row.Pc_Change_Page,
+      Pl_Change_Page: row.Pl_Change_Page,
+      Pl_Schedule: row.Pl_Schedule,
+      Pl_Color_Separate: row.Pl_Color_Separate,
+      Pl_Delivery1: row.Pl_Delivery1,
+      Pl_Delivery2: row.Pl_Delivery2,
+      Pl_Delivery3: row.Pl_Delivery3,
+      Job_Find_St_Days: row.Job_Find_St_Days,
+      Job_Find_Ed_Days: row.Job_Find_Ed_Days,
+      Settles: row.Settles,
+      Settles_Day: row.Settles_Day,
+      Pd_Revision_Days: row.Pd_Revision_Days,
+      Od_Sach_S_Years: row.Od_Sach_S_Years,
+      Pl_Sach_S_Years: row.Pl_Sach_S_Years,
+      LINK_Name1: row.LINK_Name1,
+      LINK1: row.LINK1,
+      LINK_Name2: row.LINK_Name2,
+      LINK2: row.LINK2,
+      LINK_Name3: row.LINK_Name3,
+      LINK3: row.LINK3,
+      LINK_Name4: row.LINK_Name4,
+      LINK4: row.LINK4,
+      LINK_Name5: row.LINK_Name5,
+      LINK5: row.LINK5,
+      LINK_Name6: row.LINK_Name6,
+      LINK6: row.LINK6,
+      LINK_Name7: row.LINK_Name7,
+      LINK7: row.LINK7,
+      LINK_Name8: row.LINK_Name8,
+      LINK8: row.LINK8,
+      LINK_Name9: row.LINK_Name9,
+      LINK9: row.LINK9,
+      LINK_Name10: row.LINK_Name10,
+      LINK10: row.LINK10,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "System_set_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const columns = [
     {
@@ -2270,15 +2429,22 @@ export function SystemSet() {
               </h1>
               <hr className="my-6 h-0.5 bg-gray-500 opacity-150 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-              <div className="ml-5 text-lg">
+              <div className="ml-5 text-lg flex justify-between">
                 <input
                   className="border-2 border-gray-500 rounded-md w-52 h-9"
                   type="text"
-                  placeholder=" Search By ID ..."
+                  placeholder=" Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <button
+                  onClick={exportToCsv}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+                >
+                  Export to CSV
+                </button>
               </div>
+
               <div className="flex justify-center items-center mt-5">
                 <div className="w-full px-5">
                   <DataTable

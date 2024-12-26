@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function ProcessG() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -105,6 +106,46 @@ export function ProcessG() {
     );
   });
 
+  // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      ProcessG_CD: row.ProcessG_CD,
+      Change_CD: row.Change_CD,
+      ManageG_CD: row.ManageG_CD,
+      ProcessG_Name: row.ProcessG_Name,
+      ProcessG_Abb: row.ProcessG_Abb,
+      ProcessG_Symbol: row.ProcessG_Symbol,
+      ProcessG_Mark: row.ProcessG_Mark,
+      Use: row.Use,
+      Use_Object: row.Use_Object,
+      Graph: row.Graph,
+      List: row.List,
+      Coefficient: row.Coefficient,
+      M_Coefficient: row.M_Coefficient,
+      P_Coefficient: row.P_Coefficient,
+      Std_M_CAT: row.Std_M_CAT,
+      Std_M_Time: row.Std_M_Time,
+      Std_P_CAT: row.Std_P_CAT,
+      Std_P_Time: row.Std_P_Time,
+      M_Resource_N: row.M_Resource_N,
+      S_Resource_N: row.S_Resource_N,
+      ProcessG_Remark: row.ProcessG_Remark,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "ProcessG_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const columns = [
     {
       name: "ProcessG_CD",
@@ -204,7 +245,9 @@ export function ProcessG() {
               : row.ProcessG_Symbol || ""
           }
           onChange={(e) => handleChange(e, row.ProcessG_CD, "ProcessG_Symbol")}
-          onKeyDown={(e) => handleKeyDown(e, row.ProcessG_CD, "ProcessG_Symbol")}
+          onKeyDown={(e) =>
+            handleKeyDown(e, row.ProcessG_CD, "ProcessG_Symbol")
+          }
         />
       ),
       width: "190px",
@@ -448,7 +491,9 @@ export function ProcessG() {
               : row.ProcessG_Remark || ""
           }
           onChange={(e) => handleChange(e, row.ProcessG_CD, "ProcessG_Remark")}
-          onKeyDown={(e) => handleKeyDown(e, row.ProcessG_CD, "ProcessG_Remark")}
+          onKeyDown={(e) =>
+            handleKeyDown(e, row.ProcessG_CD, "ProcessG_Remark")
+          }
         />
       ),
       width: "400px",
@@ -468,7 +513,7 @@ export function ProcessG() {
               </h1>
               <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-              <div className="ml-5 text-lg">
+              <div className="ml-5 text-lg flex justify-between">
                 <input
                   className="border-2 border-gray-500 rounded-md w-52 h-9"
                   type="text"
@@ -476,7 +521,14 @@ export function ProcessG() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <button
+                  onClick={exportToCsv}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+                >
+                  Export to CSV
+                </button>
               </div>
+
               <div className="flex justify-center items-center mt-5">
                 <div className="w-full text-center px-5">
                   <DataTable

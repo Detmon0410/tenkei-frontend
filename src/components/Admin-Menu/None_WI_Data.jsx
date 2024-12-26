@@ -3,9 +3,127 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function None_WI_Data() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      Order_No: "ORD123456",
+      Product_Grp_CD: "PRG001",
+      Customer_CD: "CUST001",
+      NAV_Name: "NAV Item 1",
+      Product_Name: "Product A",
+      NAV_Size: "Large",
+      Product_Size: "10x20",
+      Tolerance: "±0.5",
+      Customer_Draw: "CDR001",
+      Company_Draw: "CMDR001",
+      Product_Draw: "PDR001",
+      Quantity: 150.5,
+      Pd_Target_Qty: 200,
+      Pd_Complete_Qty: 180,
+      I_Complete_Qty: 170,
+      Shipment_Qty: 160,
+      Pd_Split_Qty: 2,
+      Pd_Calc_Qty: 195,
+      NG_Qty: 5,
+      Unit_CD: "PCS",
+      Sales_Grp_CD: "SG001",
+      Sales_Person_CD: "SP001",
+      Request1_CD: "R1",
+      Request2_CD: "R2",
+      Request3_CD: "R3",
+      Material1: "Steel",
+      H_Treatment1: "Heat Treat A",
+      Material2: "Aluminum",
+      H_Treatment2: "Anodized",
+      Material3: "Brass",
+      H_Treatment3: "Polished",
+      Material4: "Plastic",
+      H_Treatment4: "Injection",
+      Material5: "Copper",
+      H_Treatment5: "Plated",
+      Coating_CD: "C1",
+      Coating: "Powder Coating",
+      Quote_No: "Q1234",
+      Quote_CD: "A",
+      Od_No_of_Pd_Split: "SPLIT001",
+      Item0_CD: "I0",
+      Item1_CD: "ITEM001",
+      Item2_CD: "I2",
+      Item3_CD: "I3",
+      Item4_CD: "I4",
+      Custom_Material: "Custom1",
+      Od_No_of_Custom: "CUS001",
+      Supply_CD: "S1",
+      Destination_CD: "DEST001",
+      Contract_Docu_CD: "DOC001",
+      Price_CD: "P1",
+      Unit_Price: 25.75,
+      Specific_CD: "SP",
+      Od_Progress_CD: "PR",
+      Delivery_CD: "D",
+      Schedule_CD: "S",
+      Target_CD: "T1",
+      Product_Docu: "Product documentation details",
+      Procure_Docu: "Procurement documentation details",
+      Outside_Docu: "Outsourcing documentation details",
+      Inspect_Docu: "Inspection documentation details",
+      Send_Docu: "Shipping documentation details",
+      Supple_Docu: "Supplementary documentation details",
+      Sl_Instructions: "Special instructions",
+      Pd_Instructions: "Production instructions",
+      Pd_Remark: "Production remarks",
+      I_Remark: "Inspection remarks",
+      Od_Ctl_Person_CD: "CTL001",
+      Od_Reg_Person_CD: "REG001",
+      Od_Upd_Person_CD: "UPD001",
+      Request_Delivery: "2024-12-20T10:00:00Z",
+      Product_Delivery: "2024-12-21T15:00:00Z",
+      Confirm_Delivery: "2024-12-22T12:00:00Z",
+      NAV_Delivery: "2024-12-23T09:00:00Z",
+      ASP_Delivery: "2024-12-24T14:00:00Z",
+      Order_Date: "2024-12-01T08:00:00Z",
+      Pd_Received_Date: "2024-12-05T10:00:00Z",
+      Pd_Complete_Date: "2024-12-15T16:00:00Z",
+      I_Completed_Date: "2024-12-16T18:00:00Z",
+      Shipment_Date: "2024-12-18T20:00:00Z",
+      Pd_Calc_Date: "2024-12-19T10:00:00Z",
+      Calc_Process_Date: "2024-12-20T14:00:00Z",
+      Rs_Confirm_Date: "2024-12-21T09:00:00Z",
+      Od_Reg_Date: "2024-12-02T08:30:00Z",
+      Od_Upd_Date: "2024-12-03T11:00:00Z",
+      Od_NAV_Upd_Date: "2024-12-04T15:00:00Z",
+      Carbide_Cost: 125.5,
+      Steel_Cost: 80.75,
+      Outsourcing_Cost: 300.25,
+      H_Treatment_Cost: 50.0,
+      Coating_Cost: 60.0,
+      Electrode_Cost: 40.0,
+      Electroplate_Cost: 55.0,
+      Tooling_Cost: 75.0,
+      Jig_Cost: 85.0,
+      Fixtures_Cost: 95.0,
+      Od_CAT1: true,
+      Od_CAT2: false,
+      Od_CAT3: true,
+      Od_Pending: false,
+      Temp_Shipment: true,
+      Unreceived: false,
+      Current_Order: true,
+      Month_Plan: false,
+      Week_Plan: true,
+      Today_Plan: false,
+      Must_Delivery: true,
+      Into_I: false,
+      Input_Confirm: true,
+      Pd_Confirm: false,
+      I_Confirm: true,
+      Od_Confirm: true,
+      I_Target: false,
+      Urgent_Goods: true,
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
@@ -21,9 +139,19 @@ export function None_WI_Data() {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  // const fetchOrders = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:4000/order/td-orders");
+  //     // console.log("Fetched data:", response.data);
+  //     setData(response.data.data.orders || []);
+  //   } catch (error) {
+  //     // console.error("Error fetching orders:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchOrders();
+  // }, []);
 
   useEffect(() => {
     const initialEditedData = data.reduce((acc, row, index) => {
@@ -125,6 +253,139 @@ export function None_WI_Data() {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      Order_No: row.Order_No,
+      Product_Grp_CD: row.Product_Grp_CD,
+      Customer_CD: row.Customer_CD,
+      NAV_Name: row.NAV_Name,
+      Product_Name: row.Product_Name,
+      NAV_Size: row.NAV_Size,
+      Product_Size: row.Product_Size,
+      Tolerance: row.Tolerance,
+      Customer_Draw: row.Customer_Draw,
+      Company_Draw: row.Company_Draw,
+      Product_Draw: row.Product_Draw,
+      Quantity: row.Quantity,
+      Pd_Target_Qty: row.Pd_Target_Qty,
+      Pd_Complete_Qty: row.Pd_Complete_Qty,
+      I_Complete_Qty: row.I_Complete_Qty,
+      Shipment_Qty: row.Shipment_Qty,
+      Pd_Split_Qty: row.Pd_Split_Qty,
+      Pd_Calc_Qty: row.Pd_Calc_Qty,
+      NG_Qty: row.NG_Qty,
+      Unit_CD: row.Unit_CD,
+      Sales_Grp_CD: row.Sales_Grp_CD,
+      Sales_Person_CD: row.Sales_Person_CD,
+      Request1_CD: row.Request1_CD,
+      Request2_CD: row.Request2_CD,
+      Request3_CD: row.Request3_CD,
+      Material1: row.Material1,
+      H_Treatment1: row.H_Treatment1,
+      Material2: row.Material2,
+      H_Treatment2: row.H_Treatment2,
+      Material3: row.Material3,
+      H_Treatment3: row.H_Treatment3,
+      Material4: row.Material4,
+      H_Treatment4: row.H_Treatment4,
+      Material5: row.Material5,
+      H_Treatment5: row.H_Treatment5,
+      Coating_CD: row.Coating_CD,
+      Coating: row.Coating,
+      Quote_No: row.Quote_No,
+      Quote_CD: row.Quote_CD,
+      Od_No_of_Pd_Split: row.Od_No_of_Pd_Split,
+      ItemO_CD: row.ItemO_CD,
+      Item1_CD: row.Item1_CD,
+      Item2_CD: row.Item2_CD,
+      Item3_CD: row.Item3_CD,
+      Item4_CD: row.Item4_CD,
+      Custom_Material: row.Custom_Material,
+      Od_No_of_Custom: row.Od_No_of_Custom,
+      Supply_CD: row.Supply_CD,
+      Destination_CD: row.Destination_CD,
+      Contract_Docu_CD: row.Contract_Docu_CD,
+      Price_CD: row.Price_CD,
+      Unit_Price: row.Unit_Price,
+      Specific_CD: row.Specific_CD,
+      Od_Progress_CD: row.Od_Progress_CD,
+      Delivery_CD: row.Delivery_CD,
+      Schedule_CD: row.Schedule_CD,
+      Target_CD: row.Target_CD,
+      Product_Docu: row.Product_Docu,
+      Procure_Docu: row.Procure_Docu,
+      Outside_Docu: row.Outside_Docu,
+      Inspect_Docu: row.Inspect_Docu,
+      Send_Docu: row.Send_Docu,
+      Supple_Docu: row.Supple_Docu,
+      Sl_Instructions: row.Sl_Instructions,
+      Pd_Instructions: row.Pd_Instructions,
+      Pd_Remark: row.Pd_Remark,
+      I_Remark: row.I_Remark,
+      Od_Ctl_Person_CD: row.Od_Ctl_Person_CD,
+      Od_Reg_Person_CD: row.Od_Reg_Person_CD,
+      Od_Upd_Person_CD: row.Od_Upd_Person_CD,
+      Request_Delivery: row.Request_Delivery,
+      Product_Delivery: row.Product_Delivery,
+      Confirm_Delivery: row.Confirm_Delivery,
+      NAV_Delivery: row.NAV_Delivery,
+      ASP_Delivery: row.ASP_Delivery,
+      Order_Date: row.Order_Date,
+      Pd_Received_Date: row.Pd_Received_Date,
+      Pd_Complete_Date: row.Pd_Complete_Date,
+      I_Completed_Date: row.I_Completed_Date,
+      Shipment_Date: row.Shipment_Date,
+      Pd_Calc_Date: row.Pd_Calc_Date,
+      Calc_Process_Date: row.Calc_Process_Date,
+      Rs_Confirm_Date: row.Rs_Confirm_Date,
+      Od_Reg_Date: row.Od_Reg_Date,
+      Od_Upd_Date: row.Od_Upd_Date,
+      Od_NAV_Upd_Date: row.Od_NAV_Upd_Date,
+      Carbide_Cost: row.Carbide_Cost,
+      Steel_Cost: row.Steel_Cost,
+      Outsourcing_Cost: row.Outsourcing_Cost,
+      H_Treatment_Cost: row.H_Treatment_Cost,
+      Coating_Cost: row.Coating_Cost,
+      Electrode_Cost: row.Electrode_Cost,
+      Electroplate_Cost: row.Electroplate_Cost,
+      Tooling_Cost: row.Tooling_Cost,
+      Jig_Cost: row.Jig_Cost,
+      Fixtures_Cost: row.Fixtures_Cost,
+      Od_CAT1: row.Od_CAT1,
+      Od_CAT2: row.Od_CAT2,
+      Od_CAT3: row.Od_CAT3,
+      Od_Pending: row.Od_Pending,
+      Temp_Shipment: row.Temp_Shipment,
+      Unreceived: row.Unreceived,
+      Current_Order: row.Current_Order,
+      Month_Plan: row.Month_Plan,
+      Week_Plan: row.Week_Plan,
+      Today_Plan: row.Today_Plan,
+      Must_Delivery: row.Must_Delivery,
+      Into_I: row.Into_I,
+      Input_Confirm: row.Input_Confirm,
+      Pd_Confirm: row.Pd_Confirm,
+      I_Confirm: row.I_Confirm,
+      Od_Confirm: row.Od_Confirm,
+      I_Target: row.I_Target,
+      Urgent_Goods: row.Urgent_Goods,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "None_WI_Data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const columns = [
     {
@@ -339,7 +600,7 @@ export function None_WI_Data() {
       name: "Quantity",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Quantity !== undefined
@@ -356,7 +617,7 @@ export function None_WI_Data() {
       name: "Pd_Target_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Pd_Target_Qty !== undefined
@@ -373,7 +634,7 @@ export function None_WI_Data() {
       name: "Pd_Complete_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Pd_Complete_Qty !== undefined
@@ -390,7 +651,7 @@ export function None_WI_Data() {
       name: "I_Complete_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.I_Complete_Qty !== undefined
@@ -407,7 +668,7 @@ export function None_WI_Data() {
       name: "Shipment_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Shipment_Qty !== undefined
@@ -424,7 +685,7 @@ export function None_WI_Data() {
       name: "Pd_Split_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Pd_Split_Qty !== undefined
@@ -441,7 +702,7 @@ export function None_WI_Data() {
       name: "Pd_Calc_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Pd_Calc_Qty !== undefined
@@ -458,7 +719,7 @@ export function None_WI_Data() {
       name: "NG_Qty",
       selector: (row) => (
         <input
-          className="text-center w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className=" w-full p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.NG_Qty !== undefined
@@ -475,7 +736,7 @@ export function None_WI_Data() {
       name: "Unit_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Unit_CD !== undefined
@@ -526,7 +787,7 @@ export function None_WI_Data() {
       name: "Request1_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Request1_CD !== undefined
@@ -849,7 +1110,7 @@ export function None_WI_Data() {
       name: "Item1_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Item1_CD !== undefined
@@ -866,7 +1127,7 @@ export function None_WI_Data() {
       name: "Item2_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Item2_CD !== undefined
@@ -883,7 +1144,7 @@ export function None_WI_Data() {
       name: "Item3_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Item3_CD !== undefined
@@ -900,7 +1161,7 @@ export function None_WI_Data() {
       name: "Item4_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Item4_CD !== undefined
@@ -1053,7 +1314,7 @@ export function None_WI_Data() {
       name: "Od_Progress_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Od_Progress_CD !== undefined
@@ -1070,7 +1331,7 @@ export function None_WI_Data() {
       name: "Delivery_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Delivery_CD !== undefined
@@ -1087,7 +1348,7 @@ export function None_WI_Data() {
       name: "Schedule_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Schedule_CD !== undefined
@@ -1104,7 +1365,7 @@ export function None_WI_Data() {
       name: "Target_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Target_CD !== undefined
@@ -1151,7 +1412,7 @@ export function None_WI_Data() {
       name: "Sl_Instructions",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Sl_Instructions !== undefined
@@ -1168,7 +1429,7 @@ export function None_WI_Data() {
       name: "Pd_Instructions",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Pd_Instructions !== undefined
@@ -1185,7 +1446,7 @@ export function None_WI_Data() {
       name: "Pd_Remark",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Pd_Remark !== undefined
@@ -1202,7 +1463,7 @@ export function None_WI_Data() {
       name: "I_Remark",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.I_Remark !== undefined
@@ -1219,7 +1480,7 @@ export function None_WI_Data() {
       name: "Od_Ctl_Person_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Od_Ctl_Person_CD !== undefined
@@ -1236,7 +1497,7 @@ export function None_WI_Data() {
       name: "Od_Reg_Person_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Od_Reg_Person_CD !== undefined
@@ -1253,7 +1514,7 @@ export function None_WI_Data() {
       name: "Od_Upd_Person_CD",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.Od_Upd_Person_CD !== undefined
@@ -1269,7 +1530,9 @@ export function None_WI_Data() {
     {
       name: "Request_Delivery",
       selector: (row) => {
-        const date = row.Request_Delivery ? new Date(row.Request_Delivery) : null;
+        const date = row.Request_Delivery
+          ? new Date(row.Request_Delivery)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1295,7 +1558,9 @@ export function None_WI_Data() {
     {
       name: "Product_Delivery",
       selector: (row) => {
-        const date = row.Product_Delivery ? new Date(row.Product_Delivery) : null;
+        const date = row.Product_Delivery
+          ? new Date(row.Product_Delivery)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1321,7 +1586,9 @@ export function None_WI_Data() {
     {
       name: "Confirm_Delivery",
       selector: (row) => {
-        const date = row.Confirm_Delivery ? new Date(row.Confirm_Delivery) : null;
+        const date = row.Confirm_Delivery
+          ? new Date(row.Confirm_Delivery)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1348,7 +1615,7 @@ export function None_WI_Data() {
       name: "NAV_Delivery",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.NAV_Delivery !== undefined
@@ -1365,7 +1632,7 @@ export function None_WI_Data() {
       name: "ASP_Delivery",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="text"
           value={
             editedData[row.Order_No]?.ASP_Delivery !== undefined
@@ -1407,7 +1674,9 @@ export function None_WI_Data() {
     {
       name: "Pd_Received_Date",
       selector: (row) => {
-        const date = row.Pd_Received_Date ? new Date(row.Pd_Received_Date) : null;
+        const date = row.Pd_Received_Date
+          ? new Date(row.Pd_Received_Date)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1433,7 +1702,9 @@ export function None_WI_Data() {
     {
       name: "Pd_Complete_Date",
       selector: (row) => {
-        const date = row.Pd_Complete_Date ? new Date(row.Pd_Complete_Date) : null;
+        const date = row.Pd_Complete_Date
+          ? new Date(row.Pd_Complete_Date)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1459,7 +1730,9 @@ export function None_WI_Data() {
     {
       name: "I_Completed_Date",
       selector: (row) => {
-        const date = row.I_Completed_Date ? new Date(row.I_Completed_Date) : null;
+        const date = row.I_Completed_Date
+          ? new Date(row.I_Completed_Date)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1537,7 +1810,9 @@ export function None_WI_Data() {
     {
       name: "Calc_Process_Date",
       selector: (row) => {
-        const date = row.Calc_Process_Date ? new Date(row.Calc_Process_Date) : null;
+        const date = row.Calc_Process_Date
+          ? new Date(row.Calc_Process_Date)
+          : null;
         if (!date || isNaN(date)) return "";
 
         const day = String(date.getDate()).padStart(2, "0");
@@ -1668,7 +1943,7 @@ export function None_WI_Data() {
       name: "Carbide_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Carbide_Cost !== undefined
@@ -1685,7 +1960,7 @@ export function None_WI_Data() {
       name: "Steel_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Steel_Cost !== undefined
@@ -1702,7 +1977,7 @@ export function None_WI_Data() {
       name: "Outsourcing_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Outsourcing_Cost !== undefined
@@ -1719,7 +1994,7 @@ export function None_WI_Data() {
       name: "H_Treatment_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.H_Treatment_Cost !== undefined
@@ -1736,7 +2011,7 @@ export function None_WI_Data() {
       name: "Coating_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Coating_Cost !== undefined
@@ -1753,7 +2028,7 @@ export function None_WI_Data() {
       name: "Electrode_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Electrode_Cost !== undefined
@@ -1770,7 +2045,7 @@ export function None_WI_Data() {
       name: "Electroplate_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Electroplate_Cost !== undefined
@@ -1787,7 +2062,7 @@ export function None_WI_Data() {
       name: "Tooling_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Tooling_Cost !== undefined
@@ -1804,7 +2079,7 @@ export function None_WI_Data() {
       name: "Jig_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Jig_Cost !== undefined
@@ -1821,7 +2096,7 @@ export function None_WI_Data() {
       name: "Fixtures_Cost",
       selector: (row) => (
         <input
-          className="w-full text-center p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
+          className="w-full  p-2 border rounded-md border-white focus:border-blue-500 focus:outline-none"
           type="number"
           value={
             editedData[row.Order_No]?.Fixtures_Cost !== undefined
@@ -2082,7 +2357,7 @@ export function None_WI_Data() {
             </h1>
             <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-            <div className="ml-5 text-lg">
+            <div className="ml-5 text-lg flex justify-between">
               <input
                 className="border-2 border-gray-500 rounded-md w-52 h-9"
                 type="text"
@@ -2090,9 +2365,16 @@ export function None_WI_Data() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <button
+                onClick={exportToCsv}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+              >
+                Export to CSV
+              </button>
             </div>
+
             <div className="flex justify-center items-center mt-5">
-              <div className="w-full text-center px-5">
+              <div className="w-full px-5">
                 <DataTable
                   columns={columns}
                   data={filteredData}
@@ -2103,7 +2385,6 @@ export function None_WI_Data() {
                     rows: {
                       style: {
                         minHeight: "50px",
-                        textAlign: "center",
                         justifyContent: "center",
                         borderBottom: "1px solid #ccc",
                         borderRight: "1px solid #ccc",
@@ -2112,14 +2393,12 @@ export function None_WI_Data() {
                     headCells: {
                       style: {
                         fontSize: "14px",
-                        textAlign: "center",
                         justifyContent: "center",
                         border: "1px solid #ccc",
                       },
                     },
                     cells: {
                       style: {
-                        textAlign: "center",
                         justifyContent: "center",
                         border: "1px solid #ccc",
                       },

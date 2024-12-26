@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function Holiday() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -120,6 +121,29 @@ export function Holiday() {
     );
   });
 
+  // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      Holiday: row.Holiday,
+      Holiday_Name: row.Holiday_Name,
+      Coefficient: row.Coefficient,
+      Holiday_Remark: row.Holiday_Remark,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "Holiday_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const columns = [
     {
       name: "Holiday",
@@ -210,7 +234,8 @@ export function Holiday() {
               Holiday <br /> 休日設定
             </h1>
             <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
-            <div className="ml-5 text-lg">
+
+            <div className="ml-5 text-lg flex justify-between">
               <input
                 className="border-2 border-gray-500 rounded-md w-52 h-9"
                 type="text"
@@ -218,7 +243,14 @@ export function Holiday() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <button
+                onClick={exportToCsv}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+              >
+                Export to CSV
+              </button>
             </div>
+
             <div className="flex justify-left items-center mt-5 mb-3">
               <div className="w-full sm:w-auto text-center px-5">
                 <DataTable

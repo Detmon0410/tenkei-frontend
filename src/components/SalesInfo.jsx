@@ -83,10 +83,10 @@ export default function SalesInfo() {
                         </select>
                         <input
                           type="text"
-                          className="bg-[#72aaf8] border-solid border-2 border-gray-500 rounded-md py-0.5 w-[143px]"
+                          className="bg-[#72aaf8] border-solid border-2 border-gray-500 rounded-md py-0.5 w-[143px] ml-2"
                         />
 
-                        <button className="bg-slate-300 h-8 w-32 px-5 rounded-lg hover:bg-slate-400 hover:text-white transition duration-300 ml-4">
+                        <button className="bg-slate-300  h-8 w-32 px-5 rounded-lg hover:bg-slate-400 hover:text-white transition duration-300 ml-4">
                           Quote_Action
                         </button>
                       </div>
@@ -155,13 +155,13 @@ export default function SalesInfo() {
                     <div className="relative pt-2">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-16"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-16 ml-2"
                       />
                     </div>
                     <div className="relative pt-2">
                       <input
                         type="text"
-                        className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px]"
+                        className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px] ml-2"
                       />
                     </div>
                     {/* End */}
@@ -180,7 +180,7 @@ export default function SalesInfo() {
                     <div className="relative pt-2">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52 ml-2"
                       />
                     </div>
                     {/* End */}
@@ -212,10 +212,10 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-slate-300 border-solid border-2 border-gray-500 rounded-md py-0.5 w-20"
+                        className="bg-slate-300 border-solid border-2 border-gray-500 rounded-md py-0.5 w-20 ml-2"
                       />
                     </div>
-                    <div className="relative w-[87px]">
+                    <div className="relative w-[87px] ml-1">
                       <select className="border-gray-500 border-solid border-2 rounded-md bg-[#72aaf8] w-full h-8">
                         <option value=""></option>
                         <option value="1">1</option>
@@ -226,7 +226,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-[#72aaf8] border-solid border-2 border-gray-500 rounded-md py-0.5 w-20"
+                        className="bg-[#72aaf8] border-solid border-2 border-gray-500 rounded-md py-0.5 w-20 ml-2"
                       />
                     </div>
                     {/* End */}
@@ -242,18 +242,18 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-20"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-20 ml-2"
                       />
                     </div>
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-slate-300 border-solid border-2 border-gray-500 rounded-md py-0.5 w-[152px]"
+                        className="bg-slate-300 border-solid border-2 border-gray-500 rounded-md py-0.5 w-[152px] ml-2"
                       />
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-center pl-[77px]">
+                    <div className="px-2 w-auto text-center pl-[59px]">
                       <label className="font-bold text-xs">Sales Person</label>
                     </div>
                     <div className="relative w-[87px]">
@@ -267,7 +267,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52 ml-2"
                       />
                     </div>
                     {/* End */}
@@ -291,7 +291,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[420px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[420px] ml-2"
                       />
                     </div>
                     {/* End */}
@@ -312,7 +312,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[167px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[167px] ml-2"
                       />
                     </div>
                     {/* End */}
@@ -333,7 +333,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52 ml-2"
                       />
                     </div>
                     {/* End */}
@@ -354,7 +354,7 @@ export default function SalesInfo() {
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-center pl-6">
+                    <div className="px-2 w-auto text-center pl-8">
                       <label className="font-bold text-xs">
                         Delivery Category
                       </label>
@@ -370,12 +370,12 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[167px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[167px] ml-2"
                       />
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-center pl-[87px]">
+                    <div className="px-2 w-auto text-center pl-[90px]">
                       <label className="font-bold text-xs">Billing_CD</label>
                     </div>
                     <div className="relative w-[87px]">
@@ -389,7 +389,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-52 ml-2"
                       />
                     </div>
                     {/* End */}
@@ -510,7 +510,7 @@ export default function SalesInfo() {
                         <input
                           type="text"
                           defaultValue="None"
-                          className="bg-[#ff8989] border-solid border-2 border-gray-500 rounded-md py-0.5 w-56"
+                          className="bg-[#ff8989] border-solid border-2 border-gray-500 rounded-md py-0.5 w-56 ml-2"
                         />
                       </div>
 
@@ -526,7 +526,7 @@ export default function SalesInfo() {
                         </select>
                         <input
                           type="text"
-                          className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-56"
+                          className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-56 ml-2"
                         />
                       </div>
                     </div>
@@ -573,7 +573,7 @@ export default function SalesInfo() {
                       </select>
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-56"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-56 ml-2"
                       />
                     </div>
                     {/* End */}
@@ -749,11 +749,11 @@ export default function SalesInfo() {
                     </select>
                     <input
                       type="text"
-                      className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-44"
+                      className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-44 ml-2"
                     />
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-end pl-[102px]">
+                    <div className="px-2 w-auto text-end pl-[94px]">
                       <label className="font-bold text-xs">SOrder_Date</label>
                     </div>
                     <div className="relative">
@@ -832,7 +832,7 @@ export default function SalesInfo() {
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-end pl-[447px]">
+                    <div className="px-2 w-auto text-end pl-[455px]">
                       <label className="font-bold text-xs">SO_Sales_Date</label>
                     </div>
                     <div className="relative">
@@ -879,7 +879,7 @@ export default function SalesInfo() {
                     />
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-end pl-[47px]">
+                    <div className="px-2 w-auto text-end pl-[55px]">
                       <label className="font-bold text-xs">
                         Production_Completed
                       </label>
@@ -924,7 +924,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px] ml-2"
                       />
                     </div>
                     {/* End */}
@@ -982,10 +982,10 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px] ml-2"
                       />
                     </div>
-                    <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-16 h-8">
+                    <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-16 h-8 ml-2">
                       <option value=""></option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -994,10 +994,10 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px] ml-2"
                       />
                     </div>
-                    <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-16 h-8">
+                    <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-16 h-8 ml-2">
                       <option value=""></option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -1006,12 +1006,12 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[105px] ml-2"
                       />
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-end pl-[385px]">
+                    <div className="px-2 w-auto text-end pl-[352px]">
                       <label className="font-bold text-xs">Shipment_Date</label>
                     </div>
                     <div className="relative">
@@ -1053,7 +1053,7 @@ export default function SalesInfo() {
                     <div className="relative">
                       <input
                         type="text"
-                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[380px]"
+                        className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-[380px] ml-2"
                       />
                     </div>
                     {/* End */}
@@ -1101,7 +1101,7 @@ export default function SalesInfo() {
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-end pl-[392px]">
+                    <div className="px-2 w-auto text-end pl-[400px]">
                       <label className="font-bold text-xs">SO_Reg_Date</label>
                     </div>
                     <div className="relative">
@@ -1142,7 +1142,7 @@ export default function SalesInfo() {
                     </div>
                     {/* End */}
                     {/* Start */}
-                    <div className="px-2 w-auto text-end pl-[392px]">
+                    <div className="px-2 w-auto text-end pl-[400spx]">
                       <label className="font-bold text-xs">SO_Upd_Date</label>
                     </div>
                     <div className="relative">

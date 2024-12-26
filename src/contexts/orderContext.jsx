@@ -23,10 +23,10 @@ export default function OrderContextProvider({ children }) {
   const [SpecificData, setSpecificData] = useState(null);
   const [OdProgressData, setOdProgressData] = useState(null);
   const [DeliveryData, setDeliveryData] = useState(null);
-
+  const [CalcData, setCalcData] = useState(null);
   const resetOrderData = () => {
     setOrderData((prevData) => ({
-      ...prevData, // คงค่าของ Order_No จากข้อมูลเดิมไว้
+      ...prevData,
       Quantity: null,
       Product_Grp_CD: "",
       Od_CAT1: false,
@@ -349,6 +349,23 @@ export default function OrderContextProvider({ children }) {
     }
   };
 
+  const searchCalcData = async (orderNos) => {
+    try {
+      const response = await axios.post("/order/search-cal", orderNos);
+
+      if (response.data && response.data.data) {
+     
+        setCalcData(response.data.data);
+        return true;
+      } else {
+        console.log("No valid order data found.");
+      }
+    } catch (error) {
+      console.error("Error fetching order data:", error);
+      return false;
+    }
+  };
+
   const editOrders = async () => {
     try {
       const response = await axios.put("/order/edit-order", orderData);
@@ -362,6 +379,7 @@ export default function OrderContextProvider({ children }) {
       throw new Error("Failed to update order");
     }
   };
+
 
   const createOrder = async () => {
     try {
@@ -388,6 +406,21 @@ export default function OrderContextProvider({ children }) {
     } catch (error) {
       console.error("Error deleting order:", error);
       throw new Error("Failed to delete order");
+    }
+  };
+
+  
+  const editCalc = async () => {
+    try {
+      const response = await axios.post("/order/update-calc", CalcData);
+      console.log("calc updated successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error updating calc:",
+        error.response?.data || error.message
+      );
+      throw new Error("Failed to update calc");
     }
   };
 
@@ -434,6 +467,7 @@ export default function OrderContextProvider({ children }) {
         SpecificData,
         OdProgressData,
         DeliveryData,
+        CalcData,
         searchOrderData,
         fetchOrders,
         editOrders,
@@ -457,6 +491,9 @@ export default function OrderContextProvider({ children }) {
         setSpecificData,
         setOdProgressData,
         setDeliveryData,
+        setCalcData,
+        searchCalcData,
+        editCalc,
       }}
     >
       {children}

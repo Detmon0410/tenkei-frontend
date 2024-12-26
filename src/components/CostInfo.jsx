@@ -122,7 +122,7 @@ const CostInfo = () => {
         ...prevState,
         Order_No: searchOrderNo,
         Parts_No: searchPlanNo,
-        OdPt_No:searchOrderNo+searchPlanNo,
+        OdPt_No: searchOrderNo + searchPlanNo,
         Cost_No: newCostNo,
         CPD: new Date().toISOString().split("T")[0],
       }));
@@ -140,8 +140,6 @@ const CostInfo = () => {
 
   const handleF9Click = async () => {
     try {
-  
-
       const costExists = await SearchCostNo(
         searchOrderNo,
         searchPlanNo,
@@ -299,6 +297,8 @@ const CostInfo = () => {
     CsProgressData,
   ]);
 
+
+
   return (
     <div className="flex bg-[#E9EFEC] h-[100vh]">
       <Sidebar />
@@ -372,8 +372,8 @@ const CostInfo = () => {
               <label htmlFor="checkbox1" className="text-sm">
                 Process List View
               </label>
-              <input type="checkbox" id="checkbox2" className="mr-2 ml-3" />
-              <label htmlFor="checkbox2" className="text-sm">
+              <input type="checkbox" id="Auto_Year_Change"     className="mr-2 ml-3" />
+              <label htmlFor="Auto_Year_Change" className="text-sm">
                 Auto Year Change
               </label>
             </div>
@@ -436,21 +436,20 @@ const CostInfo = () => {
               />
             </div>
           </div>
-         
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 mb-2">
-              <div className="flex items-center space-x-2">
-              
-                <input
-                  disabled
-                  id="OdPt_No"
-                  value={CostData?.OdPt_No || ""}
-                  onChange={handleCostInputChange}
-                  type="hidden"
-                  className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
-                />
-              </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 mb-2">
+            <div className="flex items-center space-x-2">
+              <input
+                disabled
+                id="OdPt_No"
+                value={CostData?.OdPt_No || ""}
+                onChange={handleCostInputChange}
+                type="hidden"
+                className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
+              />
             </div>
-    
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 mb-2">
             <div className="flex items-center space-x-2">
               <label className="text-xs font-bold w-[70px]">Cost No.</label>
@@ -464,21 +463,20 @@ const CostInfo = () => {
               />
             </div>
           </div>
-         
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 mb-2">
-              <div className="flex items-center space-x-2">
-              
-                <input
-                  disabled
-                  id="OdPtCs_No"
-                  value={CostData?.OdPtCs_No || ""}
-                  onChange={handleCostInputChange}
-                  type="hidden"
-                  className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
-                />
-              </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 mb-2">
+            <div className="flex items-center space-x-2">
+              <input
+                disabled
+                id="OdPtCs_No"
+                value={CostData?.OdPtCs_No || ""}
+                onChange={handleCostInputChange}
+                type="hidden"
+                className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
+              />
             </div>
-          
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2">
             <div className="flex items-center space-x-2">
               <label className="text-xs font-bold w-[105px] lg:w-[70px]">
@@ -1045,41 +1043,40 @@ const CostInfo = () => {
           <div className="bg-white p-3 mt-5">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4">
               <div className="grid grid-cols-4 gap-2">
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  Search <br />
-                  検索 (F1)
+                <button disabled className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  (F1)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  Setting <br />
-                  設定 (F2)
+                  Edit <br />
+                  編集(F2)
                 </button>
                 <button
                   onClick={handleF3Click}
                   className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
                 >
-                  Show <br />
-                  照会 (F3)
+                  New_Add <br />
+                  追加(F3)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  Target <br />
-                  対象 (F4)
+                <button disabled className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  (F4)
                 </button>
               </div>
               <div className="grid grid-cols-4 gap-2">
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  Product <br />
-                  部門 (F5)
+                <button disabled className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  (F5)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  Calc <br />
-                  生産 (F6)
+                  Result_View <br />
+                  (F6)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  List <br />一 覽 (F7)
+                  Next_Cost <br />
+                  別原(F7)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  Data <br />
-                  データ (F8)
+                  Next_Parts
+                  <br />
+                  別部(F8)
                 </button>
               </div>
               <div className="grid grid-cols-4 gap-2">
@@ -1087,18 +1084,19 @@ const CostInfo = () => {
                   onClick={handleF9Click}
                   className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
                 >
-                  <label className="flex justify-center items-center">
-                    <IoIosArrowRoundForward className="font-medium text-2xl" />{" "}
-                    CSV{" "}
-                  </label>
-                  (F9)
+                  Save
+                  <br />
+                  登録(F9)
                 </button>
+
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                  (F10)
+                  Delete
+                  <br />
+                  取消(F10)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white">
-                  Clear <br />
-                  クリア (F11)
+                  Next_Input <br />
+                  次へ(F11)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
                   Exit <br />

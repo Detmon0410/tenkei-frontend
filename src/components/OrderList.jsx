@@ -852,20 +852,20 @@ export default function OrderList() {
                 <hr className="border-y-[1px] border-gray-300" />
 
                 <div className="w-full overflow-x-auto">
-                  <div className="min-w-[1600px] w-full">
+                  <div className="min-w-[1800px] w-full">
                     <div className="mx-5 py-4">
                       <div className="grid grid-cols-12">
-                        <div className="col-span-12 md:col-span-1 sm:col-span-2 flex items-start ">
+                        <div className="flex">
                           <label className="text-xs font-bold">
                             Order_Info_Search
                           </label>
                         </div>
 
-                        <div className="col-span-12 md:col-span-11 grid grid-cols-1">
+                        <div className="col-span-12 md:col-span-11 grid grid-cols-1 mt-9 -ml-[150px]">
                           <div className="grid grid-cols-5 gap-4 mb-3">
                             {/* Format Section */}
-                            <div className="flex gap-2 items-center">
-                              <label className="font-medium text-xs w-2/5 text-end">
+                            <div className="flex gap-2 items-center ml-[62px]">
+                              <label className="font-medium text-xs text-end">
                                 Format
                               </label>
                               <div className="w-1/2 sm:w-3/5">
@@ -940,10 +940,10 @@ export default function OrderList() {
 
                             {/* Order Progress Section */}
                             <div className="flex items-center ml-auto">
-                              <label className="text-xs font-medium w-2/5 text-end pr-2">
+                              <label className="text-xs font-medium text-end pr-2">
                                 Order_Progress
                               </label>
-                              <div className="flex gap-2 w-3/5">
+                              <div className="flex gap-2">
                                 <select
                                   disabled={!formState.stOdProgressCD}
                                   id="S_St_Od_Progress_CD"
@@ -1000,10 +1000,10 @@ export default function OrderList() {
                           <div className="flex gap-2 mb-3">
                             {/* Order_No Field */}
                             <div className="flex gap-2">
-                              <label className="font-medium text-xs w-2/5 text-end pt-1 pl-6">
+                              <label className="font-medium text-xs text-end pt-1 pl-[50px]">
                                 Order_No
                               </label>
-                              <div className="w-3/5">
+                              <div className="w-40">
                                 <input
                                   disabled={!formState.orderNo}
                                   id="S_Order_No"
@@ -1016,8 +1016,8 @@ export default function OrderList() {
                             </div>
 
                             {/* Ctl_Person Field Group (Expands to 3 columns on larger screens) */}
-                            <div className="flex gap-2 pl-[520px]">
-                              <label className="text-xs font-medium w-2/5 text-end pt-1">
+                            <div className="flex gap-2 pl-[510px]">
+                              <label className="text-xs font-medium text-end pt-1">
                                 Ctl_Person
                               </label>
                               <div className="flex gap-2 w-3/5">
@@ -1057,11 +1057,11 @@ export default function OrderList() {
                             </div>
 
                             {/* Delivery_CAT Field */}
-                            <div className="flex gap-2 items-center">
-                              <label className="text-xs font-medium w-2/5 text-end">
+                            <div className="flex gap-2 items-center ml-auto">
+                              <label className="text-xs font-medium text-end">
                                 Delivery_CAT
                               </label>
-                              <div className="flex gap-2 w-3/5">
+                              <div className="flex gap-2">
                                 <select
                                   disabled={!formState.stDeliveryCD}
                                   id="S_St_Delivery_CD"
@@ -1133,10 +1133,10 @@ export default function OrderList() {
                             <div className="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                               <div className="col-span-2 grid grid-cols-1 gap-2">
                                 <div className="w-full flex items-center gap-2">
-                                  <label className="text-xs font-medium w-1/5 text-end">
+                                  <label className="text-xs font-medium text-end pl-[48px]">
                                     Product_Grp
                                   </label>
-                                  <div className="flex justify-between w-4/5 gap-2">
+                                  <div className="flex justify-between gap-2">
                                     <select
                                       disabled={!formState.stPdGrpCD}
                                       id="S_St_Pd_Grp_CD"
@@ -1144,7 +1144,7 @@ export default function OrderList() {
                                         orderListData?.S_St_Pd_Grp_CD || ""
                                       }
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-44"
                                     >
                                       <option value=""></option>
                                       {Array.isArray(WorkgData) &&
@@ -1167,7 +1167,7 @@ export default function OrderList() {
                                       value={destinationName}
                                       onChange={(event) => setWorkgData(event)}
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-20"
                                     />
                                     <label>~</label>
                                     <select
@@ -1208,16 +1208,16 @@ export default function OrderList() {
 
                               {/* Sales_Grp Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="text-xs font-medium text-end pl-4">
+                                <label className="text-xs font-medium text-end pl-[94px]">
                                   Sales_Grp
                                 </label>
-                                <div className="flex gap-2 w-3/5">
+                                <div className="flex gap-2">
                                   <select
                                     disabled={!formState.slGrpCD}
                                     id="S_Sl_Grp_CD"
                                     value={orderListData?.S_Sl_Grp_CD || ""}
                                     onChange={handleInputChange}
-                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-24"
                                   >
                                     <option value=""></option>
                                     {Array.isArray(WorkgData) &&
@@ -1240,15 +1240,15 @@ export default function OrderList() {
                                     value={destinationName5}
                                     onChange={(event) => setWorkgData(event)}
                                     type="text"
-                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                                    className="bg-white border-solid border-2 border-gray-500 rounded-md -ml-0.5 w-24"
                                   />
                                 </div>
                               </div>
                             </div>
 
                             {/* Schedule_CAT Field */}
-                            <div className="flex gap-2 items-center">
-                              <label className="text-xs font-medium text-end -ml-3">
+                            <div className="flex gap-2 items-center ml-auto">
+                              <label className="text-xs font-medium text-end">
                                 Schedule_CAT
                               </label>
                               <div className="flex gap-2">
@@ -1323,10 +1323,10 @@ export default function OrderList() {
                             <div className="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
                               {/* Not_Pd_Grp1 Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs w-2/5 text-end">
+                                <label className="font-medium text-xs text-end pl-[47px]">
                                   Not_Pd_Grp1
                                 </label>
-                                <div className="flex gap-2 w-3/5">
+                                <div className="flex gap-2">
                                   <select
                                     disabled={!formState.noPdGrpCD1}
                                     id="S_No_Pd_Grp_CD1"
@@ -1355,14 +1355,14 @@ export default function OrderList() {
                                     value={destinationName3}
                                     onChange={(event) => setWorkgData(event)}
                                     type="text"
-                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-20"
                                   />
                                 </div>
                               </div>
 
                               {/* Price_CAT Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs w-2/5 text-end">
+                                <label className="font-medium text-xs text-end pl-10">
                                   Price_CAT
                                 </label>
                                 <div className="flex gap-2 w-3/5">
@@ -1401,7 +1401,7 @@ export default function OrderList() {
 
                               {/* Sales_Person Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs text-end">
+                                <label className="font-medium text-xs text-end -ml-1">
                                   Sales_Person
                                 </label>
                                 <div className="flex gap-2 w-full">
@@ -1410,7 +1410,7 @@ export default function OrderList() {
                                     id="S_Sl_Person_CD"
                                     value={orderListData?.S_Sl_Person_CD || ""}
                                     onChange={handleInputChange}
-                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-20"
+                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-24"
                                   >
                                     <option value=""></option>
                                     {Array.isArray(WorkerData) &&
@@ -1433,14 +1433,14 @@ export default function OrderList() {
                                     value={selectedSalesGrpAbb2 || ""}
                                     onChange={(event) => setWorkerData(event)}
                                     type="text"
-                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[79px]"
+                                    className="bg-white border-solid border-2 border-gray-500 rounded-md w-24"
                                   />
                                 </div>
                               </div>
                             </div>
 
                             {/* Target_CAT Field */}
-                            <div className="flex gap-2 items-center">
+                            <div className="flex gap-2 items-center ml-auto">
                               <label className="text-xs font-medium text-end -ml-3">
                                 Target_CAT
                               </label>
@@ -1515,7 +1515,7 @@ export default function OrderList() {
                             {/* Fields Spanning 3 Columns for Larger Screens */}
                             <div className="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                               {/* Not_Pd_Grp2 Field */}
-                              <div className="flex gap-2 items-center pl-12">
+                              <div className="flex gap-2 items-center pl-11">
                                 <label className="font-medium text-xs text-end">
                                   Not_Pd_Grp2
                                 </label>
@@ -1525,7 +1525,7 @@ export default function OrderList() {
                                     id="S_No_Pd_Grp_CD2"
                                     value={orderListData?.S_No_Pd_Grp_CD2 || ""}
                                     onChange={handleInputChange}
-                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-[84px]"
+                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                                   >
                                     <option value=""></option>
                                     {Array.isArray(WorkgData) &&
@@ -1715,7 +1715,7 @@ export default function OrderList() {
                             <div className="flex gap-2">
                               {/* Customer1 Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs text-end pl-[60px]">
+                                <label className="font-medium text-xs text-end pl-[58px]">
                                   Customer1
                                 </label>
                                 <div className="flex gap-2 w-44">
@@ -1773,7 +1773,7 @@ export default function OrderList() {
                                 </div>
                                 {/* Mate1 Field */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-1">
+                                  <label className="text-xs font-medium text-end pl-56">
                                     Mate1
                                   </label>
                                   <div>
@@ -1783,7 +1783,7 @@ export default function OrderList() {
                                       value={orderListData?.S_Material1 || ""}
                                       onChange={handleInputChange}
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-28"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                                     />
                                   </div>
                                 </div>
@@ -2093,7 +2093,7 @@ export default function OrderList() {
                                       id="S_Item2_CD"
                                       value={orderListData?.S_Item2_CD || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-white w-[105px]"
                                     >
                                       <option value="1">1</option>
                                       <option value="2">2</option>
@@ -2105,14 +2105,14 @@ export default function OrderList() {
                                       value={orderListData?.S_Item2_Name || ""}
                                       onChange={handleInputChange}
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[105px]"
                                     />
                                   </div>
                                 </div>
 
                                 {/* Mate3 Field */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-4">
+                                  <label className="text-xs font-medium text-end pl-[72px]">
                                     Mate3
                                   </label>
                                   <input
@@ -2168,7 +2168,7 @@ export default function OrderList() {
                           </div>
 
                           {/* Outer Grid Container */}
-                          <div className="flex gap-2 mb-3 pl-[39px]">
+                          <div className="flex gap-2 mb-3 pl-[37px]">
                             {/* Pd_Draw_No Field */}
                             <div className="flex gap-2">
                               <label className="text-xs font-medium text-end pt-1">
@@ -2189,7 +2189,7 @@ export default function OrderList() {
                             {/* Note_Customer Section */}
                             <div className="flex gap-2">
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs text-end pl-7">
+                                <label className="font-medium text-xs text-end pl-[31px]">
                                   Note_Customer
                                 </label>
                                 <div className="flex gap-2">
@@ -2275,7 +2275,7 @@ export default function OrderList() {
 
                                 {/* Mate4 */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-4">
+                                  <label className="text-xs font-medium text-end pl-14">
                                     Mate4
                                   </label>
                                   <input
@@ -2284,7 +2284,7 @@ export default function OrderList() {
                                     value={orderListData?.S_Material4 || ""}
                                     onChange={handleInputChange}
                                     type="text"
-                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-16"
+                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                                   />
                                 </div>
                               </div>
@@ -2580,7 +2580,7 @@ export default function OrderList() {
                                       id="S_Coating_CD2"
                                       value={orderListData?.S_Coating_CD2 || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-12"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-28"
                                     >
                                       <option value=""></option>
                                       {Array.isArray(CoatingData) &&
@@ -2605,13 +2605,13 @@ export default function OrderList() {
                                         setCoatingData(event)
                                       }
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-12"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[118px]"
                                     />
                                   </div>
                                 </div>
 
                                 <div className="flex gap-2 items-center">
-                                  <label className="font-medium text-xs text-end pl-4">
+                                  <label className="font-medium text-xs text-end pl-10">
                                     Od_Pend
                                   </label>
                                   <div className="flex gap-2">
@@ -2620,7 +2620,7 @@ export default function OrderList() {
                                       id="S_Od_Pending"
                                       value={orderListData?.S_Od_Pending || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#FFF] w-16"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#FFF] w-32"
                                     >
                                       <option value=""></option>
                                       <option value="true">Yes</option>
@@ -2638,7 +2638,7 @@ export default function OrderList() {
                                       id="S_Od_CAT1"
                                       value={orderListData?.S_Od_CAT1 || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#FFF)] w-16"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#FFF)] w-32"
                                     >
                                       <option value=""></option>
                                       <option value="true">Yes</option>
@@ -2754,7 +2754,7 @@ export default function OrderList() {
                                       id="S_Coating_CD3"
                                       value={orderListData?.S_Coating_CD3 || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-12"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-28"
                                     >
                                       <option value=""></option>
                                       {Array.isArray(CoatingData) &&
@@ -2779,7 +2779,7 @@ export default function OrderList() {
                                         setCoatingData(event)
                                       }
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-12"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[115px]"
                                     />
                                   </div>
                                 </div>
@@ -2795,7 +2795,7 @@ export default function OrderList() {
                                         orderListData?.S_Temp_Shipment || ""
                                       }
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-white w-16 -ml-1"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-white w-32"
                                     >
                                       <option value=""></option>
                                       <option value="true">Yes</option>
@@ -2804,10 +2804,10 @@ export default function OrderList() {
                                   </div>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-1">
+                                  <label className="text-xs font-medium text-end pl-[95px]">
                                     Od_CAT2
                                   </label>
-                                  <div className="w-16">
+                                  <div className="w-32">
                                     <select
                                       disabled={!formState.odCAT2}
                                       id="S_Od_CAT2"
@@ -2932,7 +2932,7 @@ export default function OrderList() {
                                         orderListData?.S_No_Coating_CD || ""
                                       }
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-12"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-28"
                                     >
                                       <option value=""></option>
                                       {Array.isArray(CoatingData) &&
@@ -2957,21 +2957,21 @@ export default function OrderList() {
                                         setCoatingData(event)
                                       }
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-12"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[115px]"
                                     />
                                   </div>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-1">
+                                  <label className="text-xs font-medium text-end pl-2">
                                     Unrecive
                                   </label>
-                                  <div className="w-14">
+                                  <div className="w-32">
                                     <select
                                       disabled={!formState.unreceived}
                                       id="S_Unreceived"
                                       value={orderListData?.S_Unreceived || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-white w-16"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
                                     >
                                       <option value=""></option>
                                       <option value="true">Yes</option>
@@ -2980,10 +2980,10 @@ export default function OrderList() {
                                   </div>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-2">
+                                  <label className="text-xs font-medium text-end pl-5">
                                     Od_CAT3
                                   </label>
-                                  <div className="w-16">
+                                  <div className="w-32">
                                     <select
                                       disabled={!formState.odCAT3}
                                       id="S_Od_CAT3"
@@ -3038,7 +3038,7 @@ export default function OrderList() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-5 gap-2 mb-3 lg:-ml-20">
+                          <div className="grid grid-cols-5 gap-2 mb-3">
                             <div className="grid grid-cols-6 col-span-4 gap-6">
                               <button className="h-16 w-40 bg-blue-500 rounded-lg hover:bg-blue-700">
                                 <label className="text-white font-semibold text-sm">
@@ -3100,7 +3100,7 @@ export default function OrderList() {
                             </div>
 
                             <div className="gap-2 items-center grid grid-cols-1">
-                              <div className="flex gap-2 ml-5">
+                              <div className="flex gap-2 -ml-8">
                                 <label className="text-xs font-medium pt-1">
                                   Cale_Process
                                 </label>
@@ -3141,8 +3141,8 @@ export default function OrderList() {
                                   />
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <label className="text-xs font-medium pt-1 ml-1">
+                              <div className="flex gap-2 mt-1">
+                                <label className="text-xs font-medium pt-1 -ml-12">
                                   Pl_Process_Date
                                 </label>
                                 <div className="flex gap-2 w-3/5">

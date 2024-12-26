@@ -3,13 +3,150 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function WI_Amount() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      Order_No: "ORD123456",
+      Product_Grp_CD: "PG001",
+      Customer_CD: "CUST00001",
+      NAV_Name: "NAVName1",
+      Product_Name: "Product1",
+      NAV_Size: "Size1",
+      Product_Size: "SizeA",
+      Tolerance: "5%",
+      Customer_Draw: "CD001",
+      Company_Draw: "CDCompany001",
+      Product_Draw: "PD001",
+      Quantity: 500.0,
+      Pd_Target_Qty: 200,
+      Pd_Complete_Qty: 150,
+      I_Complete_Qty: 100,
+      Shipment_Qty: 50,
+      Pd_Split_Qty: 30,
+      Pd_Calc_Qty: 80,
+      NG_Qty: 5,
+      Unit_CD: "KG",
+      Sales_Grp_CD: "SG001",
+      Sales_Person_CD: "SP001",
+      Request1_CD: "R1",
+      Request2_CD: "R2",
+      Request3_CD: "R3",
+      Material1: "Material1",
+      H_Treatment1: "HTreatment1",
+      Material2: "Material2",
+      H_Treatment2: "HTreatment2",
+      Material3: "Material3",
+      H_Treatment3: "HTreatment3",
+      Material4: "Material4",
+      H_Treatment4: "HTreatment4",
+      Material5: "Material5",
+      H_Treatment5: "HTreatment5",
+      Coating_CD: "CO1",
+      Coating: "CoatingType1",
+      Quote_No: "Q12345",
+      Quote_CD: "Q1",
+      Od_No_of_Pd_Split: "Split001",
+      Item0_CD: "IT01",
+      Item1_CD: "IT001",
+      Item2_CD: "IT02",
+      Item3_CD: "IT03",
+      Item4_CD: "IT04",
+      Custom_Material: "CustomMat1",
+      Od_No_of_Custom: "Custom001",
+      Supply_CD: "S01",
+      Destination_CD: "D01",
+      Contract_Docu_CD: "CD001",
+      Price_CD: "P01",
+      Unit_Price: 100.0,
+      Specific_CD: "S01",
+      Od_Progress_CD: "P01",
+      Delivery_CD: "D1",
+      Schedule_CD: "S1",
+      Target_CD: "T1",
+      Product_Docu: "Document1",
+      Procure_Docu: "ProcureDoc1",
+      Outside_Docu: "OutsideDoc1",
+      Inspect_Docu: "InspectDoc1",
+      Send_Docu: "SendDoc1",
+      Supple_Docu: "SuppleDoc1",
+      Sl_Instructions: "Instruction1",
+      Pd_Instructions: "PdInstruction1",
+      Pd_Remark: "PdRemark1",
+      I_Remark: "IRemark1",
+      Od_Ctl_Person_CD: "OCP001",
+      Od_Reg_Person_CD: "ORP001",
+      Od_Upd_Person_CD: "OUP001",
+      Request_Delivery: new Date("2024-12-20"),
+      Product_Delivery: new Date("2024-12-25"),
+      Confirm_Delivery: new Date("2024-12-22"),
+      NAV_Delivery: new Date("2024-12-23"),
+      ASP_Delivery: new Date("2024-12-24"),
+      Order_Date: new Date("2024-12-10"),
+      Pd_Received_Date: new Date("2024-12-12"),
+      Pd_Complete_Date: new Date("2024-12-15"),
+      I_Completed_Date: new Date("2024-12-16"),
+      Shipment_Date: new Date("2024-12-17"),
+      Pd_Calc_Date: new Date("2024-12-18"),
+      Calc_Process_Date: new Date("2024-12-19"),
+      Rs_Confirm_Date: new Date("2024-12-20"),
+      Od_Reg_Date: new Date("2024-12-05"),
+      Od_Upd_Date: new Date("2024-12-06"),
+      Od_NAV_Upd_Date: new Date("2024-12-07"),
+      Carbide_Cost: 50.0,
+      Steel_Cost: 30.0,
+      Outsourcing_Cost: 40.0,
+      H_Treatment_Cost: 20.0,
+      Coating_Cost: 10.0,
+      Electrode_Cost: 5.0,
+      Electroplate_Cost: 15.0,
+      Tooling_Cost: 25.0,
+      Jig_Cost: 10.0,
+      Fixtures_Cost: 8.0,
+      Od_CAT1: true,
+      Od_CAT2: false,
+      Od_CAT3: true,
+      Od_Pending: false,
+      Temp_Shipment: false,
+      Unreceived: true,
+      Current_Order: true,
+      Month_Plan: false,
+      Week_Plan: true,
+      Today_Plan: false,
+      Must_Delivery: true,
+      Into_I: false,
+      Input_Confirm: true,
+      Pd_Confirm: true,
+      I_Confirm: true,
+      Od_Confirm: false,
+      I_Target: true,
+      Urgent_Goods: false,
+      T_Quantity: 1000,
+      T_Comp_Qty: 800,
+      T_Remain_Qty: 200,
+      T_Unit_Price: 150.0,
+      T_Amount: 120000.0,
+      N_Amount: 50000.0,
+      N_Remain_Qty: 100,
+      N_Unit_Price: 120.0,
+      Difference: 20000.0,
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editedData, setEditedData] = useState({});
   const [isChanged, setIsChanged] = useState(false);
   const editedDataRef = useRef(editedData);
+
+  // const fetchOrders = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:4000/order/td-orders");
+  //     // console.log("Fetched data:", response.data);
+  //     setData(response.data.data.orders || []);
+  //   } catch (error) {
+  //     // console.error("Error fetching orders:", error);
+  //   }
+  // };
   const apiUrl4 = import.meta.env.VITE_APP_API_BASE_URL4;
   const fetchOrders = async () => {
     try {
@@ -21,9 +158,9 @@ export function WI_Amount() {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  // useEffect(() => {
+  //   fetchOrders();
+  // }, []);
 
   useEffect(() => {
     const initialEditedData = data.reduce((acc, row, index) => {
@@ -125,6 +262,148 @@ export function WI_Amount() {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      Order_No: row.Order_No,
+      Product_Grp_CD: row.Product_Grp_CD,
+      Customer_CD: row.Customer_CD,
+      NAV_Name: row.NAV_Name,
+      Product_Name: row.Product_Name,
+      NAV_Size: row.NAV_Size,
+      Product_Size: row.Product_Size,
+      Tolerance: row.Tolerance,
+      Customer_Draw: row.Customer_Draw,
+      Company_Draw: row.Company_Draw,
+      Product_Draw: row.Product_Draw,
+      Quantity: row.Quantity,
+      Pd_Target_Qty: row.Pd_Target_Qty,
+      Pd_Complete_Qty: row.Pd_Complete_Qty,
+      I_Complete_Qty: row.I_Complete_Qty,
+      Shipment_Qty: row.Shipment_Qty,
+      Pd_Split_Qty: row.Pd_Split_Qty,
+      Pd_Calc_Qty: row.Pd_Calc_Qty,
+      NG_Qty: row.NG_Qty,
+      Unit_CD: row.Unit_CD,
+      Sales_Grp_CD: row.Sales_Grp_CD,
+      Sales_Person_CD: row.Sales_Person_CD,
+      Request1_CD: row.Request1_CD,
+      Request2_CD: row.Request2_CD,
+      Request3_CD: row.Request3_CD,
+      Material1: row.Material1,
+      H_Treatment1: row.H_Treatment1,
+      Material2: row.Material2,
+      H_Treatment2: row.H_Treatment2,
+      Material3: row.Material3,
+      H_Treatment3: row.H_Treatment3,
+      Material4: row.Material4,
+      H_Treatment4: row.H_Treatment4,
+      Material5: row.Material5,
+      H_Treatment5: row.H_Treatment5,
+      Coating_CD: row.Coating_CD,
+      Coating: row.Coating,
+      Quote_No: row.Quote_No,
+      Quote_CD: row.Quote_CD,
+      Od_No_of_Pd_Split: row.Od_No_of_Pd_Split,
+      Item0_CD: row.Item0_CD,
+      Item1_CD: row.Item1_CD,
+      Item2_CD: row.Item2_CD,
+      Item3_CD: row.Item3_CD,
+      Item4_CD: row.Item4_CD,
+      Custom_Material: row.Custom_Material,
+      Od_No_of_Custom: row.Od_No_of_Custom,
+      Supply_CD: row.Supply_CD,
+      Destination_CD: row.Destination_CD,
+      Contract_Docu_CD: row.Contract_Docu_CD,
+      Price_CD: row.Price_CD,
+      Unit_Price: row.Unit_Price,
+      Specific_CD: row.Specific_CD,
+      Od_Progress_CD: row.Od_Progress_CD,
+      Delivery_CD: row.Delivery_CD,
+      Schedule_CD: row.Schedule_CD,
+      Target_CD: row.Target_CD,
+      Product_Docu: row.Product_Docu,
+      Procure_Docu: row.Procure_Docu,
+      Outside_Docu: row.Outside_Docu,
+      Inspect_Docu: row.Inspect_Docu,
+      Send_Docu: row.Send_Docu,
+      Supple_Docu: row.Supple_Docu,
+      Sl_Instructions: row.Sl_Instructions,
+      Pd_Instructions: row.Pd_Instructions,
+      Pd_Remark: row.Pd_Remark,
+      I_Remark: row.I_Remark,
+      Od_Ctl_Person_CD: row.Od_Ctl_Person_CD,
+      Od_Reg_Person_CD: row.Od_Reg_Person_CD,
+      Od_Upd_Person_CD: row.Od_Upd_Person_CD,
+      Request_Delivery: row.Request_Delivery,
+      Product_Delivery: row.Product_Delivery,
+      Confirm_Delivery: row.Confirm_Delivery,
+      NAV_Delivery: row.NAV_Delivery,
+      ASP_Delivery: row.ASP_Delivery,
+      Order_Date: row.Order_Date,
+      Pd_Received_Date: row.Pd_Received_Date,
+      Pd_Complete_Date: row.Pd_Complete_Date,
+      I_Completed_Date: row.I_Completed_Date,
+      Shipment_Date: row.Shipment_Date,
+      Pd_Calc_Date: row.Pd_Calc_Date,
+      Calc_Process_Date: row.Calc_Process_Date,
+      Rs_Confirm_Date: row.Rs_Confirm_Date,
+      Od_Reg_Date: row.Od_Reg_Date,
+      Od_Upd_Date: row.Od_Upd_Date,
+      Od_NAV_Upd_Date: row.Od_NAV_Upd_Date,
+      Carbide_Cost: row.Carbide_Cost,
+      Steel_Cost: row.Steel_Cost,
+      Outsourcing_Cost: row.Outsourcing_Cost,
+      H_Treatment_Cost: row.H_Treatment_Cost,
+      Coating_Cost: row.Coating_Cost,
+      Electrode_Cost: row.Electrode_Cost,
+      Electroplate_Cost: row.Electroplate_Cost,
+      Tooling_Cost: row.Tooling_Cost,
+      Jig_Cost: row.Jig_Cost,
+      Fixtures_Cost: row.Fixtures_Cost,
+      Od_CAT1: row.Od_CAT1,
+      Od_CAT2: row.Od_CAT2,
+      Od_CAT3: row.Od_CAT3,
+      Od_Pending: row.Od_Pending,
+      Temp_Shipment: row.Temp_Shipment,
+      Unreceived: row.Unreceived,
+      Current_Order: row.Current_Order,
+      Month_Plan: row.Month_Plan,
+      Week_Plan: row.Week_Plan,
+      Today_Plan: row.Today_Plan,
+      Must_Delivery: row.Must_Delivery,
+      Into_I: row.Into_I,
+      Input_Confirm: row.Input_Confirm,
+      Pd_Confirm: row.Pd_Confirm,
+      I_Confirm: row.I_Confirm,
+      Od_Confirm: row.Od_Confirm,
+      I_Target: row.I_Target,
+      Urgent_Goods: row.Urgent_Goods,
+      T_Quantity: row.T_Quantity,
+      T_Comp_Qty: row.T_Comp_Qty,
+      T_Remain_Qty: row.T_Remain_Qty,
+      T_Unit_Price: row.T_Unit_Price,
+      T_Amount: row.T_Amount,
+      N_Amount: row.N_Amount,
+      N_Remain_Qty: row.N_Remain_Qty,
+      N_Unit_Price: row.N_Unit_Price,
+      Difference: row.Difference,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "WI_Amount_Data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const columns = [
     {
@@ -2249,7 +2528,7 @@ export function WI_Amount() {
             </h1>
             <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-            <div className="ml-5 text-lg">
+            <div className="ml-5 text-lg flex justify-between">
               <input
                 className="border-2 border-gray-500 rounded-md w-52 h-9"
                 type="text"
@@ -2257,7 +2536,14 @@ export function WI_Amount() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <button
+                onClick={exportToCsv}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+              >
+                Export to CSV
+              </button>
             </div>
+
             <div className="flex justify-center items-center mt-5">
               <div className="w-full text-center px-5">
                 <DataTable

@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function Machine() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -104,6 +105,43 @@ export function Machine() {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+    // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+    const exportToCsv = () => {
+      const csvData = data.map((row) => ({
+        Resource_CD: row.Resource_CD,
+        Change_CD: row.Change_CD,
+        ResourceG_CD: row.ResourceG_CD,
+        CostG_CD: row.CostG_CD,
+        ManageG_CD: row.ManageG_CD,
+        Resource_Name: row.Resource_Name,
+        Resource_Abb: row.Resource_Abb,
+        Resource_Symbol: row.Resource_Symbol,
+        Resource_Mark: row.Resource_Mark,
+        Use: row.Use,
+        End: row.End,
+        M_Coefficient: row.M_Coefficient,
+        P_Coefficient: row.P_Coefficient,
+        Before: row.Before,
+        After: row.After,
+        T_Type: row.T_Type,
+        P_Type: row.P_Type,
+        Resource_Remark: row.Resource_Remark,
+      }));
+  
+      const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  
+      // ดาวน์โหลดไฟล์ CSV
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "Machine_data.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
 
   const columns = [
     {
@@ -407,7 +445,9 @@ export function Machine() {
               : row.Resource_Remark || ""
           }
           onChange={(e) => handleChange(e, row.Resource_CD, "Resource_Remark")}
-          onKeyDown={(e) => handleKeyDown(e, row.Resource_CD, "Resource_Remark")}
+          onKeyDown={(e) =>
+            handleKeyDown(e, row.Resource_CD, "Resource_Remark")
+          }
         />
       ),
       width: "400px",
@@ -427,7 +467,7 @@ export function Machine() {
               </h1>
               <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-              <div className="ml-5 text-lg">
+              <div className="ml-5 text-lg flex justify-between">
                 <input
                   className="border-2 border-gray-500 rounded-md w-52 h-9"
                   type="text"
@@ -435,7 +475,14 @@ export function Machine() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <button
+                  onClick={exportToCsv}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+                >
+                  Export to CSV
+                </button>
               </div>
+
               <div className="flex justify-center items-center mt-5">
                 <div className="w-full text-center px-5">
                   <DataTable

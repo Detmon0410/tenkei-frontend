@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function WeekTargetSetting() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -137,6 +138,35 @@ export function WeekTargetSetting() {
       return formattedValue.includes(searchTerm);
     });
   });
+
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      St_Target_Week1: row.St_Target_Week1,
+      Ed_Target_Week1: row.Ed_Target_Week1,
+      St_Target_Week2: row.St_Target_Week2,
+      Ed_Target_Week2: row.Ed_Target_Week2,
+      St_Target_Week3: row.St_Target_Week3,
+      Ed_Target_Week3: row.Ed_Target_Week3,
+      St_Target_Week4: row.St_Target_Week4,
+      Ed_Target_Week4: row.Ed_Target_Week4,
+      St_Target_Week5: row.St_Target_Week5,
+      Ed_Target_Week5: row.Ed_Target_Week5,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "Week_Target_Setting_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   const columns = [
     {
@@ -414,7 +444,7 @@ export function WeekTargetSetting() {
               </h1>
               <hr className="my-6 h-0.5 bg-gray-500 opacity-150 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-              <div className="ml-5 text-lg">
+              <div className="ml-5 text-lg flex justify-between">
                 <input
                   className="border-2 border-gray-500 rounded-md w-52 h-9"
                   type="text"
@@ -422,6 +452,12 @@ export function WeekTargetSetting() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <button
+                  onClick={exportToCsv}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+                >
+                  Export to CSV
+                </button>
               </div>
               <div className="flex justify-center items-center mt-5">
                 <div className="w-full text-center px-5">
@@ -465,6 +501,8 @@ export function WeekTargetSetting() {
                   />
                 </div>
               </div>
+
+              
             </div>
           </div>
         </div>

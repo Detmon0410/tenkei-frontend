@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import Papa from "papaparse";
 
 export function Process() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,6 +103,58 @@ export function Process() {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  // ฟังก์ชันสำหรับ Export ข้อมูลเป็น CSV
+  const exportToCsv = () => {
+    const csvData = data.map((row) => ({
+      Process_CD: row.Process_CD,
+      Change_CD: row.Change_CD,
+      ProcessG_CD: row.ProcessG_CD,
+      ResourceG_CD: row.ResourceG_CD,
+      ManageG_CD: row.ManageG_CD,
+      Manhour_Calc: row.Manhour_Calc,
+      Days_Calc: row.Days_Calc,
+      Process_Name: row.Process_Name,
+      Process_Abb: row.Process_Abb,
+      Process_Symbol: row.Process_Symbol,
+      Process_Mark: row.Process_Mark,
+      Use: row.Use,
+      For_Plan: row.For_Plan,
+      For_Info: row.For_Info,
+      Graph: row.Graph,
+      List: row.List,
+      Outside_On: row.Outside_On,
+      Outside_Off: row.Outside_Off,
+      End: row.End,
+      Coefficient: row.Coefficient,
+      M_Coefficient: row.M_Coefficient,
+      P_Coefficient: row.P_Coefficient,
+      Before: row.Before,
+      After: row.After,
+      Operation_Time: row.Operation_Time,
+      Std_M_CAT: row.Std_M_CAT,
+      Std_M_Time: row.Std_M_Time,
+      Std_P_CAT: row.Std_P_CAT,
+      Std_P_Time: row.Std_P_Time,
+      T_Type: row.T_Type,
+      P_Type: row.P_Type,
+      S_Type: row.S_Type,
+      Process_Remark: row.Process_Remark,
+    }));
+
+    const csv = Papa.unparse(csvData); // แปลง JSON เป็น CSV
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    // ดาวน์โหลดไฟล์ CSV
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "Process_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const columns = [
     {
@@ -656,7 +709,7 @@ export function Process() {
               </h1>
               <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
 
-              <div className="ml-5 text-lg">
+              <div className="ml-5 text-lg flex justify-between">
                 <input
                   className="border-2 border-gray-500 rounded-md w-52 h-9"
                   type="text"
@@ -664,7 +717,14 @@ export function Process() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <button
+                  onClick={exportToCsv}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-5"
+                >
+                  Export to CSV
+                </button>
               </div>
+
               <div className="flex justify-center items-center mt-5">
                 <div className="w-full text-center px-5">
                   <DataTable
