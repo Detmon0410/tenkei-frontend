@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { IoIosArrowRoundForward } from "react-icons/io";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useOrder } from "../hooks/use-order";
 import { usePlan } from "../hooks/use-plan";
 import { useCost } from "../hooks/use-cost";
 import Swal from "sweetalert2";
 const CostInfo = () => {
   const [isOdPtNoHidden, setIsOdPtNoHidden] = useState(false);
-  const [searchOrderNo, setSearchOrderNo] = useState("");
-  const [searchPlanNo, setSearchPlanNo] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+   const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
+   const { searchPlanNo: initialSearchPlanNo = "" } = location.state || {};
+   const [searchOrderNo, setSearchOrderNo] = useState(initialSearchOrderNo);
+   const [searchPlanNo, setSearchPlanNo] = useState(initialSearchPlanNo);
   const [searchCostNo, setSearchCostNo] = useState("");
   const [Search_OdPt_No, setSearch_OdPt_No] = useState("");
   const [Search_OdPtCs_No, setSearch_OdPtCs_No] = useState("");
@@ -297,8 +301,6 @@ const CostInfo = () => {
     CsProgressData,
   ]);
 
-
-
   return (
     <div className="flex bg-[#E9EFEC] h-[100vh]">
       <Sidebar />
@@ -372,7 +374,11 @@ const CostInfo = () => {
               <label htmlFor="checkbox1" className="text-sm">
                 Process List View
               </label>
-              <input type="checkbox" id="Auto_Year_Change"     className="mr-2 ml-3" />
+              <input
+                type="checkbox"
+                id="Auto_Year_Change"
+                className="mr-2 ml-3"
+              />
               <label htmlFor="Auto_Year_Change" className="text-sm">
                 Auto Year Change
               </label>
@@ -1043,7 +1049,10 @@ const CostInfo = () => {
           <div className="bg-white p-3 mt-5">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4">
               <div className="grid grid-cols-4 gap-2">
-                <button disabled className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled
+                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                >
                   (F1)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
@@ -1057,12 +1066,18 @@ const CostInfo = () => {
                   New_Add <br />
                   追加(F3)
                 </button>
-                <button disabled className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled
+                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                >
                   (F4)
                 </button>
               </div>
               <div className="grid grid-cols-4 gap-2">
-                <button disabled className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled
+                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                >
                   (F5)
                 </button>
                 <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">

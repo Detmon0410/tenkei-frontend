@@ -9,8 +9,7 @@ import PlanContextProvider from "./contexts/PlanContext";
 import ResultContextProvider from "./contexts/ResultContext.jsx";
 import CostContextProvider from "./contexts/CostContext.jsx";
 import CostListContextProvider from "./contexts/CostListContext.jsx";
-import PlanListContextProvider from "./contexts/PlanListContext.jsx";
-
+import SorderContextProvider from "./contexts/SorderContext.jsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -18,19 +17,19 @@ createRoot(document.getElementById("root")).render(
     <AuthContextProvider>
       <OrderContextProvider>
         <OrderListContextProvider>
-          <PlanListContextProvider>
-            <PurchaseContextProvider>
-              <PlanContextProvider>
-                <ResultContextProvider>
-                  <CostContextProvider>
-                    <CostListContextProvider>
+          <PurchaseContextProvider>
+            <PlanContextProvider>
+              <ResultContextProvider>
+                <CostContextProvider>
+                  <CostListContextProvider>
+                    <SorderContextProvider>
                       <App />
-                    </CostListContextProvider>
-                  </CostContextProvider>
-                </ResultContextProvider>
-              </PlanContextProvider>
-            </PurchaseContextProvider>
-          </PlanListContextProvider>
+                    </SorderContextProvider>
+                  </CostListContextProvider>
+                </CostContextProvider>
+              </ResultContextProvider>
+            </PlanContextProvider>
+          </PurchaseContextProvider>
         </OrderListContextProvider>
       </OrderContextProvider>
     </AuthContextProvider>

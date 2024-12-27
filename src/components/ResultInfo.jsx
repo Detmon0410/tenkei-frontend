@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { IoIosArrowRoundForward } from "react-icons/io";
@@ -66,13 +67,35 @@ export default function ResultInfo() {
   } = useOrder();
   const { ResultData, setResultData, SearchResultData } = useResult();
 
-  const [searchOrderNo, setSearchOrderNo] = useState("");
-  const [searchPlanNo, setSearchPlanNo] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
+  const { searchPlanNo: initialSearchPlanNo = "" } = location.state || {};
+  const [searchOrderNo, setSearchOrderNo] = useState(initialSearchOrderNo);
+  const [searchPlanNo, setSearchPlanNo] = useState(initialSearchPlanNo);
   const [Search_Odpt_No, setSearch_Odpt_No] = useState("");
   const [Person_Name, setPerson_Name] = useState("");
   const [PartName, setPartName] = useState("");
   const [ProgressName, setProgressName] = useState("");
   const [Schedule_Name, setSchedule_Name] = useState("");
+
+  const formatDateTime = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+
+    // ดึงข้อมูลวันที่ในรูปแบบ UTC
+    const day = String(d.getUTCDate()).padStart(2, "0");
+    const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const year = d.getUTCFullYear();
+
+    // ดึงข้อมูลเวลาในรูปแบบ UTC
+    const hours = String(d.getUTCHours()).padStart(2, "0");
+    const minutes = String(d.getUTCMinutes()).padStart(2, "0");
+    const seconds = String(d.getUTCSeconds()).padStart(2, "0");
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
+
   const handleOrderInputChange = async (event) => {
     const { id, value, type, checked } = event.target;
 
@@ -111,6 +134,24 @@ export default function ResultInfo() {
       ...prevResultData,
       [id]: type === "checkbox" ? checked : value === "" ? null : value,
     }));
+  };
+
+  const handleF4Click = async () => {
+    try {
+      const orderExists = await searchOrderData(searchOrderNo);
+      if (orderExists) {
+        navigate("/cost-info", { state: { searchOrderNo, searchPlanNo } });
+      } else {
+        await Swal.fire({
+          title: "ข้อมูลไม่ถูกต้อง",
+          text: "ไม่มีพบหมายเลข order",
+          icon: "warning",
+          confirmButtonText: "ตกลง",
+        });
+      }
+    } catch (error) {
+      alert("Error occurs when F4_Click\nPlease contact system administrator.");
+    }
   };
 
   useEffect(() => {
@@ -200,7 +241,7 @@ export default function ResultInfo() {
         (item) => item.Coating_CD === orderData.Coating_CD
       );
 
-      setCoatingName(selectedGroup ? selectedGroup.Coating_Name : "");
+      setCoatingName(selectedGroup ? selectedGroup.Coating_Name : "none");
     }
   }, [
     orderData?.Customer_CD,
@@ -585,7 +626,9 @@ export default function ResultInfo() {
                           <div className="w-3/5">
                             <input
                               id="Pd_Received_Date"
-                              value={orderData?.Pd_Received_Date || ""}
+                              value={formatDateTime(
+                                orderData?.Pd_Received_Date || ""
+                              )}
                               onChange={handleOrderInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -717,7 +760,9 @@ export default function ResultInfo() {
                           <div className="w-3/5">
                             <input
                               id="Request_Delivery"
-                              value={orderData?.Request_Delivery || ""}
+                              value={formatDateTime(
+                                orderData?.Request_Delivery || ""
+                              )}
                               onChange={handleOrderInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -760,7 +805,7 @@ export default function ResultInfo() {
                             <div className="w-3/5">
                               <input
                                 id="Coating_Name"
-                                value={coatingName || ""}
+                                value={coatingName || "none"}
                                 onChange={(event) => setCoatingData(event)}
                                 type="text"
                                 className="bg-[#ffff00] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -825,7 +870,9 @@ export default function ResultInfo() {
                           <div className="w-3/5">
                             <input
                               id="Product_Delivery"
-                              value={orderData?.Product_Delivery || ""}
+                              value={formatDateTime(
+                                orderData?.Product_Delivery || ""
+                              )}
                               onChange={handleOrderInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -919,7 +966,9 @@ export default function ResultInfo() {
                           <div className="w-3/5">
                             <input
                               id="Confirm_Delivery"
-                              value={orderData?.Confirm_Delivery || ""}
+                              value={formatDateTime(
+                                orderData?.Confirm_Delivery || ""
+                              )}
                               onChange={handleOrderInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1221,7 +1270,9 @@ export default function ResultInfo() {
                           <div className="w-40 -ml-4">
                             <input
                               id="Pt_Delivery"
-                              value={planData?.Pt_Delivery || ""}
+                              value={formatDateTime(
+                                planData?.Pt_Delivery || ""
+                              )}
                               onChange={handlePlanInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1308,7 +1359,9 @@ export default function ResultInfo() {
                           <div className="w-40 -ml-4">
                             <input
                               id="Pl_Reg_Date"
-                              value={planData?.Pl_Reg_Date || ""}
+                              value={formatDateTime(
+                                planData?.Pl_Reg_Date || ""
+                              )}
                               onChange={handlePlanInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1374,7 +1427,9 @@ export default function ResultInfo() {
                           <div className="w-40 -ml-4">
                             <input
                               id="Pl_Upd_Date"
-                              value={planData?.Pl_Upd_Date || ""}
+                              value={formatDateTime(
+                                planData?.Pl_Upd_Date || ""
+                              )}
                               onChange={handlePlanInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1550,7 +1605,12 @@ export default function ResultInfo() {
                         <div className="flex gap-2 items-center" key={id}>
                           <input
                             id={`PMT${id}`}
-                            value={planData?.[`PMT${id}`] || ""}
+                            value={
+                              planData?.[`PMT${id}`] !== undefined &&
+                              planData?.[`PMT${id}`] !== null
+                                ? planData?.[`PMT${id}`]
+                                : ""
+                            }
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1567,7 +1627,12 @@ export default function ResultInfo() {
                         <div className="flex gap-2 items-center" key={id}>
                           <input
                             id={`PPT${id}`}
-                            value={planData?.[`PPT${id}`] || ""}
+                            value={
+                              planData?.[`PPT${id}`] !== undefined &&
+                              planData?.[`PPT${id}`] !== null
+                                ? planData?.[`PPT${id}`]
+                                : ""
+                            }
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1586,7 +1651,7 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`PPD${id}`}
-                            value={planData?.[`PPD${id}`] || ""}
+                            value={formatDateTime(planData?.[`PPD${id}`] || "")}
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ff99cc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1602,7 +1667,9 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPD${id}`}
-                            value={ResultData?.[`RPD${id}`] || ""}
+                            value={formatDateTime(
+                              ResultData?.[`RPD${id}`] || ""
+                            )}
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#fecc99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1620,7 +1687,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RMT${id}`}
-                            value={ResultData?.[`RMT${id}`] || ""}
+                            value={
+                              planData?.[`RMT${id}`] !== undefined &&
+                              planData?.[`RMT${id}`] !== null
+                                ? planData?.[`RMT${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1638,7 +1710,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPT${id}`}
-                            value={ResultData?.[`RPT${id}`] || ""}
+                            value={
+                              planData?.[`RPT${id}`] !== undefined &&
+                              planData?.[`RPT${id}`] !== null
+                                ? planData?.[`RPT${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1654,7 +1731,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPN${id}`}
-                            value={ResultData?.[`RPN${id}`] || ""}
+                            value={
+                              planData?.[`RPN${id}`] !== undefined &&
+                              planData?.[`RPN${id}`] !== null
+                                ? planData?.[`RPN${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#99ccff] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1708,7 +1790,12 @@ export default function ResultInfo() {
                         <div className="flex gap-2 items-center" key={id}>
                           <input
                             id={`PMT${id}`}
-                            value={planData?.[`PMT${id}`] || ""}
+                            value={
+                              planData?.[`PMT${id}`] !== undefined &&
+                              planData?.[`PMT${id}`] !== null
+                                ? planData?.[`PMT${id}`]
+                                : ""
+                            }
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1725,7 +1812,12 @@ export default function ResultInfo() {
                         <div className="flex gap-2 items-center" key={id}>
                           <input
                             id={`PPT${id}`}
-                            value={planData?.[`PPT${id}`] || ""}
+                            value={
+                              planData?.[`PPT${id}`] !== undefined &&
+                              planData?.[`PPT${id}`] !== null
+                                ? planData?.[`PPT${id}`]
+                                : ""
+                            }
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1744,7 +1836,7 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`PPD${id}`}
-                            value={planData?.[`PPD${id}`] || ""}
+                            value={formatDateTime(planData?.[`PPD${id}`] || "")}
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ff99cc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1760,7 +1852,9 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPD${id}`}
-                            value={ResultData?.[`RPD${id}`] || ""}
+                            value={formatDateTime(
+                              ResultData?.[`RPD${id}`] || ""
+                            )}
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#fecc99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1778,7 +1872,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RMT${id}`}
-                            value={ResultData?.[`RMT${id}`] || ""}
+                            value={
+                              planData?.[`RMT${id}`] !== undefined &&
+                              planData?.[`RMT${id}`] !== null
+                                ? planData?.[`RMT${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1796,7 +1895,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPT${id}`}
-                            value={ResultData?.[`RPT${id}`] || ""}
+                            value={
+                              planData?.[`RPT${id}`] !== undefined &&
+                              planData?.[`RPT${id}`] !== null
+                                ? planData?.[`RPT${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1812,7 +1916,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPN${id}`}
-                            value={ResultData?.[`RPN${id}`] || ""}
+                            value={
+                              planData?.[`RPN${id}`] !== undefined &&
+                              planData?.[`RPN${id}`] !== null
+                                ? planData?.[`RPN${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#99ccff] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1866,7 +1975,12 @@ export default function ResultInfo() {
                         <div className="flex gap-2 items-center" key={id}>
                           <input
                             id={`PMT${id}`}
-                            value={planData?.[`PMT${id}`] || ""}
+                            value={
+                              planData?.[`PMT${id}`] !== undefined &&
+                              planData?.[`PMT${id}`] !== null
+                                ? planData?.[`PMT${id}`]
+                                : ""
+                            }
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1883,7 +1997,12 @@ export default function ResultInfo() {
                         <div className="flex gap-2 items-center" key={id}>
                           <input
                             id={`PPT${id}`}
-                            value={planData?.[`PPT${id}`] || ""}
+                            value={
+                              planData?.[`PPT${id}`] !== undefined &&
+                              planData?.[`PPT${id}`] !== null
+                                ? planData?.[`PPT${id}`]
+                                : ""
+                            }
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1902,7 +2021,7 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`PPD${id}`}
-                            value={planData?.[`PPD${id}`] || ""}
+                            value={formatDateTime(planData?.[`PPD${id}`] || "")}
                             onChange={handlePlanInputChange}
                             type="text"
                             className="bg-[#ff99cc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1918,7 +2037,9 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPD${id}`}
-                            value={ResultData?.[`RPD${id}`] || ""}
+                            value={formatDateTime(
+                              ResultData?.[`RPD${id}`] || ""
+                            )}
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#fecc99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1936,7 +2057,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RMT${id}`}
-                            value={ResultData?.[`RMT${id}`] || ""}
+                            value={
+                              planData?.[`RMT${id}`] !== undefined &&
+                              planData?.[`RMT${id}`] !== null
+                                ? planData?.[`RMT${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1954,7 +2080,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPT${id}`}
-                            value={ResultData?.[`RPT${id}`] || ""}
+                            value={
+                              planData?.[`RPT${id}`] !== undefined &&
+                              planData?.[`RPT${id}`] !== null
+                                ? planData?.[`RPT${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1970,7 +2101,12 @@ export default function ResultInfo() {
                         <div key={id}>
                           <input
                             id={`RPN${id}`}
-                            value={ResultData?.[`RPN${id}`] || ""}
+                            value={
+                              planData?.[`RPN${id}`] !== undefined &&
+                              planData?.[`RPN${id}`] !== null
+                                ? planData?.[`RPN${id}`]
+                                : ""
+                            }
                             onChange={handleResultInputChange}
                             type="text"
                             className="bg-[#99ccff] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -1999,9 +2135,12 @@ export default function ResultInfo() {
                       Show <br />
                       照会 (F3)
                     </button>
-                    <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
-                      Target <br />
-                      対象 (F4)
+                    <button
+                      onClick={handleF4Click}
+                      className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                    >
+                      PDS <br />
+                      Input(F4)
                     </button>
                   </div>
                   <div className="grid grid-cols-4 gap-2">

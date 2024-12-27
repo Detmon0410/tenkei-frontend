@@ -5,7 +5,6 @@ import { usePurchase } from "../hooks/use-purchase";
 import Swal from "sweetalert2";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { IoIosArrowRoundForward } from "react-icons/io";
 
 export default function PurchaseInfo() {
   const location = useLocation();
@@ -21,7 +20,11 @@ export default function PurchaseInfo() {
   const [DeliverySymbol, setDeliverySymbol] = useState("");
   const [PriceName, setPriceName] = useState("");
   const [ReQty, setReQty] = useState("");
-  
+  const [Searchpo, setSearchpo] = useState("");
+  const [selectedWorkGName, setSelectedWorkGName] = useState("");
+  const [selectedCustomerAbb, setSelectedCustomerAbb] = useState("");
+  const [selectedSalesGrpAbb, setSelectedSalesGrpAbb] = useState("");
+  const [destinationName, setDestinationName] = useState("");
   const {
     orderData,
     searchOrderData,
@@ -34,6 +37,10 @@ export default function PurchaseInfo() {
     setDeliveryData,
     PriceData,
     setPriceData,
+    WorkergData,
+    setWorkergData,
+    CustomerData,
+    setCustomerData,
   } = useOrder();
   const {
     purchaseData,
@@ -54,11 +61,26 @@ export default function PurchaseInfo() {
     setVendorCat,
   } = usePurchase();
   const navigate = useNavigate();
+  const formatDateTime = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+
+    // ดึงข้อมูลวันที่ในรูปแบบ UTC
+    const day = String(d.getUTCDate()).padStart(2, "0");
+    const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const year = d.getUTCFullYear();
+
+    // ดึงข้อมูลเวลาในรูปแบบ UTC
+    const hours = String(d.getUTCHours()).padStart(2, "0");
+    const minutes = String(d.getUTCMinutes()).padStart(2, "0");
+    const seconds = String(d.getUTCSeconds()).padStart(2, "0");
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
 
   const handleInputChange = (event, isPurchase = false) => {
     const { id, value, type, checked } = event.target;
 
-    // เลือกว่าจะอัปเดตข้อมูลใน orderData หรือ purchaseData ขึ้นอยู่กับค่า isPurchase
     if (isPurchase) {
       setPurchaseData((prevPurchaseData) => ({
         ...prevPurchaseData,
@@ -71,7 +93,6 @@ export default function PurchaseInfo() {
       }));
     }
 
-    // ตรวจสอบและค้นหาข้อมูลทั้ง order และ purchase
     if (id === "Search_Order_No") {
       setSearchOrderNo(value);
       if (value) {
@@ -83,21 +104,23 @@ export default function PurchaseInfo() {
   const handlePurchaseInputChange = async (event) => {
     const { id, value, type, checked } = event.target;
 
-    // อัปเดต purchaseData ตามค่าที่ผู้ใช้กรอก
     setPurchaseData((prevPurchaseData) => ({
       ...prevPurchaseData,
-      [id]: type === "checkbox" ? checked : value === "" ? null : value,
+      [id]:
+        type === "checkbox"
+          ? checked
+          : type === "date" && value !== ""
+          ? new Date(`${value}T00:00:00.000Z`).toISOString()
+          : value === ""
+          ? null
+          : value,
     }));
 
     if (id === "Search_PcLn_No") {
-      const OdPcLnNo = value;
-      // ไม่จำเป็นต้องใช้ await ที่นี่สำหรับการตั้งค่า selectedPurchaseNo
-      setSelectedPurchaseNo(value);
-      await searchProcureData(OdPcLnNo);
+      setSearchpo(value);
     }
 
     if (id === "Vendor_CAT") {
-      // ใช้ค่า Vendor_CAT จาก event.target.value แทน purchaseData
       await Vendor_CATProcure(value);
     }
   };
@@ -111,13 +134,15 @@ export default function PurchaseInfo() {
   const handleSearch_Order_NoChange = async (newOrder_No) => {
     if (searchOrderNo) {
       await searchOrderData(searchOrderNo);
-      await searchPurchaseData(searchOrderNo);
+    }
+    if (Searchpo) {
+      await searchProcureData(Searchpo);
     }
   };
 
   useEffect(() => {
     handleSearch_Order_NoChange();
-  }, [searchOrderNo]);
+  }, [searchOrderNo, Searchpo]);
 
   const handleF2Click = () => {
     try {
@@ -136,6 +161,10 @@ export default function PurchaseInfo() {
   const handleF3Click = () => {
     try {
       editPermission(true);
+      setPurchaseData((prevData) => ({
+        ...prevData,
+        Order_No: searchOrderNo,
+      }));
     } catch (error) {
       Swal.fire({
         title: "เกิดข้อผิดพลาด",
@@ -165,17 +194,36 @@ export default function PurchaseInfo() {
     }
   };
 
+  const handleF5Click = async () => {
+    try {
+      const orderExists = await searchOrderData(searchOrderNo);
+      if (orderExists) {
+        navigate("/plan-info", { state: { searchOrderNo } });
+      } else {
+        await Swal.fire({
+          title: "ข้อมูลไม่ถูกต้อง",
+          text: "ไม่มีพบหมายเลข order",
+          icon: "warning",
+          confirmButtonText: "ตกลง",
+        });
+      }
+    } catch (error) {
+      alert("Error occurs when F5_Click\nPlease contact system administrator.");
+    }
+  };
+
   const handleF9Click = async () => {
     try {
       const orderExists = await searchOrderData(searchOrderNo);
 
       if (orderExists) {
-        const purchaseExists = await searchPurchaseData(
-          purchaseData?.OdPcLn_No
+        const purchaseExists = await searchProcureData(
+       
+          purchaseData.OdPcLn_No
         );
         if (purchaseExists) {
           const result = await Swal.fire({
-            title: "ต้องการบันทึกข้อมูลหรือไม่",
+            title: "ต้องการแก้ไขข้อมูลหรือไม่",
             icon: "question",
             showCancelButton: true,
             confirmButtonText: "ใช่",
@@ -192,7 +240,7 @@ export default function PurchaseInfo() {
             purchaseData.Pc_Ans_Delivery = new Date(
               purchaseData.Pc_Ans_Delivery
             ).toISOString();
-           
+
             document.getElementById("Pc_Arrival_Date").value = formattedDate;
             purchaseData.Pc_Arrival_Date = formattedDate;
 
@@ -343,20 +391,20 @@ export default function PurchaseInfo() {
       setUnitName(selectedGroup ? selectedGroup.Unit_Name : "");
     }
 
-    if (purchaseData?.Vendor_CD && vendorCat.length > 0) {
+    if (
+      purchaseData?.Vendor_CD &&
+      Array.isArray(vendorCat) &&
+      vendorCat.length > 0
+    ) {
       let selectedGroup;
 
+      const vendorCD = purchaseData.Vendor_CD; // Store Vendor_CD for reuse
+
       if (purchaseData?.Vendor_CAT === "1") {
-        // ค้นหาจาก Vendor_CD เมื่อ Vendor_CAT เป็น "1"
-        selectedGroup = vendorCat.find(
-          (item) => item.Vendor_CD === purchaseData.Vendor_CD
-        );
+        selectedGroup = vendorCat.find((item) => item.Vendor_CD === vendorCD);
         setVendorName(selectedGroup ? selectedGroup.Vendor_Name : "");
       } else if (purchaseData?.Vendor_CAT === "0") {
-        // ค้นหาจาก WorkG_CD เมื่อ Vendor_CAT เป็น "0"
-        selectedGroup = vendorCat.find(
-          (item) => item.WorkG_CD === purchaseData.Vendor_CD
-        );
+        selectedGroup = vendorCat.find((item) => item.WorkG_CD === vendorCD);
         setVendorName(selectedGroup ? selectedGroup.WorkG_Name : "");
       }
     }
@@ -411,6 +459,42 @@ export default function PurchaseInfo() {
   ]);
 
   useEffect(() => {
+    if (orderData?.Product_Grp_CD && WorkergData.length > 0) {
+      const selectedGroup = WorkergData.find(
+        (item) => item.WorkG_CD === orderData.Product_Grp_CD
+      );
+      setSelectedWorkGName(selectedGroup ? selectedGroup.WorkG_Name : "");
+    }
+
+    if (orderData?.Sales_Grp_CD && WorkergData.length > 0) {
+      const selectedGroup = WorkergData.find(
+        (item) => item.WorkG_CD === orderData.Sales_Grp_CD
+      );
+      setSelectedSalesGrpAbb(selectedGroup ? selectedGroup.WorkG_Abb : "");
+    }
+
+    if (orderData?.Destination_CD && WorkergData.length > 0) {
+      const selectedGroup = WorkergData.find(
+        (item) => item.WorkG_CD === orderData.Destination_CD
+      );
+      setDestinationName(selectedGroup ? selectedGroup.WorkG_Abb : "");
+    }
+    if (orderData?.Customer_CD && CustomerData.length > 0) {
+      const selectedGroup = CustomerData.find(
+        (item) => item.Customer_CD === orderData.Customer_CD
+      );
+      setSelectedCustomerAbb(selectedGroup ? selectedGroup.Customer_Abb : "");
+    }
+  }, [
+    orderData?.Product_Grp_CD,
+    orderData?.Sales_Grp_CD,
+    orderData?.Destination_CD,
+    orderData?.Customer_CD,
+    WorkergData,
+    CustomerData,
+  ]);
+
+  useEffect(() => {
     const PcQty = parseFloat(purchaseData?.Pc_Qty) || 0;
     const aQty = parseFloat(purchaseData?.Pc_Arrival_Qty) || 0;
     setReQty(PcQty - aQty);
@@ -443,19 +527,19 @@ export default function PurchaseInfo() {
 
                 <div className="flex gap-2 items-center w-full sm:w-1/2 md:w-3/5">
                   <label className="font-medium text-xs">Search_Poln_No</label>
-                  <div className="w-24">
+                  <div className="w-34">
                     <select
                       id="Search_PcLn_No"
-                      value={selectedPurchaseNo || ""}
+                      value={Searchpo || ""}
                       onChange={(e) => handlePurchaseInputChange(e)}
-                      className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-24"
+                      className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-26"
                     >
                       <option value="">เลือกข้อมูล</option>
                       {Array.isArray(selectedPurchaseNo) &&
                       selectedPurchaseNo.length > 0 ? (
                         selectedPurchaseNo.map((item, index) => (
                           <option key={index} value={item.OdPcLn_No}>
-                            {item.OdPcLn_No}
+                            {item.Procure_No + item.Pc_Line_No}
                           </option>
                         ))
                       ) : (
@@ -465,9 +549,12 @@ export default function PurchaseInfo() {
                   </div>
                   <div className="w-full">
                     <input
+                      readOnly
                       id="Search_Pc_Name"
+                      value={purchaseData?.Pc_Name || ""}
+                      onChange={handlePurchaseInputChange}
                       type="text"
-                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-40"
+                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[450px]"
                     />
                   </div>
                 </div>
@@ -478,7 +565,10 @@ export default function PurchaseInfo() {
                   </label>
                   <div className="w-full">
                     <input
-                      disabled
+                      readOnly
+                      id="Search_OdPcLn_No"
+                      value={purchaseData?.OdPcLn_No || ""}
+                      onChange={handlePurchaseInputChange}
                       type="text"
                       className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-64"
                     />
@@ -500,26 +590,21 @@ export default function PurchaseInfo() {
                           Pruduct_Grp
                         </label>
                         <div className="w-2/6 ml-5">
-                          {orderData ? (
-                            <input
-                              id="Product_Grp_CD"
-                              disabled
-                              value={orderData.Product_Grp_CD || ""}
-                              onChange={handleInputChange}
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          )}
+                          <input
+                            id="Product_Grp_CD"
+                            disabled
+                            value={orderData?.Product_Grp_CD || ""}
+                            onChange={handleInputChange}
+                            type="text"
+                            className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                          />
                         </div>
                         <div className="w-2/6">
                           <input
                             disabled
+                            id="Product_Grp_Name"
+                            value={selectedWorkGName || ""}
+                            onChange={(event) => setWorkergData(event)}
                             type="text"
                             className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                           />
@@ -527,22 +612,15 @@ export default function PurchaseInfo() {
                       </div>
                       <div className="col-span-3 gap-2 grid grid-cols-3">
                         <div className="flex gap-2 items-center">
-                          {orderData ? (
-                            <input
-                              id="Od_Pending"
-                              value={!!orderData.Od_Pending || ""}
-                              onChange={handleInputChange}
-                              disabled
-                              type="checkbox"
-                              className="h-6 w-6"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="checkbox"
-                              className="h-6 w-6"
-                            />
-                          )}
+                          <input
+                            id="Od_Pending"
+                            checked={orderData?.Od_Pending === true}
+                            onChange={handleInputChange}
+                            disabled
+                            type="checkbox"
+                            className="h-6 w-6"
+                          />
+
                           <label className="font-medium text-xs">
                             Od_Pending
                           </label>
@@ -552,22 +630,14 @@ export default function PurchaseInfo() {
                             Ctl_Person
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Od_Ctl_Person_CD"
-                                value={orderData?.Od_Ctl_Person_CD || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Od_Ctl_Person_CD"
+                              value={orderData?.Od_Ctl_Person_CD || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -575,22 +645,14 @@ export default function PurchaseInfo() {
                             Sales_Person
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Sales_Person_CD"
-                                value={orderData.Sales_Person_CD || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Sales_Person_CD"
+                              value={orderData?.Sales_Person_CD || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                       </div>
@@ -599,28 +661,17 @@ export default function PurchaseInfo() {
                           Specific
                         </label>
                         <div className="w-2/6">
-                          {orderData ? (
-                            <select
-                              id="Specific_CD"
-                              value={orderData.Specific_CD || ""}
-                              onChange={handleInputChange}
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
-                            >
-                              <option value={orderData.Specific_CD || ""}>
-                                {orderData.Specific_CD || ""}
-                              </option>
-                            </select>
-                          ) : (
-                            <select
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                            </select>
-                          )}
+                          <select
+                            id="Specific_CD"
+                            value={orderData?.Specific_CD || ""}
+                            onChange={handleInputChange}
+                            disabled
+                            className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
+                          >
+                            <option value={orderData?.Specific_CD || ""}>
+                              {orderData?.Specific_CD || ""}
+                            </option>
+                          </select>
                         </div>
                         <div className="w-2/6">
                           <input
@@ -637,22 +688,16 @@ export default function PurchaseInfo() {
                           Received
                         </label>
                         <div className="w-3/5">
-                          {orderData ? (
-                            <input
-                              disabled
-                              id="Pd_Received_Date"
-                              value={orderData.Pd_Received_Date || ""}
-                              onChange={handleInputChange}
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          )}
+                          <input
+                            disabled
+                            id="Pd_Received_Date"
+                            value={formatDateTime(
+                              orderData?.Pd_Received_Date || ""
+                            )}
+                            onChange={handleInputChange}
+                            type="text"
+                            className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                          />
                         </div>
                       </div>
                       <div className="col-span-3 gap-2 grid grid-cols-3">
@@ -661,26 +706,21 @@ export default function PurchaseInfo() {
                             Customer
                           </label>
                           <div className="w-2/6">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Customer_CD"
-                                value={orderData.Customer_CD || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Customer_CD"
+                              value={orderData?.Customer_CD || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                           <div className="w-2/6">
                             <input
                               disabled
+                              id="Customer_CD_Name"
+                              value={selectedCustomerAbb || ""}
+                              onChange={(event) => setCustomerData(event)}
                               type="text"
                               className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
@@ -691,22 +731,14 @@ export default function PurchaseInfo() {
                             Qty
                           </label>
                           <div className="w-2/6">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Quantity"
-                                value={orderData.Quantity || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Quantity"
+                              value={orderData?.Quantity || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                           <div className="w-2/6">
                             <input
@@ -719,21 +751,13 @@ export default function PurchaseInfo() {
                         <div className="flex gap-2 items-center">
                           <label className="font-medium text-xs">Price</label>
                           <div>
-                            {orderData ? (
-                              <input
-                                disabled
-                                value={orderData.Unit_Price || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              value={orderData?.Unit_Price || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                           <div>
                             <input
@@ -757,28 +781,17 @@ export default function PurchaseInfo() {
                           Progress
                         </label>
                         <div className="w-2/6">
-                          {orderData ? (
-                            <select
-                              id="Od_Progress_CD"
-                              value={orderData.Od_Progress_CD || ""}
-                              onChange={handleInputChange}
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff00] w-full"
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                            </select>
-                          ) : (
-                            <select
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff00] w-full"
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                            </select>
-                          )}
+                          <select
+                            id="Od_Progress_CD"
+                            value={orderData?.Od_Progress_CD || ""}
+                            onChange={handleInputChange}
+                            disabled
+                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff00] w-full"
+                          >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                          </select>
                         </div>
                         <div className="w-2/6">
                           <input
@@ -795,22 +808,16 @@ export default function PurchaseInfo() {
                           Request
                         </label>
                         <div className="w-3/5">
-                          {orderData ? (
-                            <input
-                              disabled
-                              id="Request_Delivery"
-                              value={orderData.Request_Delivery || ""}
-                              onChange={handleInputChange}
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          )}
+                          <input
+                            disabled
+                            id="Request_Delivery"
+                            value={formatDateTime(
+                              orderData?.Request_Delivery || ""
+                            )}
+                            onChange={handleInputChange}
+                            type="text"
+                            className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                          />
                         </div>
                       </div>
                       <div className="col-span-3 grid grid-cols-3 gap-2 items-center">
@@ -819,49 +826,35 @@ export default function PurchaseInfo() {
                             Product
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Product_Name"
-                                value={orderData.Product_Name || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Product_Name"
+                              value={orderData?.Product_Name || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 items-center">
                           <label className="font-medium text-xs">Req3</label>
                           <div>
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Request3_CD"
-                                value={orderData?.Request3_CD || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                id="Request3_CD"
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Request3_CD"
+                              value={orderData?.Request3_CD || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                           <label className="font-medium text-xs">Coating</label>
                           <div>
                             <input
                               disabled
+                              id="Coating"
+                              value={orderData?.Coating || "none"}
+                              onChange={handleInputChange}
                               type="text"
                               className="bg-[#ffff00] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
@@ -872,22 +865,14 @@ export default function PurchaseInfo() {
                             Detail
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Coating"
-                                value={orderData.Coating || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Coating"
+                              value={orderData?.Coating || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                       </div>
@@ -896,28 +881,17 @@ export default function PurchaseInfo() {
                           Delivery
                         </label>
                         <div className="w-2/6">
-                          {orderData ? (
-                            <select
-                              id="Delivery_CD"
-                              value={orderData?.Delivery_CD || ""}
-                              onChange={handleInputChange}
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
-                            >
-                              <option value={orderData.Delivery_CD || ""}>
-                                {orderData.Delivery_CD || ""}
-                              </option>
-                            </select>
-                          ) : (
-                            <select
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                            </select>
-                          )}
+                          <select
+                            id="Delivery_CD"
+                            value={orderData?.Delivery_CD || ""}
+                            onChange={handleInputChange}
+                            disabled
+                            className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
+                          >
+                            <option value={orderData?.Delivery_CD || ""}>
+                              {orderData?.Delivery_CD || ""}
+                            </option>
+                          </select>
                         </div>
                         <div className="w-2/6">
                           <input
@@ -934,22 +908,16 @@ export default function PurchaseInfo() {
                           Product
                         </label>
                         <div className="w-3/5">
-                          {orderData ? (
-                            <input
-                              disabled
-                              id="Product_Delivery"
-                              value={orderData?.Product_Delivery || ""}
-                              onChange={handleInputChange}
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          )}
+                          <input
+                            disabled
+                            id="Product_Delivery"
+                            value={formatDateTime(
+                              orderData?.Product_Delivery || ""
+                            )}
+                            onChange={handleInputChange}
+                            type="text"
+                            className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                          />
                         </div>
                       </div>
                       <div className="col-span-3 grid grid-cols-3 gap-2 items-center">
@@ -958,22 +926,14 @@ export default function PurchaseInfo() {
                             Size
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Product_Size"
-                                value={orderData.Product_Size || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Product_Size"
+                              value={orderData?.Product_Size || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -981,22 +941,14 @@ export default function PurchaseInfo() {
                             Mate1
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Material1"
-                                value={orderData.Material1 || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Material1"
+                              value={orderData?.Material1 || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -1017,28 +969,17 @@ export default function PurchaseInfo() {
                           Target
                         </label>
                         <div className="w-2/6">
-                          {orderData ? (
-                            <select
-                              id="Target_CD"
-                              value={orderData.Target_CD || ""}
-                              onChange={handleInputChange}
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
-                            >
-                              <option value={orderData.Target_CD || ""}>
-                                {orderData.Target_CD || ""}
-                              </option>
-                            </select>
-                          ) : (
-                            <select
-                              disabled
-                              className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
-                            >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                            </select>
-                          )}
+                          <select
+                            id="Target_CD"
+                            value={orderData?.Target_CD || ""}
+                            onChange={handleInputChange}
+                            disabled
+                            className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
+                          >
+                            <option value={orderData?.Target_CD || ""}>
+                              {orderData?.Target_CD || ""}
+                            </option>
+                          </select>
                         </div>
                         <div className="w-2/6">
                           <input
@@ -1055,22 +996,16 @@ export default function PurchaseInfo() {
                           Confirm
                         </label>
                         <div className="w-3/5">
-                          {orderData ? (
-                            <input
-                              disabled
-                              id="Confirm_Delivery"
-                              value={orderData.Confirm_Delivery || ""}
-                              onChange={handleInputChange}
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          )}
+                          <input
+                            disabled
+                            id="Confirm_Delivery"
+                            value={formatDateTime(
+                              orderData?.Confirm_Delivery || ""
+                            )}
+                            onChange={handleInputChange}
+                            type="text"
+                            className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                          />
                         </div>
                       </div>
                       <div className="col-span-3 grid grid-cols-3 gap-2 items-center">
@@ -1079,22 +1014,14 @@ export default function PurchaseInfo() {
                             Draw
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Product_Draw"
-                                value={orderData.Product_Draw || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Product_Draw"
+                              value={orderData?.Product_Draw || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -1102,22 +1029,14 @@ export default function PurchaseInfo() {
                             Mate2
                           </label>
                           <div className="w-3/5">
-                            {orderData ? (
-                              <input
-                                disabled
-                                id="Material2"
-                                value={orderData.Material2 || ""}
-                                onChange={handleInputChange}
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            ) : (
-                              <input
-                                disabled
-                                type="text"
-                                className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            )}
+                            <input
+                              disabled
+                              id="Material2"
+                              value={orderData?.Material2 || ""}
+                              onChange={handleInputChange}
+                              type="text"
+                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -1138,22 +1057,14 @@ export default function PurchaseInfo() {
                           Pd_Complete
                         </label>
                         <div className="w-4/6 ml-5">
-                          {orderData ? (
-                            <input
-                              disabled
-                              id="Pd_Complete_Date"
-                              value={orderData?.Pd_Complete_Date || ""}
-                              onChange={handleInputChange}
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          ) : (
-                            <input
-                              disabled
-                              type="text"
-                              className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          )}
+                          <input
+                            disabled
+                            id="Pd_Complete_Date"
+                            value={orderData?.Pd_Complete_Date || ""}
+                            onChange={handleInputChange}
+                            type="text"
+                            className="bg-whtie border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                          />
                         </div>
                       </div>
                     </div>
@@ -1244,15 +1155,18 @@ export default function PurchaseInfo() {
                               {purchaseData?.Pc_Progress_CD || ""}
                             </option>
                             {Array.isArray(poProgress) &&
-                            poProgress.length > 0 ? (
-                              poProgress.map((item, index) => (
-                                <option key={index} value={item.Pc_Progress_CD}>
-                                  {item.Pc_Progress_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
+                                  poProgress.length > 0 ? (
+                                    poProgress.map((item, index) => (
+                                      <option
+                                        key={index}
+                                        value={item.Pc_Progress_CD}
+                                      >
+                                        {item.Pc_Progress_CD}
+                                      </option>
+                                    ))
+                                  ) : (
+                                    <option value="">ไม่มีข้อมูล</option>
+                                  )}
                           </select>
                         </div>
 
@@ -1454,6 +1368,8 @@ export default function PurchaseInfo() {
                         <input
                           disabled
                           id="Pc_Mate_Docu"
+                          checked={purchaseData?.Pc_Mate_Docu === true}
+                          onChange={handlePurchaseInputChange}
                           type="checkbox"
                           className="h-6 w-6"
                         />
@@ -1652,7 +1568,7 @@ export default function PurchaseInfo() {
                           <input
                             disabled
                             id="Re_Qty"
-                            value={ReQty }
+                            value={ReQty}
                             type="text"
                             className="bg-[#cc99ff] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                           />
@@ -1790,92 +1706,91 @@ export default function PurchaseInfo() {
                     </div>
                   </div>
                 </div>
-                <table className="border-2 border-black w-full min-w-[1200px] table-fixed text-sm ">
-                  <thead>
-                    <tr>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Orc
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Pc
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        PO_Item
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        PO_Material
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        PO_Dat
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Req_Date
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Conf_Date
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Rec_Date
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Vendor_CAT
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Vendor_CD
-                      </th>
-                      <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap">
-                        Pc_Ma
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-center">
-                    {/* Add rows here */}
-                    <tr>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                    </tr>
-                    {/* Repeat rows as needed */}
-                    {/* Add rows here */}
-                    <tr>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                    </tr>
-                    {/* Repeat rows as needed */}
-                    {/* Add rows here */}
-                    <tr>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                      <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap"></td>
-                    </tr>
-                    {/* Repeat rows as needed */}
-                  </tbody>
-                </table>
+                <div className="overflow-x-auto">
+                  <table className="border-2 border-black w-full table-auto text-sm">
+                    <thead>
+                      <tr>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Orc
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Pc
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          PO_Item
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          PO_Material
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          PO_Dat
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Req_Date
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Conf_Date
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Rec_Date
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Vendor_CAT
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Vendor_CD
+                        </th>
+                        <th className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                          Pc_Ma
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-center">
+                      {Array.isArray(selectedPurchaseNo) &&
+                      selectedPurchaseNo.length > 0
+                        ? selectedPurchaseNo.map((item, index) => {
+                            return (
+                              <tr key={index}>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {item.Order_No}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {item.Procure_No + item.Pc_Line_No}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {item.Pc_Name}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {item.Pc_Material}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {formatDateTime(item.Pc_Date)}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {formatDateTime(item.Pc_Req_Delivery)}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {formatDateTime(item.Pc_Ans_Delivery)}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {formatDateTime(item.Pc_Send_Date)}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {formatDateTime(item.Pc_Arrival_Date)}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {formatDateTime(item.Pc_Cancel_Date)}
+                                </td>
+                                <td className="py-3 px-4 bg-white border-2 border-black whitespace-nowrap min-w-[50px]">
+                                  {item.Price_CD}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        : null}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               <div className="bg-white p-3 mt-5">
@@ -1911,7 +1826,7 @@ export default function PurchaseInfo() {
                     </button>
                   </div>
                   <div className="grid grid-cols-4 gap-2">
-                    <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                    <button onClick={handleF5Click} className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
                       Plan <br /> 計画(F5)
                     </button>
                     <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">

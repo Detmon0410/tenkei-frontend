@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOrder } from "../hooks/use-order";
+import { usePlan } from "../hooks/use-plan";
 import { FaArrowDownLong, FaArrowRightLong } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import Navbar from "../components/Navbar";
@@ -33,18 +34,18 @@ export default function OrderInfo() {
   const [updPersonName, setupdPersonName] = useState("");
   const [destinationName, setDestinationName] = useState("");
   const [OrderNo, setOrderNo] = useState("");
-  const [autoYearChange, setAutoYearChange] = useState(false);
+  const [autoYearChange, setAutoYearChange] = useState(true);
   const [customerDraw, setCustomerDraw] = useState("");
   const [companyDraw, setCompanyDraw] = useState("");
   const [DocuName, setDocuName] = useState("");
   const [SpecificName, setSpecificName] = useState("");
   const [OdProgressName, setOdProgressName] = useState("");
   const [DeliveryName, setDeliveryName] = useState("");
-
+  const [Schedule_Name, setSchedule_Name] = useState("");
   const handleAutoYearChange = (event) => {
     setAutoYearChange(event.target.checked);
   };
-
+  const { ScheduleData } = usePlan();
   const {
     CustomerData,
     WorkerData,
@@ -356,11 +357,37 @@ export default function OrderInfo() {
   const handleInputChange = (event) => {
     const { id, value, type, checked } = event.target;
     const supplyCD = orderData?.Supply_CD;
+    let formattedValue = value;
+
+    // ตรวจสอบว่าเป็น datetime-local และฟอร์แมตค่า
+    if (type === "datetime-local" && value) {
+      const dateWithCurrentTime = new Date(value);
+      const year = dateWithCurrentTime.getFullYear();
+      const month = String(dateWithCurrentTime.getMonth() + 1).padStart(2, "0");
+      const day = String(dateWithCurrentTime.getDate()).padStart(2, "0");
+      const hours = String(dateWithCurrentTime.getHours()).padStart(2, "0");
+      const minutes = String(dateWithCurrentTime.getMinutes()).padStart(2, "0");
+      const seconds = String(dateWithCurrentTime.getSeconds()).padStart(2, "0");
+
+      formattedValue = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    // อัปเดตค่าของ orderData
     setOrderData((prevOrderData) => ({
       ...prevOrderData,
-      [id]: type === "checkbox" ? checked : value === "" ? null : value,
+      [id]:
+        type === "checkbox"
+          ? checked
+          : type === "datetime-local" && value
+          ? formattedValue // ใช้ formattedValue
+          : type === "date" && value !== ""
+          ? new Date(`${value}T00:00:00.000Z`).toISOString()
+          : value === ""
+          ? null
+          : value,
     }));
 
+    // จัดการการทำงานเพิ่มเติมตาม id
     switch (id) {
       case "Order_No":
         searchOrderData(value);
@@ -378,6 +405,8 @@ export default function OrderInfo() {
       default:
         break;
     }
+
+    // กรองข้อมูล WorkgData ตาม Supply_CD
     if (supplyCD === "0") {
       if (Array.isArray(WorkgData) && WorkgData.length > 0) {
         setFilteredWorkgData(WorkgData);
@@ -607,6 +636,18 @@ export default function OrderInfo() {
     orderData?.Destination_CD,
     WorkergData,
   ]);
+
+    useEffect(() => {
+      if (orderData?.Schedule_CD && ScheduleData.length > 0) {
+        const selectedGroup = ScheduleData.find(
+          (item) => item.Schedule_CD === orderData.Schedule_CD
+        );
+  
+        setSchedule_Name(selectedGroup ? selectedGroup.Schedule_Symbol : "");
+     
+      }
+    }, [orderData?.Schedule_CD, ScheduleData]);
+  
 
   useEffect(() => {
     if (orderData?.Sales_Person_CD && WorkerData.length > 0) {
@@ -877,6 +918,7 @@ export default function OrderInfo() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                     >
+                      <option value=""></option>
                       <option value={orderData?.Product_Grp_CD || ""}>
                         {orderData?.Product_Grp_CD || ""}
                       </option>
@@ -1088,7 +1130,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_Pending"
-                              value={!!orderData.Od_Pending || ""}
+                              checked={orderData?.Od_Pending === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1097,7 +1139,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_Pending"
-                              value={!!orderData?.Od_Pending || ""}
+                              checked={orderData?.Od_Pending === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1112,7 +1154,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Temp_Shipment"
-                              value={!!orderData.Temp_Shipment || ""}
+                              checked={orderData?.Temp_Shipment === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1121,7 +1163,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Temp_Shipment"
-                              value={!!orderData?.Temp_Shipment || ""}
+                              checked={orderData?.Temp_Shipment === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1136,7 +1178,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Unreceived"
-                              value={!!orderData.Unreceived || ""}
+                              checked={orderData?.Unreceived === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1145,7 +1187,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Unreceived"
-                              value={!!orderData?.Unreceived || ""}
+                              checked={orderData?.Unreceived === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1160,7 +1202,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_CAT1"
-                              value={!!orderData.Od_CAT1 || ""}
+                              checked={orderData?.Od_CAT1 === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1169,7 +1211,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_CAT1"
-                              value={!!orderData?.Od_CAT1 || ""}
+                              checked={orderData?.Od_CAT1 === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1184,7 +1226,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_CAT2"
-                              value={!!orderData.Od_CAT2 || ""}
+                              checked={orderData?.Od_CAT2 === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1193,7 +1235,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_CAT2"
-                              value={!!orderData?.Od_CAT2 || ""}
+                              checked={orderData?.Od_CAT2 === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1208,7 +1250,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_CAT3"
-                              value={!!orderData.Od_CAT3 || ""}
+                              checked={orderData?.Od_CAT3 === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1217,7 +1259,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_CAT3"
-                              value={!!orderData?.Od_CAT3 || ""}
+                              checked={orderData?.Od_CAT3 === true}
                               onChange={handleInputChange}
                               type="checkbox"
                               className="w-6 h-6"
@@ -1462,6 +1504,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                             >
+                              <option value=""></option>
                               <option value={orderData?.Unit_CD || ""}>
                                 {orderData?.Unit_CD || ""}
                               </option>
@@ -1623,6 +1666,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Sales_Grp_CD || ""}>
                               {orderData?.Sales_Grp_CD || ""}
                             </option>
@@ -1661,6 +1705,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Sales_Person_CD || ""}>
                               {orderData?.Sales_Person_CD || ""}
                             </option>
@@ -1699,6 +1744,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Request1_CD || ""}>
                               {orderData?.Request1_CD || ""}
                             </option>
@@ -1733,6 +1779,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Request2_CD || ""}>
                               {orderData?.Request2_CD || ""}
                             </option>
@@ -1766,6 +1813,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Request3_CD || ""}>
                               {orderData?.Request3_CD || ""}
                             </option>
@@ -2075,6 +2123,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                             >
+                              <option value=""></option>
                               <option value={orderData?.Coating_CD || ""}>
                                 {orderData?.Coating_CD || ""}
                               </option>
@@ -2193,6 +2242,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                             >
+                              <option value=""></option>
                               <option value={orderData?.Quote_CD || ""}>
                                 {orderData?.Quote_CD || ""}
                               </option>
@@ -2232,6 +2282,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Item1_CD || ""}>
                               {orderData?.Item1_CD || ""}
                             </option>
@@ -2356,18 +2407,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Received_Date"
-                              value={orderData.Pd_Received_Date || ""}
+                              value={
+                                orderData?.Pd_Received_Date
+                                  ? new Date(orderData.Pd_Received_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="Pd_Received_Date"
-                              value={orderData?.Pd_Received_Date || ""}
+                              value={
+                                orderData?.Pd_Received_Date
+                                  ? new Date(orderData.Pd_Received_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2382,18 +2445,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Complete_Date"
-                              value={orderData.Pd_Complete_Date || ""}
+                              value={
+                                orderData?.Pd_Complete_Date
+                                  ? new Date(orderData.Pd_Complete_Date)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="date"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="Pd_Complete_Date"
-                              value={orderData?.Pd_Complete_Date || ""}
+                              value={
+                                orderData?.Pd_Complete_Date
+                                  ? new Date(orderData.Pd_Complete_Date)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="date"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2408,18 +2483,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="I_Completed_Date"
-                              value={orderData.I_Completed_Date || ""}
+                              value={
+                                orderData?.I_Completed_Date
+                                  ? new Date(orderData.I_Completed_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="I_Completed_Date"
-                              value={orderData?.I_Completed_Date || ""}
+                              value={
+                                orderData?.I_Completed_Date
+                                  ? new Date(orderData.I_Completed_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2434,18 +2521,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Shipment_Date"
-                              value={orderData.Shipment_Date || ""}
+                              value={
+                                orderData?.Shipment_Date
+                                  ? new Date(orderData.Shipment_Date)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="date"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="Shipment_Date"
-                              value={orderData?.Shipment_Date || ""}
+                              value={
+                                orderData?.Shipment_Date
+                                  ? new Date(orderData.Shipment_Date)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="date"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2460,18 +2559,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Calc_Date"
-                              value={orderData.Pd_Calc_Date || ""}
+                              value={
+                                orderData?.Pd_Calc_Date
+                                  ? new Date(orderData.Pd_Calc_Date)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="date"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="Pd_Calc_Date"
-                              value={orderData?.Pd_Calc_Date || ""}
+                              value={
+                                orderData?.Pd_Calc_Date
+                                  ? new Date(orderData.Pd_Calc_Date)
+                                      .toISOString()
+                                      .split("T")[0]
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="date"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2486,18 +2597,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Calc_Process_Date"
-                              value={orderData.Calc_Process_Date || ""}
+                              value={
+                                orderData?.Calc_Process_Date
+                                  ? new Date(orderData.Calc_Process_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="Calc_Process_Date"
-                              value={orderData?.Calc_Process_Date || ""}
+                              value={
+                                orderData?.Calc_Process_Date
+                                  ? new Date(orderData.Calc_Process_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2512,18 +2635,30 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Od_Upd_Date"
-                              value={orderData.Od_Upd_Date || ""}
+                              value={
+                                orderData?.Od_Upd_Date
+                                  ? new Date(orderData.Od_Upd_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           ) : (
                             <input
                               disabled
                               id="Od_Upd_Date"
-                              value={orderData?.Od_Upd_Date || ""}
+                              value={
+                                orderData?.Od_Upd_Date
+                                  ? new Date(orderData.Od_Upd_Date)
+                                      .toISOString()
+                                      .substring(0, 16)
+                                  : ""
+                              }
                               onChange={handleInputChange}
-                              type="text"
+                              type="datetime-local"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                             />
                           )}
@@ -2599,6 +2734,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Supply_CD || ""}>
                               {orderData?.Supply_CD || ""}
                             </option>
@@ -2638,7 +2774,8 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
-                            <option value="">
+                            <option value=""></option>
+                            <option value={orderData?.Destination_CD || ""}>
                               {orderData?.Destination_CD || ""}
                             </option>
                             {filteredWorkgData.length > 0 ? (
@@ -2688,6 +2825,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Contract_Docu_CD || ""}>
                               {orderData?.Contract_Docu_CD || ""}
                             </option>
@@ -2730,6 +2868,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Unit_Price || ""}>
                               {orderData?.Unit_Price || ""}
                             </option>
@@ -2810,6 +2949,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Od_Ctl_Person_CD || ""}>
                               {orderData?.Od_Ctl_Person_CD || ""}
                             </option>
@@ -2849,6 +2989,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Od_Reg_Person_CD || ""}>
                               {orderData?.Od_Reg_Person_CD || ""}
                             </option>
@@ -2888,6 +3029,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Od_Upd_Person_CD || ""}>
                               {orderData?.Od_Upd_Person_CD || ""}
                             </option>
@@ -2927,6 +3069,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Specific_CD || ""}>
                               {orderData?.Specific_CD || ""}
                             </option>
@@ -2966,6 +3109,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Od_Progress_CD || ""}>
                               {orderData?.Od_Progress_CD || ""}
                             </option>
@@ -3005,6 +3149,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option value=""></option>
                             <option value={orderData?.Delivery_CD || ""}>
                               {orderData?.Delivery_CD || ""}
                             </option>
@@ -3045,12 +3190,20 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                             >
+                              <option value=""></option>
                               <option value={orderData.Schedule_CD || ""}>
                                 {orderData.Schedule_CD || ""}
                               </option>
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
+                              {Array.isArray(ScheduleData) &&
+                              ScheduleData.length > 0 ? (
+                                ScheduleData.map((item, index) => (
+                                  <option key={index} value={item.Schedule_CD}>
+                                    {item.Schedule_CD}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="">ไม่มีข้อมูล</option>
+                              )}
                             </select>
                           ) : (
                             <select
@@ -3060,17 +3213,28 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                             >
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
+                              <option value={orderData?.Schedule_CD || ""}>
+                                {orderData?.Schedule_CD || ""}
+                              </option>
+                              {Array.isArray(ScheduleData) &&
+                              ScheduleData.length > 0 ? (
+                                ScheduleData.map((item, index) => (
+                                  <option key={index} value={item.Schedule_CD}>
+                                    {item.Schedule_CD}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="">ไม่มีข้อมูล</option>
+                              )}
                             </select>
                           )}
                         </div>
                         <div className="w-2/6">
                           <input
                             disabled
-                            id=""
-                            type="text"
+                            id="Pl_Schedule_Name"
+                            value={Schedule_Name || ""}
+                            onChange={(event) => setScheduleData(event)}
                             className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                           />
                         </div>
@@ -3123,7 +3287,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Target_Qty"
-                              value={orderData.Pd_Target_Qty || ""}
+                              value={orderData?.Pd_Target_Qty ?? 0} 
                               onChange={(event) => handleInputChange(event)}
                               type="text"
                               className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3132,7 +3296,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Target_Qty"
-                              value={orderData?.Pd_Target_Qty || ""}
+                              value={orderData?.Pd_Target_Qty ?? 0} 
                               onChange={(event) => handleInputChange(event)}
                               type="text"
                               className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3149,7 +3313,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Complete_Qty"
-                              value={orderData.Pd_Complete_Qty || ""}
+                              value={orderData?.Pd_Complete_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3158,7 +3322,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Complete_Qty"
-                              value={orderData?.Pd_Complete_Qty || ""}
+                              value={orderData?.Pd_Complete_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3175,7 +3339,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="I_Complete_Qty"
-                              value={orderData.I_Complete_Qty || ""}
+                              value={orderData?.I_Complete_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3184,7 +3348,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="I_Complete_Qty"
-                              value={orderData?.I_Complete_Qty || ""}
+                              value={orderData?.I_Complete_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3201,7 +3365,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Shipment_Qty"
-                              value={orderData.Shipment_Qty || ""}
+                              value={orderData?.Shipment_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3210,7 +3374,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Shipment_Qty"
-                              value={orderData?.Shipment_Qty || ""}
+                              value={orderData?.Shipment_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3227,7 +3391,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Split_Qty"
-                              value={orderData.Pd_Split_Qty || ""}
+                              value={orderData?.Pd_Split_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3236,7 +3400,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Split_Qty"
-                              value={orderData?.Pd_Split_Qty || ""}
+                              value={orderData?.Pd_Split_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3253,7 +3417,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Calc_Qty"
-                              value={orderData.Pd_Calc_Qty || ""}
+                              value={orderData?.Pd_Calc_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3262,7 +3426,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="Pd_Calc_Qty"
-                              value={orderData?.Pd_Calc_Qty || ""}
+                              value={orderData?.Pd_Calc_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3279,7 +3443,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="NG_Qty"
-                              value={orderData.NG_Qty || ""}
+                              value={orderData?.NG_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
@@ -3288,7 +3452,7 @@ export default function OrderInfo() {
                             <input
                               disabled
                               id="NG_Qty"
-                              value={orderData?.NG_Qty || ""}
+                              value={orderData?.NG_Qty ?? 0}
                               onChange={handleInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
