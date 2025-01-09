@@ -1,13 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { useOrder } from "../hooks/use-order";
 import Swal from "sweetalert2";
 export default function CalcComplete() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [buttonState, setButtonState] = useState({
+    F1: true,
+    F2: true,
+    F3: true,
+    F4: true,
+    F5: true,
+    F6: true,
+    F7: true,
+    F8: true,
+    F9: true,  
+    F10: true,
+    F11: false, // ปุ่ม F11 จะไม่ถูก disable
+    F12: false, // ปุ่ม F12 จะไม่ถูก disable
+  });
+  const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
+  const [searchOrderNo, setSearchOrderNo] = useState(initialSearchOrderNo);
   const currentDate = new Date().toISOString().split("T")[0];
   const {
     CalcData,
+    searchOrderData,
     setCalcData,
     searchCalcData,
     CustomerData,
@@ -23,6 +43,7 @@ export default function CalcComplete() {
     }, {})
   );
 
+  const isSearchOrderNoFilled = searchOrderNo !== "";
   const handleInputChange = (event) => {
     const { id, value, type, checked } = event.target;
 
@@ -46,6 +67,7 @@ export default function CalcComplete() {
         }));
       }
     });
+    
   };
 
   const handleSearch_Order_NoChange = async () => {
@@ -63,6 +85,7 @@ export default function CalcComplete() {
 
   const handleF9Click = async () => {
     try {
+      const orderExists = await searchOrderData(searchOrderNo);
       const result = await Swal.fire({
         title: "ต้องการแก้ไขข้อมูลหรือไม่",
         icon: "question",
@@ -92,7 +115,42 @@ export default function CalcComplete() {
       handleSearch_Order_NoChange();
     }
   }, [searchValue]);
+ 
+  
+  // const handleF11Click = (event, orderIndex) => {
+  //   if (event.key === "F11") {
+  //     event.preventDefault(); // ป้องกัน behavior ของ browser
+  //     const orderNo = searchValue[`Action_Od_No${orderIndex}`];
+      
+  //     if (orderNo) {
+  //       isSearchOrderNoFilled(true); // เปิดใช้งานปุ่ม F9
+  //     }
+  //   }
+  // };
 
+  const handleF12Click = async () => {
+      try {
+        const confirmResult = await Swal.fire({
+          title: "Confirm",
+          html: "Do you want to close this window?<br>คุณต้องการปิดหน้าต่างนี้หรือไม่?<br>このウィンドウを閉じますか？",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "No",
+        });
+        if (confirmResult.isConfirmed) { 
+           navigate("/dashboard")
+        }
+      } catch (error) {
+        console.error("Error in handleF12Click:", error);
+        Swal.fire({
+          title: "เกิดข้อผิดพลาด",
+          text: "กรุณาลองอีกครั้ง",
+          icon: "error",
+          confirmButtonText: "ตกลง",
+        }); // แจ้งเตือนผู้ใช้เกี่ยวกับข้อผิดพลาด
+      }
+    };
   return (
     <div className="flex bg-[#E9EFEC] h-[100vh]">
       <Sidebar />
@@ -400,50 +458,71 @@ export default function CalcComplete() {
             <div className="bg-white p-3 mt-5">
               <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div className="grid grid-cols-4 gap-2">
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F1}
+                  id="F1">
                     (F1)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F2}>
                     (F2)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F3}>
                     (F3)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F4}>
                     (F4)
                   </button>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F5}>
                     (F5)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F6}>
                     (F6)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F7}>
                     (F7)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                  disabled={buttonState.F8}>
                     (F8)
                   </button>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button
+                    className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
+                      !isSearchOrderNoFilled
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={!isSearchOrderNoFilled}
                     onClick={handleF9Click}
-                    className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
                   >
                     Action
                     <br />
                     実行(F9)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500" 
+                  disabled={buttonState.F10}>
                     (F10)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white"
+                  // id="F11"
+                  // onClick={handleF11Click}> 
+                  >
                     NextInput <br />
                     次へ (F11)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  disabled={buttonState.F12}
+                  id="F12"
+                  onClick={handleF12Click}>
                     Exit <br />
                     終了 (F12)
                   </button>

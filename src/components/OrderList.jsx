@@ -35,7 +35,7 @@ export default function OrderList() {
     DeliveryData,
     TargetData,
   } = useOrder();
-
+  
   const [destinationName, setDestinationName] = useState("");
   const [destinationName2, setDestinationName2] = useState("");
   const [destinationName3, setDestinationName3] = useState("");
@@ -592,6 +592,7 @@ export default function OrderList() {
   };
 
   useEffect(() => {
+    
     if (orderListData?.S_St_Pd_Grp_CD && WorkgData.length > 0) {
       const selectedGroup = WorkgData.find(
         (item) => item.WorkG_CD === orderListData?.S_St_Pd_Grp_CD
@@ -631,6 +632,10 @@ export default function OrderList() {
     orderListData?.S_Sl_Grp_CD,
     WorkgData,
   ]);
+  // useEffect(() => {
+  //   console.log('Updated data:', WorkerData);
+  // }, [WorkerData]); // จะได้ผลลัพธ์เมื่อ data มีการอัพเดต
+  
 
   useEffect(() => {
     if (orderListData?.S_Customer_CD1 && CustomerData.length > 0) {
@@ -705,8 +710,8 @@ export default function OrderList() {
     if (orderListData?.S_Price_CD && PriceData.length > 0) {
       const selectedGroup = PriceData.find(
         (item) => item.Price_CD === orderListData?.S_Price_CD
-      );
-
+        
+      );  
       setPriceName(selectedGroup ? selectedGroup.Price_Symbol : "");
     }
   }, [orderListData?.S_Price_CD, PriceData]);
