@@ -3436,7 +3436,7 @@ export default function OrderInfo() {
                             SpecificData.length > 0 ? (
                               SpecificData.map((item, index) => (
                                 <option key={index} value={item.Specific_CD}>
-                                  {item.Specific_CD}{item.Specific_Name}{item.Specific_Remark}
+                                  {item.Specific_CD}{generateSpaces(2)} |{" "}{item.Specific_Name}{generateSpaces(2)} |{" "}{item.Specific_Remark}
                                 </option>
                               ))
                             ) : (

@@ -30,6 +30,41 @@ const Button = ({ label, subLabel, textColor = "text-white", onClick, to }) => {
 };
 
 export default function DashboardPage() {
+    const handlePurchaseListClick = async () => {
+        const result = await Swal.fire({
+            title: 'System Check',
+            text: 'Error occurs when Button7 Click Please contact system administrator.',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            showCancelButton: false, 
+        });
+    
+        if (result.isConfirmed) {
+            // Navigate to Purchase List
+            window.location.href = '/dashboard';
+        }
+    };
+
+    const handleProcessGPlanCfmClick = async () => {
+        const result = await Swal.fire({
+            title: 'System Check',
+            text: 'Error occurs when Button13 Click Please contact system administrator.',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            showCancelButton: false, 
+        });
+    
+        if (result.isConfirmed) {
+            // Navigate to Purchase List
+            window.location.href = '/dashboard';
+        }
+    };
+
+    
+    
+
     const handleNavPurchaseClick = async () => {
         const result = await Swal.fire({
             title: 'Are you sure?',
@@ -38,7 +73,7 @@ export default function DashboardPage() {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, import it!'
+            confirmButtonText: 'Yes, import it!',
         });
 
         if (result.isConfirmed) {
@@ -59,11 +94,11 @@ export default function DashboardPage() {
         { label: 'NAV Order', subLabel: 'CSV Import', textColor: "text-red-600", to: '/nav-order-csv-import' },
         { label: 'NAV Purchase', subLabel: 'CSV Import', textColor: "text-red-600", onClick: handleNavPurchaseClick },
         { label: 'Purchase Info', subLabel: '(依頼書別手配処理)', to: '/purchase-info' },
-        { label: 'Purchase List', subLabel: '(手配一覧)', to: '/purchase-list' },
+        { label: 'Purchase List', subLabel: '(手配一覧)', onClick: handlePurchaseListClick },
         { label: 'Go to', subLabel: 'Admin Menu', to: '/admin-menu' },
         { label: 'Plan Info', subLabel: '(依頼書別計画処理)', to: '/plan-info' },
         { label: 'Plan List', subLabel: '(計画一覧)', to: '/plan-list' },
-        { label: 'ProcessG Plan Cfm', subLabel: '(工程G別計画確認)', to: '/processg-plan-cfm' },
+        { label: 'ProcessG Plan Cfm', subLabel: '(工程G別計画確認)', onClick: handleProcessGPlanCfmClick},
         { label: 'Calc Complete', subLabel: '(生産計上処理)', to: '/calc-complete' },
         { label: 'Result Info', subLabel: '(依頼書別実績処理)', to: '/result-info' },
         { label: 'Result List', subLabel: '(実績一覧)', textColor: "text-blue-700", to: '/result-list' },

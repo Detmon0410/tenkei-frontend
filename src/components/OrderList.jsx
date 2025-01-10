@@ -35,6 +35,7 @@ export default function OrderList() {
     DeliveryData,
     TargetData,
   } = useOrder();
+  
   const [destinationName, setDestinationName] = useState("");
   const [destinationName2, setDestinationName2] = useState("");
   const [destinationName3, setDestinationName3] = useState("");
@@ -177,6 +178,8 @@ export default function OrderList() {
     stPlProcessDate: true,
     edPlProcessDate: true,
   });
+
+  const generateSpaces = (count) => "\u00A0".repeat(count);
 
   const initialItem = (kyoka) => {
     if (kyoka) {
@@ -589,6 +592,7 @@ export default function OrderList() {
   };
 
   useEffect(() => {
+    
     if (orderListData?.S_St_Pd_Grp_CD && WorkgData.length > 0) {
       const selectedGroup = WorkgData.find(
         (item) => item.WorkG_CD === orderListData?.S_St_Pd_Grp_CD
@@ -628,6 +632,10 @@ export default function OrderList() {
     orderListData?.S_Sl_Grp_CD,
     WorkgData,
   ]);
+  // useEffect(() => {
+  //   console.log('Updated data:', WorkerData);
+  // }, [WorkerData]); // จะได้ผลลัพธ์เมื่อ data มีการอัพเดต
+  
 
   useEffect(() => {
     if (orderListData?.S_Customer_CD1 && CustomerData.length > 0) {
@@ -702,8 +710,8 @@ export default function OrderList() {
     if (orderListData?.S_Price_CD && PriceData.length > 0) {
       const selectedGroup = PriceData.find(
         (item) => item.Price_CD === orderListData?.S_Price_CD
-      );
-
+        
+      );  
       setPriceName(selectedGroup ? selectedGroup.Price_Symbol : "");
     }
   }, [orderListData?.S_Price_CD, PriceData]);
@@ -830,7 +838,7 @@ export default function OrderList() {
                       >
                         <option value="Simple">Simple</option>
                         <option value="Normal">Normal</option>
-                        <option  value="Detail">Detail</option>
+                        <option value="Detail">Detail</option>
                       </select>
                     </div>
                   </div>
@@ -886,7 +894,7 @@ export default function OrderList() {
                             {/* Change Page, Target Year, Target Month Section */}
 
                             <div className="flex gap-2 items-center">
-                              <label className="font-medium text-xs w-2/5 text-end">
+                              <label className="font-medium text-xs w-2/5 text-end -ml-[100px]">
                                 Change_Page
                               </label>
                               <div className="w-3/5">
@@ -902,7 +910,7 @@ export default function OrderList() {
                               </div>
                             </div>
                             <div className="flex gap-2 items-center">
-                              <label className="font-medium text-xs w-2/5 text-end">
+                              <label className="font-medium text-xs w-2/5 text-end -ml-[150px]">
                                 Target_Year
                               </label>
                               <div className="w-3/5">
@@ -917,7 +925,7 @@ export default function OrderList() {
                               </div>
                             </div>
                             <div className="flex gap-2 items-center">
-                              <label className="text-xs font-medium w-2/5 text-end">
+                              <label className="text-xs font-medium w-2/5 text-end -ml-[180px]">
                                 Target_Month
                               </label>
                               <div className="w-3/5">
@@ -951,9 +959,10 @@ export default function OrderList() {
                                     orderListData?.S_St_Od_Progress_CD || ""
                                   }
                                   onChange={handleInputChange}
-                                  className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                                  className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-12"
                                 >
-                                  <option value=""></option>
+                                  <option disabled>Od_Progress_Symbol | Od_Progress_Remark </option>
+                            
                                   {Array.isArray(OdProgressData) &&
                                   OdProgressData.length > 0 ? (
                                     OdProgressData.map((item, index) => (
@@ -961,7 +970,7 @@ export default function OrderList() {
                                         key={index}
                                         value={item.Od_Progress_CD}
                                       >
-                                        {item.Od_Progress_Symbol}
+                                        {item.Od_Progress_Symbol}{generateSpaces(2)} |{" "}{item.Od_Progress_Remark}
                                       </option>
                                     ))
                                   ) : (
@@ -976,9 +985,10 @@ export default function OrderList() {
                                     orderListData?.S_Ed_Od_Progress_CD || ""
                                   }
                                   onChange={(e) => handleInputChange(e)}
-                                  className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                                  className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-12"
                                 >
-                                  <option value="4">PC</option>
+                                  <option disabled>Od_Progress_Symbol | Od_Progress_Remark </option>
+                                 
                                   {Array.isArray(OdProgressData) &&
                                   OdProgressData.length > 0 ? (
                                     OdProgressData.map((item, index) => (
@@ -986,7 +996,7 @@ export default function OrderList() {
                                         key={index}
                                         value={item.Od_Progress_CD}
                                       >
-                                        {item.Od_Progress_Symbol}
+                                         {item.Od_Progress_Symbol}{generateSpaces(2)} |{" "}{item.Od_Progress_Remark}
                                       </option>
                                     ))
                                   ) : (
@@ -1017,7 +1027,7 @@ export default function OrderList() {
 
                             {/* Ctl_Person Field Group (Expands to 3 columns on larger screens) */}
                             <div className="flex gap-2 pl-[510px]">
-                              <label className="text-xs font-medium text-end pt-1">
+                              <label className="text-xs font-medium text-end ml-[148px]">
                                 Ctl_Person
                               </label>
                               <div className="flex gap-2 w-3/5">
@@ -1030,7 +1040,14 @@ export default function OrderList() {
                                   onChange={handleInputChange}
                                   className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                                 >
-                                  <option value=""></option>
+                                  <option disabled>
+                                    Worker_CD | Worker_Abb | Worker_Remark
+                                  </option>
+                                  <option
+                                    value={orderListData?.S_Od_Ctl_Person_CD || ""}
+                                  >
+                                    {orderListData?.S_Od_Ctl_Person_CD || ""}
+                                  </option>
                                   {Array.isArray(WorkerData) &&
                                   WorkerData.length > 0 ? (
                                     WorkerData.map((item, index) => (
@@ -1038,7 +1055,7 @@ export default function OrderList() {
                                         key={index}
                                         value={item.Worker_CD}
                                       >
-                                        {item.Worker_CD}
+                                        {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Abb}{generateSpaces(2)} |{" "}{item.Worker_Remark}
                                       </option>
                                     ))
                                   ) : (
@@ -1146,7 +1163,17 @@ export default function OrderList() {
                                       onChange={handleInputChange}
                                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-44"
                                     >
-                                      <option value=""></option>
+                                      <option disabled>
+                                        WorkG_CD | WorkG_Abb | WorkG_Name |
+                                        WorkG_Remark
+                                      </option>
+                                      <option
+                                        value={
+                                          orderListData?.S_St_Pd_Grp_CD || ""
+                                        }
+                                      >
+                                        {orderListData?.S_St_Pd_Grp_CD || ""}
+                                      </option>
                                       {Array.isArray(WorkgData) &&
                                       WorkgData.length > 0 ? (
                                         WorkgData.map((item, index) => (
@@ -1155,6 +1182,12 @@ export default function OrderList() {
                                             value={item.WorkG_CD}
                                           >
                                             {item.WorkG_CD}
+                                            {generateSpaces(2)} |{" "}
+                                            {item.WorkG_Abb}
+                                            {generateSpaces(2)} |{" "}
+                                            {item.WorkG_Name}
+                                            {generateSpaces(2)} |{" "}
+                                            {item.WorkG_Remark}
                                           </option>
                                         ))
                                       ) : (
@@ -1179,7 +1212,17 @@ export default function OrderList() {
                                       onChange={handleInputChange}
                                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                                     >
-                                      <option value=""></option>
+                                      <option disabled>
+                                        WorkG_CD | WorkG_Abb | WorkG_Name |
+                                        WorkG_Remark
+                                      </option>
+                                      <option
+                                        value={
+                                          orderListData?.S_Ed_Pd_Grp_CD || ""
+                                        }
+                                      >
+                                        {orderListData?.S_Ed_Pd_Grp_CD || ""}
+                                      </option>
                                       {Array.isArray(WorkgData) &&
                                       WorkgData.length > 0 ? (
                                         WorkgData.map((item, index) => (
@@ -1188,6 +1231,12 @@ export default function OrderList() {
                                             value={item.WorkG_CD}
                                           >
                                             {item.WorkG_CD}
+                                            {generateSpaces(2)} |{" "}
+                                            {item.WorkG_Abb}
+                                            {generateSpaces(2)} |{" "}
+                                            {item.WorkG_Name}
+                                            {generateSpaces(2)} |{" "}
+                                            {item.WorkG_Remark}
                                           </option>
                                         ))
                                       ) : (
@@ -1208,7 +1257,7 @@ export default function OrderList() {
 
                               {/* Sales_Grp Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="text-xs font-medium text-end pl-[94px]">
+                                <label className="text-xs font-medium text-end -ml-[1px]">
                                   Sales_Grp
                                 </label>
                                 <div className="flex gap-2">
@@ -1219,7 +1268,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-24"
                                   >
-                                    <option value=""></option>
+                                    <option disabled>WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark</option>
+                            <option value={orderListData?.S_Sl_Grp_CD || ""}>
+                              {orderListData?.S_Sl_Grp_CD || ""}
+                            </option>
                                     {Array.isArray(WorkgData) &&
                                     WorkgData.length > 0 ? (
                                       WorkgData.map((item, index) => (
@@ -1227,7 +1279,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.WorkG_CD}
                                         >
-                                          {item.WorkG_CD}
+                                          {item.WorkG_CD}{generateSpaces(2)} |{" "}{item.WorkG_Abb}{generateSpaces(2)} |{" "}{item.WorkG_Name}{generateSpaces(2)} |{" "}{item.WorkG_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -1332,9 +1384,12 @@ export default function OrderList() {
                                     id="S_No_Pd_Grp_CD1"
                                     value={orderListData?.S_No_Pd_Grp_CD1 || ""}
                                     onChange={handleInputChange}
-                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
+                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-20"
                                   >
-                                    <option value=""></option>
+                                     <option disabled>WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark</option>
+                            <option value={orderListData?.S_No_Pd_Grp_CD1 || ""}>
+                              {orderListData?.S_No_Pd_Grp_CD1 || ""}
+                            </option>
                                     {Array.isArray(WorkgData) &&
                                     WorkgData.length > 0 ? (
                                       WorkgData.map((item, index) => (
@@ -1342,7 +1397,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.WorkG_CD}
                                         >
-                                          {item.WorkG_CD}
+                                          {item.WorkG_CD}{generateSpaces(2)} |{" "}{item.WorkG_Abb}{generateSpaces(2)} |{" "}{item.WorkG_Name}{generateSpaces(2)} |{" "}{item.WorkG_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -1362,7 +1417,7 @@ export default function OrderList() {
 
                               {/* Price_CAT Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs text-end pl-10">
+                                <label className="font-medium text-xs text-end ml-[9px]">
                                   Price_CAT
                                 </label>
                                 <div className="flex gap-2 w-3/5">
@@ -1401,7 +1456,7 @@ export default function OrderList() {
 
                               {/* Sales_Person Field */}
                               <div className="flex gap-2 items-center">
-                                <label className="font-medium text-xs text-end -ml-1">
+                                <label className="font-medium text-xs text-end -ml-12">
                                   Sales_Person
                                 </label>
                                 <div className="flex gap-2 w-full">
@@ -1412,7 +1467,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-24"
                                   >
-                                    <option value=""></option>
+                                     <option disabled>Worker_CD | Worker_Abb | Worker_Remark</option>
+                            <option value={orderListData?.S_Sl_Person_CD || ""}>
+                              {orderListData?.S_Sl_Person_CD || ""}
+                            </option>
                                     {Array.isArray(WorkerData) &&
                                     WorkerData.length > 0 ? (
                                       WorkerData.map((item, index) => (
@@ -1420,7 +1478,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Worker_CD}
                                         >
-                                          {item.Worker_CD}
+                                          {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Abb}{generateSpaces(2)} |{" "}{item.Worker_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -1525,9 +1583,12 @@ export default function OrderList() {
                                     id="S_No_Pd_Grp_CD2"
                                     value={orderListData?.S_No_Pd_Grp_CD2 || ""}
                                     onChange={handleInputChange}
-                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
+                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-20"
                                   >
-                                    <option value=""></option>
+                                     <option disabled>WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark</option>
+                            <option value={orderData?.Target_CD || ""}>
+                              {orderData?.Target_CD || ""}
+                            </option>
                                     {Array.isArray(WorkgData) &&
                                     WorkgData.length > 0 ? (
                                       WorkgData.map((item, index) => (
@@ -1535,7 +1596,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.WorkG_CD}
                                         >
-                                          {item.WorkG_CD}
+                                          {item.WorkG_CD}{generateSpaces(2)} |{" "}{item.WorkG_Abb}{generateSpaces(2)} |{" "}{item.WorkG_Name}{generateSpaces(2)} |{" "}{item.WorkG_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -1554,7 +1615,7 @@ export default function OrderList() {
                               </div>
 
                               {/* Request_CAT Fields */}
-                              <div className="col-span-2 flex gap-2 items-center pl-16">
+                              <div className="col-span-2 flex gap-2 items-center -ml-[60px]">
                                 <label className="text-xs font-medium ">
                                   Request_CAT
                                 </label>
@@ -1726,7 +1787,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                                   >
-                                    <option value=""></option>
+                                    <option disabled>Customer_CD | Customer_Abb | Customer_Name | Customer_Remark</option>
+                            <option value={orderListData?.S_Customer_CD1 || ""}>
+                              {orderListData?.S_Customer_CD1 || ""}
+                            </option>
                                     {Array.isArray(CustomerData) &&
                                     CustomerData.length > 0 ? (
                                       CustomerData.map((item, index) => (
@@ -1734,7 +1798,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Customer_CD}
                                         >
-                                          {item.Customer_CD}
+                                          {item.Customer_CD}{generateSpaces(2)} |{" "}{item.Customer_Abb}{generateSpaces(2)} |{" "}{item.Customer_Name}{generateSpaces(2)} |{" "}{item.Customer_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -1773,7 +1837,7 @@ export default function OrderList() {
                                 </div>
                                 {/* Mate1 Field */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-56">
+                                  <label className="text-xs font-medium text-end pl-[252px]">
                                     Mate1
                                   </label>
                                   <div>
@@ -1863,7 +1927,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-[84px]"
                                   >
-                                    <option value=""></option>
+                                    <option disabled>Customer_CD | Customer_Abb | Customer_Name | Customer_Remark</option>
+                            <option value={orderListData?.S_Customer_CD2 || ""}>
+                              {orderListData?.S_Customer_CD2 || ""}
+                            </option>
                                     {Array.isArray(CustomerData) &&
                                     CustomerData.length > 0 ? (
                                       CustomerData.map((item, index) => (
@@ -1871,7 +1938,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Customer_CD}
                                         >
-                                          {item.Customer_CD}
+                                          {item.Customer_CD}{generateSpaces(2)} |{" "}{item.Customer_Abb}{generateSpaces(2)} |{" "}{item.Customer_Name}{generateSpaces(2)} |{" "}{item.Customer_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -1919,9 +1986,12 @@ export default function OrderList() {
                                       id="S_Item1_CD"
                                       value={orderListData?.S_Item1_CD || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-24"
                                     >
-                                      <option value=""></option>
+                                      <option disabled>Item1_CD | Item1_Abb | Item1_Remark</option>
+                            <option value={orderListData?.S_Item1_CD || ""}>
+                              {orderListData?.S_Item1_CD || ""}
+                            </option>
                                       {Array.isArray(Item1Data) &&
                                       Item1Data.length > 0 ? (
                                         Item1Data.map((item, index) => (
@@ -1929,7 +1999,7 @@ export default function OrderList() {
                                             key={index}
                                             value={item.Item1_CD}
                                           >
-                                            {item.Item1_CD}
+                                            {item.Item1_CD}{generateSpaces(2)} |{" "}{item.Item1_Abb}{generateSpaces(2)} |{" "}{item.Item1_Remark}
                                           </option>
                                         ))
                                       ) : (
@@ -1942,14 +2012,14 @@ export default function OrderList() {
                                       value={itemName || ""}
                                       onChange={(event) => setItem1Data(event)}
                                       type="text"
-                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                                      className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-44"
                                     />
                                   </div>
                                 </div>
 
                                 {/* Mate2 Field */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end">
+                                  <label className="text-xs font-medium ml-[39px]">
                                     Mate2
                                   </label>
                                   <input
@@ -2037,7 +2107,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-[84px]"
                                   >
-                                    <option value=""></option>
+                                     <option disabled>Customer_CD | Customer_Abb | Customer_Name | Customer_Remark</option>
+                            <option value={orderListData?.S_Customer_CD3 || ""}>
+                              {orderListData?.S_Customer_CD3 || ""}
+                            </option>
                                     {Array.isArray(CustomerData) &&
                                     CustomerData.length > 0 ? (
                                       CustomerData.map((item, index) => (
@@ -2045,7 +2118,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Customer_CD}
                                         >
-                                          {item.Customer_CD}
+                                          {item.Customer_CD}{generateSpaces(2)} |{" "}{item.Customer_Abb}{generateSpaces(2)} |{" "}{item.Customer_Name}{generateSpaces(2)} |{" "}{item.Customer_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2112,7 +2185,7 @@ export default function OrderList() {
 
                                 {/* Mate3 Field */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-[72px]">
+                                  <label className="text-xs font-medium text-end pl-[99px]">
                                     Mate3
                                   </label>
                                   <input
@@ -2202,7 +2275,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-[85px]"
                                   >
-                                    <option value=""></option>
+                                     <option disabled>Customer_CD | Customer_Abb | Customer_Name | Customer_Remark</option>
+                            <option value={orderListData?.S_No_Customer_CD || ""}>
+                              {orderListData?.S_No_Customer_CD || ""}
+                            </option>
                                     {Array.isArray(CustomerData) &&
                                     CustomerData.length > 0 ? (
                                       CustomerData.map((item, index) => (
@@ -2210,7 +2286,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Customer_CD}
                                         >
-                                          {item.Customer_CD}
+                                          {item.Customer_CD}{generateSpaces(2)} |{" "}{item.Customer_Abb}{generateSpaces(2)} |{" "}{item.Customer_Name}{generateSpaces(2)} |{" "}{item.Customer_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2275,7 +2351,7 @@ export default function OrderList() {
 
                                 {/* Mate4 */}
                                 <div className="flex gap-2 items-center">
-                                  <label className="text-xs font-medium text-end pl-14">
+                                  <label className="text-xs font-medium text-end pl-[84px]">
                                     Mate4
                                   </label>
                                   <input
@@ -2364,7 +2440,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-[85px]"
                                   >
-                                    <option value=""></option>
+                                     <option disabled>Specific_CD | Specific_Abb | Specific_Remark</option>
+                            <option value={orderListData?.S_Specific_CD1 || ""}>
+                              {orderListData?.S_Specific_CD1 || ""}
+                            </option>
                                     {Array.isArray(SpecificData) &&
                                     SpecificData.length > 0 ? (
                                       SpecificData.map((item, index) => (
@@ -2372,7 +2451,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Specific_CD}
                                         >
-                                          {item.Specific_CD}
+                                          {item.Specific_CD}{generateSpaces(2)} |{" "}{item.Specific_Abb}{generateSpaces(2)} |{" "}{item.Specific_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2402,9 +2481,12 @@ export default function OrderList() {
                                     id="S_Coating_CD1"
                                     value={orderListData?.S_Coating_CD1 || ""}
                                     onChange={handleInputChange}
-                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-20"
                                   >
-                                    <option value=""></option>
+                                   <option disabled>Coating_CD | Coating_Symbol | Coating_Remark</option>
+                            <option value={orderListData?.S_Coating_CD1 || ""}>
+                              {orderListData?.S_Coating_CD1 || ""}
+                            </option>
                                     {Array.isArray(CoatingData) &&
                                     CoatingData.length > 0 ? (
                                       CoatingData.map((item, index) => (
@@ -2412,7 +2494,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Coating_CD}
                                         >
-                                          {item.Coating_CD}
+                                          {item.Coating_CD}{generateSpaces(2)} |{" "}{item.Coating_Symbol}{generateSpaces(2)} |{" "}{item.Coating_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2425,7 +2507,7 @@ export default function OrderList() {
                                     value={coatingName || ""}
                                     onChange={(event) => setCoatingData(event)}
                                     type="text"
-                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
+                                    className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-[120px]"
                                   />
                                 </div>
 
@@ -2543,7 +2625,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-[85px]"
                                   >
-                                    <option value=""></option>
+                                    <option disabled>Specific_CD | Specific_Abb | Specific_Remark</option>
+                            <option value={orderListData?.S_Specific_CD2 || ""}>
+                              {orderListData?.S_Specific_CD2 || ""}
+                            </option>
                                     {Array.isArray(SpecificData) &&
                                     SpecificData.length > 0 ? (
                                       SpecificData.map((item, index) => (
@@ -2551,7 +2636,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Specific_CD}
                                         >
-                                          {item.Specific_CD}
+                                           {item.Specific_CD}{generateSpaces(2)} |{" "}{item.Specific_Abb}{generateSpaces(2)} |{" "}{item.Specific_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2580,9 +2665,12 @@ export default function OrderList() {
                                       id="S_Coating_CD2"
                                       value={orderListData?.S_Coating_CD2 || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-28"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-20"
                                     >
-                                      <option value=""></option>
+                                      <option disabled>Specific_CD | Specific_Abb | Specific_Remark</option>
+                            <option value={orderListData?.S_Coating_CD2 || ""}>
+                              {orderListData?.S_Coating_CD2 || ""}
+                            </option>
                                       {Array.isArray(CoatingData) &&
                                       CoatingData.length > 0 ? (
                                         CoatingData.map((item, index) => (
@@ -2590,7 +2678,7 @@ export default function OrderList() {
                                             key={index}
                                             value={item.Coating_CD}
                                           >
-                                            {item.Coating_CD}
+                                            {item.Coating_CD}{generateSpaces(2)} |{" "}{item.Coating_Symbol}{generateSpaces(2)} |{" "}{item.Coating_Remark}
                                           </option>
                                         ))
                                       ) : (
@@ -2611,7 +2699,7 @@ export default function OrderList() {
                                 </div>
 
                                 <div className="flex gap-2 items-center">
-                                  <label className="font-medium text-xs text-end pl-10">
+                                  <label className="font-medium text-xs text-end pl-2">
                                     Od_Pend
                                   </label>
                                   <div className="flex gap-2">
@@ -2629,7 +2717,7 @@ export default function OrderList() {
                                   </div>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                  <label className="font-medium text-xs text-end -ml-2">
+                                  <label className="font-medium text-xs text-end -ml-10">
                                     Od_CAT1
                                   </label>
                                   <div className="flex gap-2">
@@ -2718,7 +2806,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-[85px]"
                                   >
-                                    <option value=""></option>
+                                   <option disabled>Specific_CD | Specific_Abb | Specific_Remark</option>
+                            <option value={orderListData?.S_No_Specific_CD1 || ""}>
+                              {orderListData?.S_No_Specific_CD1 || ""}
+                            </option>
                                     {Array.isArray(SpecificData) &&
                                     SpecificData.length > 0 ? (
                                       SpecificData.map((item, index) => (
@@ -2726,7 +2817,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Specific_CD}
                                         >
-                                          {item.Specific_CD}
+                                          {item.Specific_CD}{generateSpaces(2)} |{" "}{item.Specific_Abb}{generateSpaces(2)} |{" "}{item.Specific_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2754,9 +2845,12 @@ export default function OrderList() {
                                       id="S_Coating_CD3"
                                       value={orderListData?.S_Coating_CD3 || ""}
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-28"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-20"
                                     >
-                                      <option value=""></option>
+                                      <option disabled>Coating_CD | Coating_Symbol | Coating_Remark</option>
+                            <option value={orderListData?.S_Coating_CD3 || ""}>
+                              {orderListData?.S_Coating_CD3 || ""}
+                            </option>
                                       {Array.isArray(CoatingData) &&
                                       CoatingData.length > 0 ? (
                                         CoatingData.map((item, index) => (
@@ -2764,7 +2858,7 @@ export default function OrderList() {
                                             key={index}
                                             value={item.Coating_CD}
                                           >
-                                            {item.Coating_CD}
+                                             {item.Coating_CD}{generateSpaces(2)} |{" "}{item.Coating_Symbol}{generateSpaces(2)} |{" "}{item.Coating_Remark}
                                           </option>
                                         ))
                                       ) : (
@@ -2894,7 +2988,10 @@ export default function OrderList() {
                                     onChange={handleInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-[85px]"
                                   >
-                                    <option value=""></option>
+                                  <option disabled>Specific_CD | Specific_Abb | Specific_Remark</option>
+                            <option value={ orderListData?.S_No_Specific_CD2 || ""}>
+                              { orderListData?.S_No_Specific_CD2 || ""}
+                            </option>
                                     {Array.isArray(SpecificData) &&
                                     SpecificData.length > 0 ? (
                                       SpecificData.map((item, index) => (
@@ -2902,7 +2999,7 @@ export default function OrderList() {
                                           key={index}
                                           value={item.Specific_CD}
                                         >
-                                          {item.Specific_CD}
+                                          {item.Specific_CD}{generateSpaces(2)} |{" "}{item.Specific_Abb}{generateSpaces(2)} |{" "}{item.Specific_Remark}
                                         </option>
                                       ))
                                     ) : (
@@ -2932,9 +3029,12 @@ export default function OrderList() {
                                         orderListData?.S_No_Coating_CD || ""
                                       }
                                       onChange={handleInputChange}
-                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-28"
+                                      className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-20"
                                     >
-                                      <option value=""></option>
+                                     <option disabled>Coating_CD | Coating_Symbol | Coating_Remark</option>
+                            <option value={orderListData?.S_No_Coating_CD || ""}>
+                              {orderListData?.S_No_Coating_CD || ""}
+                            </option>
                                       {Array.isArray(CoatingData) &&
                                       CoatingData.length > 0 ? (
                                         CoatingData.map((item, index) => (
@@ -2942,7 +3042,7 @@ export default function OrderList() {
                                             key={index}
                                             value={item.Coating_CD}
                                           >
-                                            {item.Coating_CD}
+                                            {item.Coating_CD}{generateSpaces(2)} |{" "}{item.Coating_Symbol}{generateSpaces(2)} |{" "}{item.Coating_Remark}
                                           </option>
                                         ))
                                       ) : (
