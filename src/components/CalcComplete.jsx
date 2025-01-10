@@ -17,7 +17,7 @@ export default function CalcComplete() {
     F6: true,
     F7: true,
     F8: true,
-    F9: true,  
+    F9: false,  
     F10: true,
     F11: false, // ปุ่ม F11 จะไม่ถูก disable
     F12: false, // ปุ่ม F12 จะไม่ถูก disable
@@ -43,7 +43,7 @@ export default function CalcComplete() {
     }, {})
   );
 
-  const isSearchOrderNoFilled = searchOrderNo !== "";
+  const isSearchOrderNoFilled = Object.values(searchValue).some(value => value !== "");
   const handleInputChange = (event) => {
     const { id, value, type, checked } = event.target;
 
@@ -67,7 +67,7 @@ export default function CalcComplete() {
         }));
       }
     });
-    
+
   };
 
   const handleSearch_Order_NoChange = async () => {
@@ -116,17 +116,28 @@ export default function CalcComplete() {
     }
   }, [searchValue]);
  
+  const handleF11Click = () => {
+    setCalcData((prevCalcData) => {
+      const clearedData = {};
   
-  // const handleF11Click = (event, orderIndex) => {
-  //   if (event.key === "F11") {
-  //     event.preventDefault(); // ป้องกัน behavior ของ browser
-  //     const orderNo = searchValue[`Action_Od_No${orderIndex}`];
-      
-  //     if (orderNo) {
-  //       isSearchOrderNoFilled(true); // เปิดใช้งานปุ่ม F9
-  //     }
-  //   }
-  // };
+      for (let i = 1; i <= 10; i++) {
+        clearedData[`Action_Od_No${i}`] = "";
+        clearedData[`Order_No${i}`] = "";
+        clearedData[`Customer_CD${i}`] = "";
+        clearedData[`NAV_Name${i}`] = "";
+        clearedData[`Quantity${i}`] = "";
+        clearedData[`Action_Unit${i}`] = "";
+        clearedData[`Od_Progress_CD${i}`] = "";
+        clearedData[`Action_Od_Progress_Abb${i}`] = "";
+      }
+  
+      return clearedData;
+    });
+  
+    // ล้างข้อมูลใน searchValue ด้วย
+    setSearchValue({});
+  };
+  
 
   const handleF12Click = async () => {
       try {
@@ -496,12 +507,12 @@ export default function CalcComplete() {
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button
-                    className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                      !isSearchOrderNoFilled
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
-                    disabled={!isSearchOrderNoFilled}
+                   className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
+                    !isSearchOrderNoFilled
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  disabled={!isSearchOrderNoFilled}
                     onClick={handleF9Click}
                   >
                     Action
@@ -513,9 +524,9 @@ export default function CalcComplete() {
                     (F10)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white"
-                  // id="F11"
-                  // onClick={handleF11Click}> 
-                  >
+                    id="F11"
+                    onClick={handleF11Click}> 
+                  
                     NextInput <br />
                     次へ (F11)
                   </button>
