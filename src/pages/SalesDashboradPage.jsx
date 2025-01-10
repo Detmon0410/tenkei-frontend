@@ -25,12 +25,21 @@ export default function SalesDashboardPage() {
 
   const handleButtonClick = async (to) => {
     try {
-      const data = await formLoad();
+      const response = await formLoad();
 
-      if (data && data.count > 0) {
-        navigate(to);
-      } else {
-        await Swal.fire({
+      if (!response || !response.data || !response.data.action) {
+        throw new Error("Invalid response from server");
+      }
+
+      const data = response.data;
+
+      switch (data.action) {
+        case "GoToNewRecord":
+          navigate(to); 
+          break;
+
+        case "AlertUser":
+          await Swal.fire({
             icon: "warning",
             title: "No Data Found",
             html: `
@@ -39,15 +48,20 @@ export default function SalesDashboardPage() {
               受注データが1件もありません。
             `,
             confirmButtonText: "OK",
-          }).then(() => {
-            navigate(to);
           });
+          navigate(to);
+          break;
+
+        default:
+          console.error("Unknown action received:", data.action);
+          throw new Error("Unknown action from server");
       }
     } catch (error) {
-      Swal.fire({
+      console.error("Error in handleButtonClick:", error);
+      await Swal.fire({
         icon: "error",
         title: "Error",
-        text: "An error occurred while checking the data.",
+        text: error.message || "An error occurred while checking the data.",
         confirmButtonText: "OK",
       });
     }

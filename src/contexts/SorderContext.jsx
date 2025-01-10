@@ -36,6 +36,59 @@ export default function SorderContextProvider({ children }) {
       return false;
     }
   };
+
+  const createSOrder = async (sorderData) => {
+    try {
+      console.log("Data being sent to API:", sorderData);
+
+      const response = await axios.post("/sorder/create-sorder", sorderData);
+
+      if (response.data && response.data.sorder) {
+        setSorderData(response.data.sorder);
+        // console.log('SOrder created successfully:', response.data.sorder);
+        return true;
+      } else {
+        console.error("Invalid response structure:", response.data);
+        return false;
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.error("Validation error:", error.response.data.message);
+      } else {
+        console.error("Error creating SOrder:", error.message);
+      }
+      return false;
+    }
+  };
+
+  const editSOrders = async () => {
+    try {
+      const response = await axios.put("/sorder/edit-sorder", sorderData);
+      // console.log("SOrder updated successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error updating order:",
+        error.response?.data || error.message
+      );
+      throw new Error("Failed to update sorder");
+    }
+  };
+
+  const deleteSOrder = async (sorderData) => {
+    try {
+      const response = await axios.delete(`/sorder/delete-sorder`, {
+        data: { SOrder_No: sorderData.SOrder_No },
+      });
+
+      // console.log("SOrder deleted successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting sorder:", error);
+      throw new Error("Failed to delete sorder");
+    }
+  };
+
   const fetchOdquote = async () => {
     try {
       const response = await axios.get("/odquote/fetch-odquote");
@@ -67,6 +120,9 @@ export default function SorderContextProvider({ children }) {
         odquoteData,
         setOdquoteData,
         currencyData,
+        createSOrder,
+        editSOrders,
+        deleteSOrder,
       }}
     >
       {children}
