@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import html2pdf from "html2pdf.js";
 import "../fonts/CODE39.ttf";
 
+import { useProcessGPlan } from "../../hooks/use-processgplan";
+import { usePlan } from "../../hooks/use-plan";
+
 export default function RdProGPlan() {
   const navigate = useNavigate();
   const reportRef = useRef();
@@ -10,15 +13,23 @@ export default function RdProGPlan() {
   const queryParams = new URLSearchParams(location.search);
   const startDate = queryParams.get("startDate");
   const endDate = queryParams.get("endDate");
-
+  const hasNavigated = useRef(false); 
   const styles = {
     fontFamily: "CODE39",
   };
 
+  const { TTprocessGData } = useProcessGPlan();
+  const { planData } = usePlan();
+
+  const selectedProcess = TTprocessGData.find((item) => item.ProcessG_CD);
+
   useEffect(() => {
-    handleViewPDF();
-    // navigate("/processg-plan-list");
-  }, []);
+    if (!hasNavigated.current) {
+      handleViewPDF();
+      hasNavigated.current = true;
+    }
+    navigate("/processg-plan-list");
+  }, [navigate]); 
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -61,20 +72,14 @@ export default function RdProGPlan() {
         {
           process1: "EW",
           process2: "10/7",
-          process3: "LP",
-          process4: "14/8",
         },
         {
           process1: "MT",
           process2: "10/7",
-          process3: "QC-WI",
-          process4: "14/8",
         },
         {
           process1: "L",
           process2: "10/7",
-          process3: "=>GF",
-          process4: "14/8",
         },
         {
           process1: "GF",
@@ -129,11 +134,11 @@ export default function RdProGPlan() {
       ],
     },
     {
-      pds: "PDS",
+      pds: "PPPP",
       planDate: "16/07",
       pdsDeli: "19/08",
-      orderPartsNo: "MOR2406307",
-      no: "-07",
+      orderPartsNo: "MOR2406305",
+      no: "-00",
       jood: "●",
       customerProductionName1: "NSPT (RAYONG)",
       customerProductionName2: "3 GROOVE DIE (OY",
@@ -150,20 +155,14 @@ export default function RdProGPlan() {
         {
           process1: "EW",
           process2: "10/7",
-          process3: "LP",
-          process4: "14/8",
         },
         {
           process1: "MT",
           process2: "10/7",
-          process3: "QC-WI",
-          process4: "14/8",
         },
         {
           process1: "L",
           process2: "10/7",
-          process3: "=>GF",
-          process4: "14/8",
         },
         {
           process1: "GF",
@@ -220,31 +219,53 @@ export default function RdProGPlan() {
   ];
 
   const handleViewPDF = () => {
-    const element = reportRef.current;
-
     const options = {
-      filename: `ProcessG_Plan.pdf`,
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        logging: true,
-      },
-      jsPDF: {
-        unit: "mm",
-        format: "a4",
-        orientation: "landscape",
-        compress: true,
-        autoSize: true,
-      },
+      filename: "ProcessG_Report.pdf",
+      html2canvas: { scale: 2, useCORS: true, logging: true },
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
     };
 
+    // คัดกรองข้อมูลที่มีค่า List เป็น true
+    const filteredData = TTprocessGData.filter((item) => item.List === true);
+
+    // เลือกข้อมูลสุ่ม 3 ตัวจาก filteredData
+    const randomData = filteredData.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+    // สร้าง container ชั่วคราวสำหรับ HTML ทั้งหมด
+    const container = document.createElement("div");
+
+    // สร้าง HTML สำหรับข้อมูลที่เลือก
+    randomData.forEach((item) => {
+      const groupElement = document.createElement("div");
+      groupElement.style.pageBreakAfter = "always"; // ขึ้นหน้าทุกครั้งหลังจากกลุ่มใหม่
+
+      // คัดลอก HTML จาก reportRef
+      const reportClone = reportRef.current.cloneNode(true);
+
+      // เปลี่ยนข้อมูลภายใน reportClone ตามข้อมูลของแต่ละ item
+      const processGCDiv = reportClone.querySelector("#processGCDiv");
+      if (processGCDiv) {
+        processGCDiv.innerHTML = `${item.ProcessG_CD}`;
+      }
+
+      const processNameDiv = reportClone.querySelector("#nameDiv");
+      if (processNameDiv) {
+        processNameDiv.innerHTML = `${item.ProcessG_Name}`;
+      }
+
+      // เพิ่ม reportClone ลงใน groupElement
+      groupElement.appendChild(reportClone);
+      container.appendChild(groupElement);
+    });
+
+    // ใช้ html2pdf.js เพื่อสร้าง PDF และแสดงในแท็บใหม่
     html2pdf()
-      .from(element)
+      .from(container)
       .set(options)
       .outputPdf("blob")
       .then((blob) => {
         const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
+        window.open(url, "_blank"); // เปิด PDF ในแท็บใหม่
       });
   };
 
@@ -298,55 +319,56 @@ export default function RdProGPlan() {
                     </div>
 
                     {/* Process Group Section */}
-                    <div className="flex items-center space-x-2 mt-4 pb-5">
-                      <div className="font-bold text-blue-800 text-lg mt-1">
-                        Process_Grp:
-                      </div>
-
-                      {/* T40190 Section */}
-                      <div className="flex items-center border border-black px-4 py-2 text-base mt-5">
-                        <span
-                          className="font-bold text-center"
-                          style={{ transform: "translateY(-10px)" }}
-                        >
-                          T40190
-                        </span>
-                      </div>
-
-                      {/* QC Shipping Vendor */}
-                      <div className="flex items-center border border-black px-4 py-2 text-base mt-5">
-                        <span
-                          className="font-bold text-center"
-                          style={{ transform: "translateY(-10px)" }}
-                        >
-                          QC Shipping Vendor
-                        </span>
-                      </div>
-
-                      {/* Process Group Plan List */}
-                      <div className="flex flex-col items-center -mt-5 space-x-10">
-                        <span className="font-bold text-lg text-blue-800 text-center">
-                          Process_Grp_Plan_List
-                        </span>
-                        <div className="flex justify-center space-x-8 mt-3">
-                          <button className="bg-red-500 text-white font-bold px-8 pt-1 pb-2 text-sm">
-                            <span style={{ transform: "translateY(-7px)" }}>
-                              Self
-                            </span>
-                          </button>
-                          <button className="bg-orange-500 text-white font-bold px-8 pt-1 pb-2 text-sm">
-                            <span style={{ transform: "translateY(-7px)" }}>
-                              1Before
-                            </span>
-                          </button>
-                          <button className="bg-orange-500 text-white font-bold px-8 pt-1 pb-2 text-sm">
-                            <span style={{ transform: "translateY(-7px)" }}>
-                              2Before
-                            </span>
-                          </button>
+                    {selectedProcess ? (
+                      <div className="flex items-center space-x-2 mt-4 pb-5">
+                        <div className="font-bold text-blue-800 text-lg mt-1">
+                          Process_Grp:
+                        </div>
+                        <div className="flex items-center border border-black px-4 py-2 text-base mt-5">
+                          <span
+                            className="font-bold text-center"
+                            style={{ transform: "translateY(-10px)" }}
+                            id="processGCDiv"
+                          >
+                            {/* ProcessG_CD จะถูกเปลี่ยนในภายหลัง */}
+                          </span>
+                        </div>
+                        <div className="flex items-center border border-black px-4 py-2 text-base mt-5">
+                          <span
+                            className="font-bold text-center"
+                            style={{ transform: "translateY(-10px)" }}
+                            id="nameDiv"
+                          >
+                            {/* ProcessG_Name จะถูกเปลี่ยนในภายหลัง */}
+                          </span>
+                        </div>
+                        {/* Process Group Plan List */}
+                        <div className="flex flex-col items-center -mt-5 space-x-10">
+                          <span className="font-bold text-lg text-blue-800 text-center">
+                            Process_Grp_Plan_List
+                          </span>
+                          <div className="flex justify-center space-x-8 mt-3">
+                            <button className="bg-red-500 text-white font-bold px-8 pt-1 pb-2 text-sm">
+                              <span style={{ transform: "translateY(-7px)" }}>
+                                Self
+                              </span>
+                            </button>
+                            <button className="bg-orange-500 text-white font-bold px-8 pt-1 pb-2 text-sm">
+                              <span style={{ transform: "translateY(-7px)" }}>
+                                1Before
+                              </span>
+                            </button>
+                            <button className="bg-orange-500 text-white font-bold px-8 pt-1 pb-2 text-sm">
+                              <span style={{ transform: "translateY(-7px)" }}>
+                                2Before
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      <p>ไม่พบข้อมูลที่ต้องการ</p>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -483,14 +505,14 @@ export default function RdProGPlan() {
                         className={`border border-blue-800 border-dashed text-xs ${rowColor}`}
                       >
                         <td className="py-1 px-1 border border-blue-800 border-dashed text-center w-auto">
-                         <div className="flex flex-col items-center">
-                          <span style={{ transform: "translateY(-10px)" }}>
-                            {row.planDate}
-                          </span>
+                          <div className="flex flex-col items-center">
+                            <span style={{ transform: "translateY(-10px)" }}>
+                              {row.planDate}
+                            </span>
 
-                          <span style={{ transform: "translateY(-10px)" }}>
-                            {row.pds}
-                          </span>
+                            <span style={{ transform: "translateY(-10px)" }}>
+                              {row.pds}
+                            </span>
                           </div>
                         </td>
                         <td className="py-1 px-1 border border-blue-800 border-dashed text-center w-auto">
@@ -566,7 +588,10 @@ export default function RdProGPlan() {
                           </span>
                         </td>
                         <td className="py-1 px-1 border border-blue-800 border-dashed align-top text-right text-xs w-auto">
-                          <div className="flex flex-col items-end">
+                          <div
+                            className="flex flex-col items-end"
+                            style={{ transform: "translateY(-10px)" }}
+                          >
                             <span>{row.mSetPSet.main}</span>
                             <span className="text-xs mt-1">
                               {row.mSetPSet.sub}
@@ -579,12 +604,12 @@ export default function RdProGPlan() {
                             className="border border-blue-800 border-dashed text-center text-xs align-top leading-none min-w-[47px]"
                           >
                             <div className="flex flex-col items-center">
-                            <span style={{ transform: "translateY(-5px)" }}>
-                              {process.process1}
-                            </span>
-                            <span style={{ transform: "translateY(-5px)" }}>
-                              {process.process2}
-                            </span>
+                              <span style={{ transform: "translateY(-5px)" }}>
+                                {process.process1}
+                              </span>
+                              <span style={{ transform: "translateY(-5px)" }}>
+                                {process.process2}
+                              </span>
                             </div>
                           </td>
                         ))}
@@ -604,6 +629,34 @@ export default function RdProGPlan() {
                     );
                   })}
                 </tbody>
+
+                {/* <tbody className="text-center">
+                  {planData && planData.length > 0 ? (
+                    planData.map((item, index) => (
+                      <tr key={index}>
+                        <td className="py-3 bg-white border-2 border-black">
+                          {item.Order_No}
+                        </td>
+                        <td className="py-3 bg-white border-2 border-black">
+                          {item.Parts_No}
+                        </td>
+                        <td className="py-3 bg-white border-2 border-black">
+                          {item.Pt_Material}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="4"
+                        className="py-3 bg-white border-2 border-black text-center"
+                      >
+                        No data available
+                      </td>
+                    </tr>
+                  )}
+                </tbody> */}
+
               </table>
             </div>
           </div>

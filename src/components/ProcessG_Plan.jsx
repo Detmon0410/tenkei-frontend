@@ -39,7 +39,7 @@ export default function ProcessG_Plan() {
     setTTProcessGData,
   } = useProcessGPlan();
 
-  const { plprogressData } = usePlan();
+  const { planData, plprogressData, processData } = usePlan();
 
   const handleInputChange = (event) => {
     const { id, value, type, checked } = event.target;
@@ -72,15 +72,15 @@ export default function ProcessG_Plan() {
     const Tg_St_Pl_Date = document.getElementById("Tg_St_Pl_Date").value;
     const Tg_Ed_Pl_Date = document.getElementById("Tg_Ed_Pl_Date").value;
 
-    if (!Tg_St_Pl_Date || !Tg_Ed_Pl_Date) {
-      Swal.fire({
-        icon: "error",
-        title: "วันที่ไม่ครบ",
-        text: "กรุณากรอกวันที่เริ่มต้นและวันที่สิ้นสุด",
-        confirmButtonText: "ตกลง",
-      });
-      return;
-    }
+    // if (!Tg_St_Pl_Date || !Tg_Ed_Pl_Date) {
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "วันที่ไม่ครบ",
+    //     text: "กรุณากรอกวันที่เริ่มต้นและวันที่สิ้นสุด",
+    //     confirmButtonText: "ตกลง",
+    //   });
+    //   return;
+    // }
 
     const startDate = new Date(Tg_St_Pl_Date);
     const endDate = new Date(Tg_Ed_Pl_Date);
@@ -99,7 +99,7 @@ export default function ProcessG_Plan() {
 
     if (listViewChecked) {
       navigate(
-        `/reports/RD_ProG_Plan?startDate=${Tg_St_Pl_Date}&endDate=${Tg_Ed_Pl_Date}`
+        `/reports/RD_ProG_Plan?startDate=${Tg_St_Pl_Date}&endDate=${Tg_Ed_Pl_Date}`,
       );
     }
   };
@@ -920,11 +920,25 @@ export default function ProcessG_Plan() {
                   <label className="font-medium text-xs">TG_Process</label>
                 </div>
                 <div className="col-span-9">
-                  <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full">
+                  <select
+                    id="TG_Process"
+                    value={processGPlanData?.TG_Process || ""}
+                    onChange={handleInputChange}
+                    className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                  >
                     <option value=""></option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
+                    {Array.isArray(processData) && processData.length > 0 ? (
+                      <>
+                        <option disabled>ProcessG_Abb</option>
+                        {processData.map((item, index) => (
+                          <option key={index} value={item.Process_CD}>
+                            {item.Process_Abb}
+                          </option>
+                        ))}
+                      </>
+                    ) : (
+                      <option value="">ไม่มีข้อมูล</option>
+                    )}
                   </select>
                 </div>
               </div>

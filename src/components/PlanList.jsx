@@ -5209,8 +5209,8 @@ export default function PlanList() {
                           )
                         : null;
 
-                      const plan = Array.isArray(planData.data)
-                        ? planData.data.find(
+                      const plan = Array.isArray(planData)
+                        ? planData.find(
                             (plan) => plan.Order_No === order.Order_No
                           )
                         : null;
