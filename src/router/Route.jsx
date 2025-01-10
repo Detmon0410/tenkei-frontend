@@ -70,6 +70,7 @@ import { ConvertDashboardPage } from "../pages/ConvertDashboardPage";
 import { Reserve1DashboardPage } from "../pages/Reserve1DashboardPage";
 import { SearchDashboardPage } from "../pages/SearchDashboardPage";
 import RdProGPlanPage from "../pages/reports/RdProGPlanPage";
+import RdNavPcUpd  from "../components/reports/RdNavPcUpd";
 
 const router = createBrowserRouter([
   {
@@ -351,6 +352,10 @@ const router = createBrowserRouter([
   {
     path: "/reports/RD_ProG_Plan",
     element: <RdProGPlanPage />,
+  },
+  {
+    path: "/report-csv-purchase",
+    element: <RdNavPcUpd />,
   },
 ]);
 
