@@ -1521,13 +1521,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Od_Ctl_Person_CD}>
+                        {planListData?.S_Od_Ctl_Person_CD}
+                      </option>
                       {Array.isArray(WorkerData) && WorkerData.length > 0 ? (
-                        WorkerData.map((item, index) => (
-                          <option key={index} value={item.Worker_CD}>
-                            {item.Worker_CD}
+                        <>
+                          <option disabled>
+                            Worker_CD | Worker_Abb | Worker_Remark
                           </option>
-                        ))
+                          {WorkerData.map((item, index) => (
+                            <option key={index} value={item.Worker_CD}>
+                              {item.Worker_CD} | {item.Worker_Abb} |{" "}
+                              {item.Worker_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -1666,13 +1674,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_St_Pd_Grp_CD}>
+                        {planListData?.S_St_Pd_Grp_CD}
+                      </option>
                       {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
-                        WorkgData.map((item, index) => (
-                          <option key={index} value={item.WorkG_CD}>
-                            {item.WorkG_CD}
+                        <>
+                          <option disabled>
+                            WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
                           </option>
-                        ))
+                          {WorkgData.map((item, index) => (
+                            <option key={index} value={item.WorkG_CD}>
+                              {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                              {item.WorkG_Name} | {item.WorkG_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -1697,13 +1713,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Ed_Pd_Grp_CD}>
+                        {planListData?.S_Ed_Pd_Grp_CD}
+                      </option>
                       {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
-                        WorkgData.map((item, index) => (
-                          <option key={index} value={item.WorkG_CD}>
-                            {item.WorkG_CD}
+                        <>
+                          <option disabled>
+                            WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
                           </option>
-                        ))
+                          {WorkgData.map((item, index) => (
+                            <option key={index} value={item.WorkG_CD}>
+                              {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                              {item.WorkG_Name} | {item.WorkG_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -1730,13 +1754,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Sl_Grp_CD}>
+                        {planListData?.S_Sl_Grp_CD}
+                      </option>
                       {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
-                        WorkgData.map((item, index) => (
-                          <option key={index} value={item.WorkG_CD}>
-                            {item.WorkG_CD}
+                        <>
+                          <option disabled>
+                            WorkG_CD | WorkG_Abb | WorkG_Remark
                           </option>
-                        ))
+                          {WorkgData.map((item, index) => (
+                            <option key={index} value={item.WorkG_CD}>
+                              {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                              {item.WorkG_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -1866,7 +1898,7 @@ export default function PlanList() {
                   </div>
                   {/* End */}
                   {/* Start */}
-                  <div className="px-2 w-auto text-center pl-7">
+                  <div className="px-2 w-auto text-center pl-[30px]">
                     <label className="font-bold text-xs">Not_Pd_Grp1</label>
                   </div>
                   <div className="relative w-24">
@@ -1885,13 +1917,21 @@ export default function PlanList() {
                       }}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_No_Pd_Grp_CD1?.not}>
+                        {planListData?.S_No_Pd_Grp_CD1?.not}
+                      </option>
                       {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
-                        WorkgData.map((item, index) => (
-                          <option key={index} value={item.WorkG_CD}>
-                            {item.WorkG_CD}
+                        <>
+                          <option disabled>
+                            WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
                           </option>
-                        ))
+                          {WorkgData.map((item, index) => (
+                            <option key={index} value={item.WorkG_CD}>
+                              {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                              {item.WorkG_Name} | {item.WorkG_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -1922,13 +1962,21 @@ export default function PlanList() {
                           : "bg-gray-200 border-gray-400"
                       }`}
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Price_CD}>
+                        {planListData?.S_Price_CD}
+                      </option>
                       {Array.isArray(PriceData) && PriceData.length > 0 ? (
-                        PriceData.map((item, index) => (
-                          <option key={index} value={item.Price_CD}>
-                            {item.Price_CD}
+                        <>
+                          <option disabled>
+                            Price_CD | Price_Symbol | Price_Remark
                           </option>
-                        ))
+                          {PriceData.map((item, index) => (
+                            <option key={index} value={item.Price_CD}>
+                              {item.Price_CD} | {item.Price_Symbol} |{" "}
+                              {item.Price_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -1959,13 +2007,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Sl_Person_CD}>
+                        {planListData?.S_Sl_Person_CD}
+                      </option>
                       {Array.isArray(WorkerData) && WorkerData.length > 0 ? (
-                        WorkerData.map((item, index) => (
-                          <option key={index} value={item.Worker_CD}>
-                            {item.Worker_CD}
+                        <>
+                          <option disabled>
+                            Worker_CD | Worker_Abb | Worker_Remark
                           </option>
-                        ))
+                          {WorkerData.map((item, index) => (
+                            <option key={index} value={item.Worker_CD}>
+                              {item.Worker_CD} | {item.Worker_Abb} |{" "}
+                              {item.Worker_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2112,13 +2168,21 @@ export default function PlanList() {
                       }}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_No_Pd_Grp_CD2?.not}>
+                        {planListData?.S_No_Pd_Grp_CD2?.not}
+                      </option>
                       {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
-                        WorkgData.map((item, index) => (
-                          <option key={index} value={item.WorkG_CD}>
-                            {item.WorkG_CD}
+                        <>
+                          <option disabled>
+                            WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
                           </option>
-                        ))
+                          {WorkgData.map((item, index) => (
+                            <option key={index} value={item.WorkG_CD}>
+                              {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                              {item.WorkG_Name} | {item.WorkG_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2149,14 +2213,22 @@ export default function PlanList() {
                           : "bg-gray-200 border-gray-400"
                       }`}
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Request1_CD}>
+                        {planListData?.S_Request1_CD}
+                      </option>
                       {Array.isArray(Request1Data) &&
                       Request1Data.length > 0 ? (
-                        Request1Data.map((item, index) => (
-                          <option key={index} value={item.Request1_CD}>
-                            {item.Request1_CD}
+                        <>
+                          <option disabled>
+                            Request1_CD | Request1_Abb | Request1_Remark
                           </option>
-                        ))
+                          {Request1Data.map((item, index) => (
+                            <option key={index} value={item.Request1_CD}>
+                              {item.Request1_CD} | {item.Request1_Abb} |{" "}
+                              {item.Request1_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2187,14 +2259,22 @@ export default function PlanList() {
                           : "bg-gray-200 border-gray-400"
                       }`}
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Request2_CD}>
+                        {planListData?.S_Request2_CD}
+                      </option>
                       {Array.isArray(Request2Data) &&
                       Request2Data.length > 0 ? (
-                        Request2Data.map((item, index) => (
-                          <option key={index} value={item.Request2_CD}>
-                            {item.Request2_CD}
+                        <>
+                          <option disabled>
+                            Request2_CD | Request2_Abb | Request2_Remark
                           </option>
-                        ))
+                          {Request2Data.map((item, index) => (
+                            <option key={index} value={item.Request2_CD}>
+                              {item.Request2_CD} | {item.Request2_Abb} |{" "}
+                              {item.Request2_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2225,14 +2305,22 @@ export default function PlanList() {
                           : "bg-gray-200 border-gray-400"
                       }`}
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Request3_CD}>
+                        {planListData?.S_Request3_CD}
+                      </option>
                       {Array.isArray(Request3Data) &&
                       Request3Data.length > 0 ? (
-                        Request3Data.map((item, index) => (
-                          <option key={index} value={item.Request3_CD}>
-                            {item.Request3_CD}
+                        <>
+                          <option disabled>
+                            Request3_CD | Request3_Abb | Request3_Remark
                           </option>
-                        ))
+                          {Request3Data.map((item, index) => (
+                            <option key={index} value={item.Request3_CD}>
+                              {item.Request3_CD} | {item.Request3_Abb} |{" "}
+                              {item.Request3_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2340,14 +2428,23 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Customer_CD1}>
+                        {planListData?.S_Customer_CD1}
+                      </option>
                       {Array.isArray(CustomerData) &&
                       CustomerData.length > 0 ? (
-                        CustomerData.map((item, index) => (
-                          <option key={index} value={item.Customer_CD}>
-                            {item.Customer_CD}
+                        <>
+                          <option disabled>
+                            Customer_CD | Customer_Abb | Customer_Name |
+                            Customer_Remark
                           </option>
-                        ))
+                          {CustomerData.map((item, index) => (
+                            <option key={index} value={item.Customer_CD}>
+                              {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                              {item.Customer_Name} | {item.Customer_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2480,14 +2577,23 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Customer_CD2}>
+                        {planListData?.S_Customer_CD2}
+                      </option>
                       {Array.isArray(CustomerData) &&
                       CustomerData.length > 0 ? (
-                        CustomerData.map((item, index) => (
-                          <option key={index} value={item.Customer_CD}>
-                            {item.Customer_CD}
+                        <>
+                          <option disabled>
+                            Customer_CD | Customer_Abb | Customer_Name |
+                            Customer_Remark
                           </option>
-                        ))
+                          {CustomerData.map((item, index) => (
+                            <option key={index} value={item.Customer_CD}>
+                              {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                              {item.Customer_Name} | {item.Customer_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2531,13 +2637,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Item1_CD}>
+                        {planListData?.S_Item1_CD}
+                      </option>
                       {Array.isArray(Item1Data) && Item1Data.length > 0 ? (
-                        Item1Data.map((item, index) => (
-                          <option key={index} value={item.Item1_CD}>
-                            {item.Item1_CD}
+                        <>
+                          <option disabled>
+                            Item1_CD | Item1_Abb | Item1_Remark
                           </option>
-                        ))
+                          {Item1Data.map((item, index) => (
+                            <option key={index} value={item.Item1_CD}>
+                              {item.Item1_CD} | {item.Item1_Abb} |{" "}
+                              {item.Item1_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2657,14 +2771,23 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Customer_CD3}>
+                        {planListData?.S_Customer_CD3}
+                      </option>
                       {Array.isArray(CustomerData) &&
                       CustomerData.length > 0 ? (
-                        CustomerData.map((item, index) => (
-                          <option key={index} value={item.Customer_CD}>
-                            {item.Customer_CD}
+                        <>
+                          <option disabled>
+                            Customer_CD | Customer_Abb | Customer_Name |
+                            Customer_Remark
                           </option>
-                        ))
+                          {CustomerData.map((item, index) => (
+                            <option key={index} value={item.Customer_CD}>
+                              {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                              {item.Customer_Name} | {item.Customer_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -2836,14 +2959,23 @@ export default function PlanList() {
                       }}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_No_Customer_CD?.not}>
+                        {planListData?.S_No_Customer_CD?.not}
+                      </option>
                       {Array.isArray(CustomerData) &&
                       CustomerData.length > 0 ? (
-                        CustomerData.map((item, index) => (
-                          <option key={index} value={item.Customer_CD}>
-                            {item.Customer_CD}
+                        <>
+                          <option disabled>
+                            Customer_CD | Customer_Abb | Customer_Name |
+                            Customer_Remark
                           </option>
-                        ))
+                          {CustomerData.map((item, index) => (
+                            <option key={index} value={item.Customer_CD}>
+                              {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                              {item.Customer_Name} | {item.Customer_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3015,14 +3147,22 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Specific_CD1}>
+                        {planListData?.S_Specific_CD1}
+                      </option>
                       {Array.isArray(SpecificData) &&
                       SpecificData.length > 0 ? (
-                        SpecificData.map((item, index) => (
-                          <option key={index} value={item.Specific_CD}>
-                            {item.Specific_CD}
+                        <>
+                          <option disabled>
+                            Specific_CD | Specific_Abb | Specific_Remark
                           </option>
-                        ))
+                          {SpecificData.map((item, index) => (
+                            <option key={index} value={item.Specific_CD}>
+                              {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                              {item.Specific_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3049,13 +3189,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Coating_CD1}>
+                        {planListData?.S_Coating_CD1}
+                      </option>
                       {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
-                        CoatingData.map((item, index) => (
-                          <option key={index} value={item.Coating_CD}>
-                            {item.Coating_CD}
+                        <>
+                          <option disabled>
+                            Coating_CD | Coating_Symbol | Coating_Remark
                           </option>
-                        ))
+                          {CoatingData.map((item, index) => (
+                            <option key={index} value={item.Coating_CD}>
+                              {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                              {item.Coating_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3210,14 +3358,22 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Specific_CD2}>
+                        {planListData?.S_Specific_CD2}
+                      </option>
                       {Array.isArray(SpecificData) &&
                       SpecificData.length > 0 ? (
-                        SpecificData.map((item, index) => (
-                          <option key={index} value={item.Specific_CD}>
-                            {item.Specific_CD}
+                        <>
+                          <option disabled>
+                            Specific_CD | Specific_Abb | Specific_Remark
                           </option>
-                        ))
+                          {SpecificData.map((item, index) => (
+                            <option key={index} value={item.Specific_CD}>
+                              {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                              {item.Specific_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3244,13 +3400,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Coating_CD2}>
+                        {planListData?.S_Coating_CD2}
+                      </option>
                       {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
-                        CoatingData.map((item, index) => (
-                          <option key={index} value={item.Coating_CD}>
-                            {item.Coating_CD}
+                        <>
+                          <option disabled>
+                            Coating_CD | Coating_Symbol | Coating_Remark
                           </option>
-                        ))
+                          {CoatingData.map((item, index) => (
+                            <option key={index} value={item.Coating_CD}>
+                              {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                              {item.Coating_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3395,14 +3559,22 @@ export default function PlanList() {
                       }}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_No_Specific_CD1?.not}>
+                        {planListData?.S_No_Specific_CD1?.not}
+                      </option>
                       {Array.isArray(SpecificData) &&
                       SpecificData.length > 0 ? (
-                        SpecificData.map((item, index) => (
-                          <option key={index} value={item.Specific_CD}>
-                            {item.Specific_CD}
+                        <>
+                          <option disabled>
+                            Specific_CD | Specific_Abb | Specific_Remark
                           </option>
-                        ))
+                          {SpecificData.map((item, index) => (
+                            <option key={index} value={item.Specific_CD}>
+                              {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                              {item.Specific_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3418,7 +3590,7 @@ export default function PlanList() {
                   />
                   {/* End */}
                   {/* Start */}
-                  <div className="px-2 w-auto text-center pl-12">
+                  <div className="px-2 w-auto text-center pl-[46px]">
                     <label className="font-bold text-xs">Coating3</label>
                   </div>
                   <div className="relative w-24">
@@ -3429,13 +3601,21 @@ export default function PlanList() {
                       onChange={handleInputChange}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_Coating_CD3}>
+                        {planListData?.S_Coating_CD3}
+                      </option>
                       {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
-                        CoatingData.map((item, index) => (
-                          <option key={index} value={item.Coating_CD}>
-                            {item.Coating_CD}
+                        <>
+                          <option disabled>
+                            Coating_CD | Coating_Symbol | Coating_Remark
                           </option>
-                        ))
+                          {CoatingData.map((item, index) => (
+                            <option key={index} value={item.Coating_CD}>
+                              {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                              {item.Coating_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3572,18 +3752,34 @@ export default function PlanList() {
                     <select
                       disabled={!formState.Not_Specific2}
                       id="S_No_Specific_CD2"
-                      value={planListData?.S_No_Specific_CD2 || ""}
-                      onChange={handleInputChange}
+                      value={planListData?.S_No_Specific_CD2?.not || ""}
+                      onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        handleInputChange({
+                          target: {
+                            id: "S_No_Specific_CD2",
+                            value: { not: selectedValue },
+                          },
+                        });
+                      }}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_No_Specific_CD2?.not}>
+                        {planListData?.S_No_Specific_CD2?.not}
+                      </option>
                       {Array.isArray(SpecificData) &&
                       SpecificData.length > 0 ? (
-                        SpecificData.map((item, index) => (
-                          <option key={index} value={item.Specific_CD}>
-                            {item.Specific_CD}
+                        <>
+                          <option disabled>
+                            Specific_CD | Specific_Abb | Specific_Remark
                           </option>
-                        ))
+                          {SpecificData.map((item, index) => (
+                            <option key={index} value={item.Specific_CD}>
+                              {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                              {item.Specific_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}
@@ -3606,17 +3802,33 @@ export default function PlanList() {
                     <select
                       disabled={!formState.Not_Coat}
                       id="S_No_Coating_CD"
-                      value={planListData?.S_No_Coating_CD || ""}
-                      onChange={handleInputChange}
+                      value={planListData?.S_No_Coating_CD?.not || ""}
+                      onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        handleInputChange({
+                          target: {
+                            id: "S_No_Coating_CD",
+                            value: { not: selectedValue },
+                          },
+                        });
+                      }}
                       className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
                     >
-                      <option value=""></option>
+                      <option value={planListData?.S_No_Coating_CD?.not}>
+                        {planListData?.S_No_Coating_CD?.not}
+                      </option>
                       {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
-                        CoatingData.map((item, index) => (
-                          <option key={index} value={item.Coating_CD}>
-                            {item.Coating_CD}
+                        <>
+                          <option disabled>
+                            Coating_CD | Coating_Symbol | Coating_Remark
                           </option>
-                        ))
+                          {CoatingData.map((item, index) => (
+                            <option key={index} value={item.Coating_CD}>
+                              {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                              {item.Coating_Remark}
+                            </option>
+                          ))}
+                        </>
                       ) : (
                         <option value="">ไม่มีข้อมูล</option>
                       )}

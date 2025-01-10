@@ -10,10 +10,10 @@ const CostInfo = () => {
   const [isOdPtNoHidden, setIsOdPtNoHidden] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-   const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
-   const { searchPlanNo: initialSearchPlanNo = "" } = location.state || {};
-   const [searchOrderNo, setSearchOrderNo] = useState(initialSearchOrderNo);
-   const [searchPlanNo, setSearchPlanNo] = useState(initialSearchPlanNo);
+  const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
+  const { searchPlanNo: initialSearchPlanNo = "" } = location.state || {};
+  const [searchOrderNo, setSearchOrderNo] = useState(initialSearchOrderNo);
+  const [searchPlanNo, setSearchPlanNo] = useState(initialSearchPlanNo);
   const [searchCostNo, setSearchCostNo] = useState("");
   const [Search_OdPt_No, setSearch_OdPt_No] = useState("");
   const [Search_OdPtCs_No, setSearch_OdPtCs_No] = useState("");
@@ -21,7 +21,23 @@ const CostInfo = () => {
   const [Person_Name, setPerson_Name] = useState("");
   const [Resource_Name, setResource_Name] = useState("");
   const [Cs_Progress_Abb_Name, setCs_Progress_Abb_Name] = useState("");
+  //ButtonState true means the button (F1-F12) is enabled and false means the button (F1-F12) is disabled
+  const [buttonState, setButtonState] = useState({
+    F1: false,
+    F2: false,
+    F3: false,
+    F4: false,
+    F5: false,
+    F6: false,
+    F7: false,
+    F8: false,
+    F9: false,
+    F10: false,
+    F11: false,
+    F12: true,
+  });
 
+  const generateSpaces = (count) => "\u00A0".repeat(count);
   const {
     planData,
     setPlanData,
@@ -29,6 +45,7 @@ const CostInfo = () => {
     selectedPlanNo,
     selectPartsData,
     processData,
+    setSelectedPlanNo,
   } = usePlan();
   const { WorkerData, setOrderData, searchOrderData, setWorkerData } =
     useOrder();
@@ -89,7 +106,143 @@ const CostInfo = () => {
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   };
 
+  const handleFButtonStateChange = (state) => {
+    //True means enabled the button
+    //False means disabled the button
+    if (state === "f2") {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: true,
+        F8: true,
+        F9: true,
+        F10: false,
+        F11: true,
+        F12: false,
+      });
+    } else if (state === "f3") {
+      setButtonState({
+        F1: false,
+        F2: true,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: true,
+        F8: true,
+        F9: true,
+        F10: false,
+        F11: true,
+        F12: false,
+      });
+    } else if (state === "f7") {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: true,
+        F4: false,
+        F5: false,
+        F6: true,
+        F7: true,
+        F8: true,
+        F9: false,
+        F10: false,
+        F11: true,
+        F12: true,
+      });
+    } else if (state === "f8") {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: true,
+        F4: false,
+        F5: false,
+        F6: true,
+        F7: true,
+        F8: true,
+        F9: false,
+        F10: false,
+        F11: true,
+        F12: true,
+      });
+    } else if (state === "f9") {
+      setButtonState({
+        F1: false,
+        F2: true,
+        F3: true,
+        F4: false,
+        F5: false,
+        F6: true,
+        F7: true,
+        F8: true,
+        F9: false,
+        F10: false,
+        F11: true,
+        F12: true,
+      });
+    } else if (state === "f11") {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: false,
+        F8: false,
+        F9: false,
+        F10: false,
+        F11: false,
+        F12: true,
+      });
+    }
+  };
+
+  const editPermission = (status) => {
+    const fields = [
+      "Process_No",
+      "CMC",
+      "CMT",
+      "CPC",
+      "CPT",
+      "CPD",
+      "CPN",
+      "Cs_Progress_CD",
+      "Cs_Remark",
+    ];
+
+    fields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.disabled = !status;
+      }
+    });
+  };
+  const searchPermission = (status) => {
+    const fields = ["Search_Order_No", "Search_Parts_No", "Search_Cost_No"];
+
+    fields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.disabled = !status;
+      }
+    });
+  };
+
+  const handleF2Click = async () => {
+    searchPermission(false);
+    editPermission(true);
+    handleFButtonStateChange("f2");
+  };
+
   const handleF3Click = async () => {
+    searchPermission(false);
+    editPermission(true);
+    handleFButtonStateChange("f3");
     const isDataFetched = await SearchCostData(searchOrderNo, searchPlanNo);
 
     // เช็คว่า Search Part No. เป็นค่าว่าง
@@ -142,6 +295,47 @@ const CostInfo = () => {
     }
   };
 
+  const handleF6Click = async () => {
+    Swal.fire({
+      title: "เกิดข้อผิดพลาด",
+      text: "กรุณาติดต่อผู้ดูแลระบบ",
+      icon: "error",
+      confirmButtonText: "ตกลง",
+    });
+  };
+  const handleF7Click = async () => {
+    const result = await Swal.fire({
+      title: "Search other Cost_No ?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ใช่",
+      cancelButtonText: "ไม่ใช่",
+    });
+    if (result.isConfirmed) {
+      handleFButtonStateChange("f7");
+      setCostData("");
+      setSearchCostNo("");
+      console.log(CostData);
+    }
+  };
+  const handleF8Click = async () => {
+    const result = await Swal.fire({
+      title: "Search other Parts_No ?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ใช่",
+      cancelButtonText: "ไม่ใช่",
+    });
+    if (result.isConfirmed) {
+      handleFButtonStateChange("f8");
+      setCostData("");
+      setPlanData("");
+      setSearchCostNo("");
+      setSearchPlanNo("");
+      console.log(CostData, planData);
+    }
+  };
+
   const handleF9Click = async () => {
     try {
       const costExists = await SearchCostNo(
@@ -163,6 +357,10 @@ const CostInfo = () => {
           const OdPtCs_No = document.getElementById("OdPtCs_No").value;
 
           await editCost(OdPtCs_No);
+
+          searchPermission(true);
+          editPermission(false);
+          handleFButtonStateChange("f9");
         }
       } else {
         const result = await Swal.fire({
@@ -187,6 +385,44 @@ const CostInfo = () => {
       });
     }
   };
+
+  const handleF11Click = async () => {
+    const result = await Swal.fire({
+      title: "Search other Order_No ?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ใช่",
+      cancelButtonText: "ไม่ใช่",
+    });
+    if (result.isConfirmed) {
+      handleFButtonStateChange("f11");
+      setCostData("");
+      setPlanData("");
+      setSearchCostNo("");
+      setSearchPlanNo("");
+      setSearchOrderNo("");
+      setCostNo("");
+      // setResourceData("");
+      // setPlanppcData("");
+      // setProcessCData("");
+      // setCsProgressData("");
+      setOrderData("");
+      setSelectedPlanNo("");
+      setSearch_OdPtCs_No("");
+      setSearch_OdPt_No("");
+
+      setResource_Name("");
+      setPerson_Name("");
+      setProcess_Name("");
+      setCs_Progress_Abb_Name("");
+    }
+
+    console.log(CostData, planData);
+  };
+  const handleF12Click = async () => {
+    navigate("/dashboard");
+  };
+
   const rows = Array.from({ length: 10 }, (_, rowIndex) => (
     <tr
       key={rowIndex}
@@ -257,6 +493,82 @@ const CostInfo = () => {
   }, [searchPlanNo, searchCostNo]);
 
   useEffect(() => {
+    if (searchOrderNo === "" && searchPlanNo === "" && searchCostNo === "") {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: false,
+        F8: false,
+        F9: false,
+        F10: false,
+        F11: false,
+        F12: true,
+      });
+    } else if (
+      searchOrderNo !== "" &&
+      searchPlanNo === "" &&
+      searchCostNo === ""
+    ) {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: true,
+        F7: false,
+        F8: true,
+        F9: false,
+        F10: false,
+        F11: true,
+        F12: true,
+      });
+    } else if (
+      searchOrderNo !== "" &&
+      searchPlanNo !== "" &&
+      searchCostNo === ""
+    ) {
+      setButtonState({
+        F1: false,
+        F2: false,
+        F3: true,
+        F4: false,
+        F5: false,
+        F6: true,
+        F7: true,
+        F8: true,
+        F9: false,
+        F10: false,
+        F11: true,
+        F12: true,
+      });
+    } else if (
+      searchOrderNo !== "" &&
+      searchCostNo !== "" &&
+      searchPlanNo !== ""
+    ) {
+      setButtonState({
+        F1: false,
+        F2: true,
+        F3: true,
+        F4: false,
+        F5: false,
+        F6: true,
+        F7: true,
+        F8: true,
+        F9: false,
+        F10: false,
+        F11: true,
+        F12: true,
+      });
+    }
+  }, [searchOrderNo, searchPlanNo, searchCostNo]);
+
+  useEffect(() => {
     if (CostData?.CPC && WorkerData.length > 0) {
       const selectedGroup = WorkerData.find(
         (item) => item.Worker_CD === CostData?.CPC
@@ -264,8 +576,8 @@ const CostInfo = () => {
       setPerson_Name(selectedGroup ? selectedGroup.Worker_Abb : "");
     }
 
-    if (CostData?.CMC && ResourceData.length > 0) {
-      const selectedGroup = ResourceData.find(
+    if (CostData?.CMC && ResourceData?.length > 0) {
+      const selectedGroup = ResourceData?.find(
         (item) => item.Resource_CD === CostData?.CMC
       );
       setResource_Name(selectedGroup ? selectedGroup.Resource_Symbol : "");
@@ -390,7 +702,7 @@ const CostInfo = () => {
                 <input
                   disabled
                   id="Search_OdPt_No"
-                  value={Search_OdPt_No}
+                  value={Search_OdPt_No || ""}
                   onChange={(e) => handleCostInputChange(e)}
                   type="text"
                   className="border-gray-500 border-solid border-2 rounded-md bg-white w-full h-8"
@@ -420,7 +732,7 @@ const CostInfo = () => {
                 <input
                   disabled
                   id="Search_OdPtCs_No"
-                  value={Search_OdPtCs_No}
+                  value={Search_OdPtCs_No || ""}
                   onChange={(e) => handleCostInputChange(e)}
                   type="text"
                   className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-80"
@@ -516,6 +828,7 @@ const CostInfo = () => {
                   value={Process_Name || ""}
                   onChange={(event) => setProcessCData(event)}
                   type="text"
+                  disabled={true}
                   className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-full sm:w-[90px] lg:w-[95px] xl:w-[150px]"
                 />
               </div>
@@ -535,16 +848,18 @@ const CostInfo = () => {
                         id="CMC"
                         value={CostData?.CMC || ""}
                         onChange={handleCostInputChange}
+                        disabled={true}
                         className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffcc] w-full h-8"
                       >
+                        <option disabled>Resource_CD | Resource_Symbol </option>
                         <option value={CostData?.CMC || ""}>
                           {CostData?.CMC || ""}
                         </option>
                         {Array.isArray(ResourceData) &&
-                        ResourceData.length > 0 ? (
-                          ResourceData.map((item, index) => (
+                        ResourceData?.length > 0 ? (
+                          ResourceData?.map((item, index) => (
                             <option key={index} value={item.Resource_CD}>
-                              {item.Resource_CD}
+                              {item.Resource_CD}{generateSpaces(2)} |{" "}{item.Resource_Symbol}
                             </option>
                           ))
                         ) : (
@@ -557,6 +872,7 @@ const CostInfo = () => {
                       value={Resource_Name || ""}
                       onChange={(event) => setResourceData(event)}
                       type="text"
+                      disabled={true}
                       className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-full xl:w-[110px]"
                     />
                   </div>
@@ -573,6 +889,7 @@ const CostInfo = () => {
                     value={CostData?.CMT ?? ""}
                     onChange={handleCostInputChange}
                     type="text"
+                    disabled={true}
                     className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
                   />
                 </div>
@@ -591,13 +908,14 @@ const CostInfo = () => {
                         onChange={handleCostInputChange}
                         className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffcc] w-full h-8"
                       >
+                        <option disabled>Worker_CD | Worker_Abb </option>
                         <option value={CostData?.CPC || ""}>
                           {CostData?.CPC || ""}
                         </option>
                         {Array.isArray(WorkerData) && WorkerData.length > 0 ? (
                           WorkerData.map((item, index) => (
                             <option key={index} value={item.Worker_CD}>
-                              {item.Worker_CD}
+                              {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Abb}
                             </option>
                           ))
                         ) : (
@@ -607,9 +925,10 @@ const CostInfo = () => {
                     </div>
                     <input
                       id="Worker_Name"
-                      value={Person_Name || ""}
+                      value={Person_Name ?? ""}
                       onChange={(event) => setWorkerData(event)}
                       type="text"
+                      disabled={true}
                       className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 w-full xl:w-[110px]"
                     />
                   </div>
@@ -676,6 +995,7 @@ const CostInfo = () => {
                         id="Cs_Progress_CD"
                         value={CostData?.Cs_Progress_CD || ""}
                         onChange={handleCostInputChange}
+                        disabled={true}
                         className={`border-gray-500 border-solid border-2 rounded-md w-full h-8 ${
                           CostData?.Cs_Progress_CD === "5"
                             ? "bg-red-500"
@@ -706,6 +1026,7 @@ const CostInfo = () => {
                       value={Cs_Progress_Abb_Name || ""}
                       onChange={(event) => setCsProgressData(event)}
                       type="text"
+                      disabled={true}
                       className={`border-solid border-2 border-gray-500 rounded-md py-0.5 w-full xl:w-[150px] ${
                         CostData?.Cs_Progress_CD === "5"
                           ? "bg-red-500"
@@ -734,6 +1055,7 @@ const CostInfo = () => {
                     }
                     onChange={(event) => handleCostInputChange(event)}
                     type="date"
+                    disabled={true}
                     className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
                   />
                 </div>
@@ -749,6 +1071,7 @@ const CostInfo = () => {
                     value={CostData?.Cs_Complete_Qty ?? ""}
                     onChange={handleCostInputChange}
                     type="text"
+                    disabled={true}
                     className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
                   />
                 </div>
@@ -762,6 +1085,7 @@ const CostInfo = () => {
                     value={CostData?.Outside || ""}
                     onChange={handleCostInputChange}
                     className="mr-2 w-5 h-5 rounded-full"
+                    disabled={true}
                   />
                   <label htmlFor="Outside" className="text-sm">
                     Outside
@@ -774,6 +1098,7 @@ const CostInfo = () => {
                     value={CostData?.Cs_Final_Complete || ""}
                     onChange={handleCostInputChange}
                     className="mr-2 w-5 h-5 rounded-full"
+                    disabled={true}
                   />
                   <label htmlFor="Cs_Final_Complete" className="text-sm">
                     Final_Complete
@@ -806,6 +1131,7 @@ const CostInfo = () => {
                     value={formatDateTime(CostData?.Cs_Register_Date)}
                     onChange={handleCostInputChange}
                     type="text"
+                    disabled={true}
                     className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
                   />
                 </div>
@@ -821,6 +1147,7 @@ const CostInfo = () => {
                     value={formatDateTime(CostData?.Cs_Modify_Date)}
                     onChange={handleCostInputChange}
                     type="text"
+                    disabled={true}
                     className="bg-white border-solid border-2 border-gray-500 rounded-md py-0.5 xl:w-60"
                   />
                 </div>
@@ -837,6 +1164,7 @@ const CostInfo = () => {
                       value={CostData?.Sequence_No || ""}
                       onChange={handleCostInputChange}
                       type="text"
+                      disabled={true}
                       className="bg-white border-solid border-2 border-gray-500 rounded-md -ml-0.5 py-0.5 w-20 sm:w-[182px] xl:w-[182px]"
                     />
                   </div>
@@ -873,8 +1201,8 @@ const CostInfo = () => {
             <div className="lg:col-span-2 p-4 flex flex-col items-start w-full">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 mb-2">
                 <div className="flex items-center space-x-7">
-                  <label className="text-xs font-bold w-28 whitespace-nowrap">
-                    Costs_List QC-FG_Comp
+                  <label className="text-xs font-bold w-28 me-1 whitespace-nowrap">
+                    [Costs_List] QC-FG_Comp
                   </label>
                   <input
                     id="QCFG_Comp_Qty"
@@ -905,7 +1233,7 @@ const CostInfo = () => {
                               (worker) => worker.Worker_CD === item.CPC
                             ).map((worker) => worker.Worker_Abb);
 
-                            const ResourceNamesForRow = ResourceData.filter(
+                            const ResourceNamesForRow = ResourceData?.filter(
                               (resource) => resource.Resource_CD === item.CMC
                             ).map((resource) => resource.Resource_Abb);
 
@@ -1050,45 +1378,78 @@ const CostInfo = () => {
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4">
               <div className="grid grid-cols-4 gap-2">
                 <button
-                  disabled
-                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  disabled={!buttonState.F1}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F1 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   (F1)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled={!buttonState.F2}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F2 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleF2Click}
+                >
                   Edit <br />
                   編集(F2)
                 </button>
                 <button
+                  disabled={!buttonState.F3}
                   onClick={handleF3Click}
-                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F3 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   New_Add <br />
                   追加(F3)
                 </button>
                 <button
-                  disabled
-                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  disabled={!buttonState.F4}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F4 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   (F4)
                 </button>
               </div>
               <div className="grid grid-cols-4 gap-2">
                 <button
-                  disabled
-                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  disabled={!buttonState.F5}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F5 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   (F5)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled={!buttonState.F6}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F6 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleF6Click}
+                >
                   Result_View <br />
                   (F6)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled={!buttonState.F7}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F7 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleF7Click}
+                >
                   Next_Cost <br />
                   別原(F7)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled={!buttonState.F8}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F8 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleF8Click}
+                >
                   Next_Parts
                   <br />
                   別部(F8)
@@ -1096,24 +1457,44 @@ const CostInfo = () => {
               </div>
               <div className="grid grid-cols-4 gap-2">
                 <button
+                  disabled={!buttonState.F9}
                   onClick={handleF9Click}
-                  className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F9 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   Save
                   <br />
                   登録(F9)
                 </button>
 
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled={!buttonState.F10}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F10 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
                   Delete
                   <br />
                   取消(F10)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white">
+                <button
+                  disabled={!buttonState.F11}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F11 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleF11Click}
+                >
                   Next_Input <br />
                   次へ(F11)
                 </button>
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button
+                  disabled={!buttonState.F12}
+                  className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                    !buttonState.F12 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleF12Click}
+                >
                   Exit <br />
                   終了 (F12)
                 </button>

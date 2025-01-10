@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 export default function OrderInfo() {
+  const generateSpaces = (count) => "\u00A0".repeat(count);
   const navigate = useNavigate();
   const location = useLocation();
   const [buttonState, setButtonState] = useState({
@@ -1255,16 +1256,16 @@ export default function OrderInfo() {
                       id="Product_Grp_CD"
                       value={orderData?.Product_Grp_CD || ""}
                       onChange={handleInputChange}
-                      className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
+                      className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-20"
                     >
-                      <option value=""></option>
+                      <option disabled>WorkG_CD | WorkG_Name</option>
                       <option value={orderData?.Product_Grp_CD || ""}>
                         {orderData?.Product_Grp_CD || ""}
                       </option>
                       {Array.isArray(WorkergData) && WorkergData.length > 0 ? (
                         WorkergData.map((item, index) => (
                           <option key={index} value={item.WorkG_CD}>
-                            {item.WorkG_CD}
+                            {item.WorkG_CD}{generateSpaces(2)} |{" "}{item.WorkG_Name}
                           </option>
                         ))
                       ) : (
@@ -1277,13 +1278,13 @@ export default function OrderInfo() {
                       value={selectedWorkGName || ""}
                       onChange={(event) => setWorkergData(event)}
                       type="text"
-                      className="bg-white border-2 border-gray-500 rounded-md px-2 w-full"
+                      className="bg-white border-2 border-gray-500 rounded-md px-2 w-40"
                       placeholder="Enter Group"
                     />
                   </div>
 
                   {/* Auto Year Change */}
-                  <div className="flex gap-2 items-center col-span-1 ">
+                  <div className="flex gap-2 items-center col-span-1 ml-[100px]">
                     <input
                       id="Auto_Year_Change"
                       checked={autoYearChange}
@@ -1857,7 +1858,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                             >
-                              <option value=""></option>
+                              <option disabled>Unit_CD | Unit_Name</option>
                               <option value={orderData?.Unit_CD || ""}>
                                 {orderData?.Unit_CD || ""}
                               </option>
@@ -1865,7 +1866,7 @@ export default function OrderInfo() {
                               UnitData.length > 0 ? (
                                 UnitData.map((item, index) => (
                                   <option key={index} value={item.Unit_CD}>
-                                    {item.Unit_CD}
+                                    {item.Unit_CD}{generateSpaces(2)} |{" "}{item.Unit_Name}
                                   </option>
                                 ))
                               ) : (
@@ -2020,7 +2021,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>WorkG_CD | WorkG_Abb</option>
                             <option value={orderData?.Sales_Grp_CD || ""}>
                               {orderData?.Sales_Grp_CD || ""}
                             </option>
@@ -2028,7 +2029,7 @@ export default function OrderInfo() {
                             WorkergData.length > 0 ? (
                               WorkergData.map((item, index) => (
                                 <option key={index} value={item.WorkG_CD}>
-                                  {item.WorkG_CD}
+                                  {item.WorkG_CD}{generateSpaces(2)} |{" "} {item.WorkG_Abb}
                                 </option>
                               ))
                             ) : (
@@ -2059,7 +2060,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Worker_CD | Worker_Abb</option>
                             <option value={orderData?.Sales_Person_CD || ""}>
                               {orderData?.Sales_Person_CD || ""}
                             </option>
@@ -2067,7 +2068,7 @@ export default function OrderInfo() {
                             WorkerData.length > 0 ? (
                               WorkerData.map((item, index) => (
                                 <option key={index} value={item.Worker_CD}>
-                                  {item.Worker_CD}
+                                  {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Abb}
                                 </option>
                               ))
                             ) : (
@@ -2098,7 +2099,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Request1_CD | Request1_Name</option>
                             <option value={orderData?.Request1_CD || ""}>
                               {orderData?.Request1_CD || ""}
                             </option>
@@ -2106,7 +2107,7 @@ export default function OrderInfo() {
                             Request1Data.length > 0 ? (
                               Request1Data.map((item, index) => (
                                 <option key={index} value={item.Request1_CD}>
-                                  {item.Request1_CD}
+                                  {item.Request1_CD}{generateSpaces(2)} |{" "}{item.Request1_Name}
                                 </option>
                               ))
                             ) : (
@@ -2133,7 +2134,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Request2_CD | Request2_Name</option>
                             <option value={orderData?.Request2_CD || ""}>
                               {orderData?.Request2_CD || ""}
                             </option>
@@ -2141,7 +2142,7 @@ export default function OrderInfo() {
                             Request2Data.length > 0 ? (
                               Request2Data.map((item, index) => (
                                 <option key={index} value={item.Request2_CD}>
-                                  {item.Request2_CD}
+                                  {item.Request2_CD}{generateSpaces(2)} |{" "}{item.Request2_Name}
                                 </option>
                               ))
                             ) : (
@@ -2167,7 +2168,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>CD | Abb | Request3_Name</option>
                             <option value={orderData?.Request3_CD || ""}>
                               {orderData?.Request3_CD || ""}
                             </option>
@@ -2175,7 +2176,7 @@ export default function OrderInfo() {
                             Request3Data.length > 0 ? (
                               Request3Data.map((item, index) => (
                                 <option key={index} value={item.Request3_CD}>
-                                  {item.Request3_CD}
+                                  {item.Request3_CD}{generateSpaces(2)} |{" "}{item.Request3_Abb}{generateSpaces(2)} |{" "}{item.Request3_Name}
                                 </option>
                               ))
                             ) : (
@@ -2477,7 +2478,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                             >
-                              <option value=""></option>
+                              <option disabled>Coating_CD | Coating_Name</option>
                               <option value={orderData?.Coating_CD || ""}>
                                 {orderData?.Coating_CD || ""}
                               </option>
@@ -2485,7 +2486,7 @@ export default function OrderInfo() {
                               CoatingData.length > 0 ? (
                                 CoatingData.map((item, index) => (
                                   <option key={index} value={item.Coating_CD}>
-                                    {item.Coating_CD}
+                                    {item.Coating_CD}{generateSpaces(2)} |{" "}{item.Coating_Name}
                                   </option>
                                 ))
                               ) : (
@@ -2596,7 +2597,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                             >
-                              <option value=""></option>
+                              <option disabled>Od_Quote_CD | Od_Quote_Name</option>
                               <option value={orderData?.Quote_CD || ""}>
                                 {orderData?.Quote_CD || ""}
                               </option>
@@ -2604,7 +2605,7 @@ export default function OrderInfo() {
                               QuoteData.length > 0 ? (
                                 QuoteData.map((item, index) => (
                                   <option key={index} value={item.Od_Quote_CD}>
-                                    {item.Od_Quote_CD}
+                                    {item.Od_Quote_CD}{generateSpaces(2)} |{" "}{item.Od_Quote_Name}
                                   </option>
                                 ))
                               ) : (
@@ -2636,7 +2637,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#cbfefe] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Item1_CD | Item1_Name</option>
                             <option value={orderData?.Item1_CD || ""}>
                               {orderData?.Item1_CD || ""}
                             </option>
@@ -2644,7 +2645,7 @@ export default function OrderInfo() {
                             Item1Data.length > 0 ? (
                               Item1Data.map((item, index) => (
                                 <option key={index} value={item.Item1_CD}>
-                                  {item.Item1_CD}
+                                  {item.Item1_CD}{generateSpaces(2)} |{" "}{item.Item1_Name}
                                 </option>
                               ))
                             ) : (
@@ -3034,6 +3035,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-white w-full"
                           >
+                            <option disabled>Customer_CD | Customer_Abb</option>
                             <option value={orderData?.Customer_CD || ""}>
                               {orderData?.Customer_CD || ""}
                             </option>
@@ -3041,7 +3043,7 @@ export default function OrderInfo() {
                             CustomerData.length > 0 ? (
                               CustomerData.map((item, index) => (
                                 <option key={index} value={item.Customer_CD}>
-                                  {item.Customer_CD}
+                                  {item.Customer_CD}{generateSpaces(2)} |{" "} {item.Customer_Abb}
                                 </option>
                               ))
                             ) : (
@@ -3088,7 +3090,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Supply_CD | Supply_Name</option>
                             <option value={orderData?.Supply_CD || ""}>
                               {orderData?.Supply_CD || ""}
                             </option>
@@ -3096,7 +3098,7 @@ export default function OrderInfo() {
                             SupplyData.length > 0 ? (
                               SupplyData.map((item, index) => (
                                 <option key={index} value={item.Supply_CD}>
-                                  {item.Supply_CD}
+                                  {item.Supply_CD}{generateSpaces(2)} |{" "}{item.Supply_Name}
                                 </option>
                               ))
                             ) : (
@@ -3128,7 +3130,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>WorkG_CD | Supply_Name</option>
                             <option value={orderData?.Destination_CD || ""}>
                               {orderData?.Destination_CD || ""}
                             </option>
@@ -3166,6 +3168,7 @@ export default function OrderInfo() {
                             className="bg-[#ff99cc] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                           />
                         </div>
+                        
                       </div>
                       <div className="flex gap-2 items-center mb-2">
                         <label className="text-xs font-semibold w-2/6">
@@ -3179,7 +3182,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Contract_Docu_CD | Item1_Name</option>
                             <option value={orderData?.Contract_Docu_CD || ""}>
                               {orderData?.Contract_Docu_CD || ""}
                             </option>
@@ -3190,7 +3193,7 @@ export default function OrderInfo() {
                                   key={index}
                                   value={item.Contract_Docu_CD}
                                 >
-                                  {item.Contract_Docu_CD}
+                                  {item.Contract_Docu_CD}{generateSpaces(2)} |{" "}{item.Contract_Docu_Name}
                                 </option>
                               ))
                             ) : (
@@ -3305,7 +3308,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Worker_CD | Worker_Name | Worker_Remark</option>
                             <option value={orderData?.Od_Ctl_Person_CD || ""}>
                               {orderData?.Od_Ctl_Person_CD || ""}
                             </option>
@@ -3313,7 +3316,7 @@ export default function OrderInfo() {
                             WorkerData.length > 0 ? (
                               WorkerData.map((item, index) => (
                                 <option key={index} value={item.Worker_CD}>
-                                  {item.Worker_CD}
+                                  {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Name}{generateSpaces(2)} |{" "}{item.Worker_Remark}
                                 </option>
                               ))
                             ) : (
@@ -3345,7 +3348,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Worker_CD | Worker_Name | Worker_Remark</option>
                             <option value={orderData?.Od_Reg_Person_CD || ""}>
                               {orderData?.Od_Reg_Person_CD || ""}
                             </option>
@@ -3353,7 +3356,7 @@ export default function OrderInfo() {
                             WorkerData.length > 0 ? (
                               WorkerData.map((item, index) => (
                                 <option key={index} value={item.Worker_CD}>
-                                  {item.Worker_CD}
+                                  {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Name}{generateSpaces(2)} |{" "}{item.Worker_Remark}
                                 </option>
                               ))
                             ) : (
@@ -3385,7 +3388,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Worker_CD | Worker_Name | Worker_Remark</option>
                             <option value={orderData?.Od_Upd_Person_CD || ""}>
                               {orderData?.Od_Upd_Person_CD || ""}
                             </option>
@@ -3393,7 +3396,7 @@ export default function OrderInfo() {
                             WorkerData.length > 0 ? (
                               WorkerData.map((item, index) => (
                                 <option key={index} value={item.Worker_CD}>
-                                  {item.Worker_CD}
+                                  {item.Worker_CD}{generateSpaces(2)} |{" "}{item.Worker_Name}{generateSpaces(2)} |{" "}{item.Worker_Remark}
                                 </option>
                               ))
                             ) : (
@@ -3425,7 +3428,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Specific_CD | Specific_Name | Specific_Remark</option>
                             <option value={orderData?.Specific_CD || ""}>
                               {orderData?.Specific_CD || ""}
                             </option>
@@ -3433,7 +3436,7 @@ export default function OrderInfo() {
                             SpecificData.length > 0 ? (
                               SpecificData.map((item, index) => (
                                 <option key={index} value={item.Specific_CD}>
-                                  {item.Specific_CD}
+                                  {item.Specific_CD}{generateSpaces(2)} |{" "}{item.Specific_Name}{generateSpaces(2)} |{" "}{item.Specific_Remark}
                                 </option>
                               ))
                             ) : (
@@ -3465,7 +3468,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Od_Progress_CD | Od_Progress_Name | Od_Progress_Remark</option>
                             <option value={orderData?.Od_Progress_CD || ""}>
                               {orderData?.Od_Progress_CD || ""}
                             </option>
@@ -3473,7 +3476,7 @@ export default function OrderInfo() {
                             OdProgressData.length > 0 ? (
                               OdProgressData.map((item, index) => (
                                 <option key={index} value={item.Od_Progress_CD}>
-                                  {item.Od_Progress_CD}
+                                  {item.Od_Progress_CD}{generateSpaces(2)} |{" "}{item.Od_Progress_Name}{generateSpaces(2)} |{" "}{item.Od_Progress_Remark}
                                 </option>
                               ))
                             ) : (
@@ -3505,7 +3508,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
-                            <option value=""></option>
+                            <option disabled>Delivery_CD | Delivery_Name | Delivery_Remark</option>
                             <option value={orderData?.Delivery_CD || ""}>
                               {orderData?.Delivery_CD || ""}
                             </option>
@@ -3513,7 +3516,7 @@ export default function OrderInfo() {
                             DeliveryData.length > 0 ? (
                               DeliveryData.map((item, index) => (
                                 <option key={index} value={item.Delivery_CD}>
-                                  {item.Delivery_CD}
+                                  {item.Delivery_CD}{generateSpaces(2)} |{" "}{item.Delivery_Name}{generateSpaces(2)} |{" "}{item.Delivery_Remark}
                                 </option>
                               ))
                             ) : (
@@ -3546,7 +3549,7 @@ export default function OrderInfo() {
                               onChange={handleInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                             >
-                              <option value=""></option>
+                              <option disabled>Schedule_CD | Schedule_Name | Schedule_Remark</option>
                               <option value={orderData.Schedule_CD || ""}>
                                 {orderData.Schedule_CD || ""}
                               </option>
@@ -3554,7 +3557,7 @@ export default function OrderInfo() {
                               ScheduleData.length > 0 ? (
                                 ScheduleData.map((item, index) => (
                                   <option key={index} value={item.Schedule_CD}>
-                                    {item.Schedule_CD}
+                                    {item.Schedule_CD}{generateSpaces(2)} |{" "}{item.Schedule_Name}{generateSpaces(2)} |{" "}{item.Schedule_Remark}
                                   </option>
                                 ))
                               ) : (
@@ -3607,6 +3610,7 @@ export default function OrderInfo() {
                             onChange={handleInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
                           >
+                            <option disabled>Target_CD | Target_Name | Target_Remark</option>
                             <option value={orderData?.Target_CD || ""}>
                               {orderData?.Target_CD || ""}
                             </option>
@@ -3614,7 +3618,7 @@ export default function OrderInfo() {
                             TargetData.length > 0 ? (
                               TargetData.map((item, index) => (
                                 <option key={index} value={item.Target_CD}>
-                                  {item.Target_CD}
+                                  {item.Target_CD}{generateSpaces(2)} |{" "}{item.Target_Name}{generateSpaces(2)} |{" "}{item.Target_Remark}
                                 </option>
                               ))
                             ) : (

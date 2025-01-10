@@ -329,6 +329,8 @@ export default function CostList() {
     }
   };
 
+  const [filteredCostListData, setFilteredCostListData] = useState([]);
+
   const enableFields = (fieldNames) => {
     setFormState((prevState) => {
       const updatedFields = { ...prevState };
@@ -727,14 +729,16 @@ export default function CostList() {
 
             <div className="bg-white w-11/12 mt-5 rounded-2xl mx-auto shadow-xl">
               <div className="flex justify-center py-4">
-                <label className="text-xl font-bold">Cost List</label>
+                <h1 className="text-xl font-bold">Cost List</h1>
               </div>
               <hr />
               <div className="container mx-auto px-4 overflow-x-auto ">
-                <div className="flex flex-nowrap justify-between items-center gap-2 py-2">
-                  <div className="flex w-full md:w-auto">
-                    <label className="w-[100px] font-medium">Search_Type</label>
-                    <div className="w-24">
+                <div className="flex flex-nowrap justify-between items-center gap-2 py-3">
+                  <div className="flex flex-col space-y-1 relative">
+                    <label className="w-[100px] text-sm font-bold">
+                      Search_Type
+                    </label>
+                    <div className="relative w-full lg:w-60 xl:w-44">
                       <select
                         onChange={handleSearchTypeChange}
                         className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full"
@@ -746,10 +750,12 @@ export default function CostList() {
                     </div>
                   </div>
 
-                  <div className="flex w-full md:w-auto px-10">
-                    <label className="w-[70px] font-medium">Delivery</label>
-                    <div className="w-24">
-                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                  <div className="flex flex-col space-y-1 relative">
+                    <label className="w-[70px] text-sm font-bold">
+                      Delivery1
+                    </label>
+                    <div className="relative w-full lg:w-60 xl:w-44">
+                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
                         <option value="Request">Request</option>
                         <option value="NAV">NAV</option>
                         <option value="Confirm">Confirm</option>
@@ -758,10 +764,12 @@ export default function CostList() {
                       </select>
                     </div>
                   </div>
-                  <div className="flex w-full md:w-auto">
-                    <label className="w-[80px] font-medium">Delivery2</label>
-                    <div className="w-24">
-                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                  <div className="flex flex-col space-y-1 relative">
+                    <label className="w-[80px] text-sm font-bold">
+                      Delivery2
+                    </label>
+                    <div className="relative w-full lg:w-60 xl:w-44">
+                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
                         <option value="Request">Request</option>
                         <option value="NAV">NAV</option>
                         <option value="Confirm">Confirm</option>
@@ -770,10 +778,12 @@ export default function CostList() {
                       </select>
                     </div>
                   </div>
-                  <div className="flex w-full md:w-auto px-10">
-                    <label className="w-[80px] font-medium">Delivery3</label>
-                    <div className="w-24">
-                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                  <div className="flex flex-col space-y-1 relative">
+                    <label className="w-[80px] text-sm font-bold">
+                      Delivery3
+                    </label>
+                    <div className="relative w-full lg:w-60 xl:w-44">
+                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
                         <option value="Request">Request</option>
                         <option value="NAV">NAV</option>
                         <option value="Confirm">Confirm</option>
@@ -782,21 +792,24 @@ export default function CostList() {
                       </select>
                     </div>
                   </div>
-                  <div className="flex w-full md:w-auto">
-                    <label className="w-[120px] font-medium">
+                  <div className="flex flex-col space-y-1 relative">
+                    <label className="w-[120px] text-sm font-bold">
                       View_Schedule
                     </label>
-                    <div className="w-24">
-                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                    <div className="relative w-full lg:w-60 xl:w-44">
+                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
                         <option value="Manual">Manual</option>
                         <option value="ASP">ASP</option>
                       </select>
                     </div>
                   </div>
-                  <div className="flex w-full md:w-auto px-10">
-                    <label className="w-[100px] font-medium">Plan_Target</label>
-                    <div className="w-24">
-                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+
+                  <div className="flex flex-col space-y-1 relative">
+                    <label className="w-[100px] text-sm font-bold">
+                      Plan_Target
+                    </label>
+                    <div className="relative w-full lg:w-60 xl:w-44">
+                      <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
                         <option value=""></option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
@@ -808,9 +821,9 @@ export default function CostList() {
               <hr />
 
               <div className="overflow-x-auto w-full">
-                <div className="grid grid-cols-12 min-w-[1400px]">
+                <div className="">
                   <div className="w-full content-start ms-5 mt-4">
-                    <label className="font-bold text-sm">
+                    <label className="font-bold text-md">
                       Order_Info_Search
                     </label>
                   </div>
@@ -1490,38 +1503,37 @@ export default function CostList() {
                               </div>
                             </div>
 
-                            <div className="flex justify-between gap-2 ">
-                              <div className="flex gap-2 w-full ml-4">
-                                <label className="w-24 font-medium text-sm">
-                                  Customer1
-                                </label>
-                                <div className="w-auto">
-                                  <input
-                                    type="text"
-                                    className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-24"
-                                  />
-                                </div>
-                              </div>
+                        <div className="flex justify-between gap-2 ">
+                          <div className="flex gap-2 w-full ml-4">
+                            <label className="w-24 font-bold text-xs">
+                              Customer1
+                            </label>
+                            <div className="w-auto">
+                              <input
+                                type="text"
+                                className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-24"
+                              />
+                            </div>
+                          </div>
 
-                              <div className="flex  w-28 ">
-                                <label className="ml-4 w-24 font-medium text-sm">
-                                  Mate1
-                                </label>
-                                <div className="w-auto ml-5">
-                                  <input
-                                    disabled={!formState.S_Material1.enabled}
-                                    id="S_Material1"
-                                    value={costListData?.S_Material1 || ""}
-                                    onChange={handleCostListInputChange}
-                                    type="text"
-                                    className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                      formState.S_Material1.enabled
-                                        ? "bg-[#ccffff] border-gray-500"
-                                        : "bg-white border-gray-500"
-                                    }`}
-                                  />
-                                </div>
-                              </div>
+                          <div className="flex  w-28 ">
+                            <label className="ml-4 w-24 font-bold text-xs">
+                              Mate1
+                            </label>
+                            <div className="w-auto ml-5">
+                              <input
+                                disabled={!formState.S_Material1.enabled}
+                                id="S_Material1"
+                                value={costListData?.S_Material1 || ""}
+                                onChange={handleCostListInputChange}
+                                type="text"
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Material1.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
+                              />
+                            </div>
+                          </div>
 
                               <div className="flex  w-28 ">
                                 <label className="ml-4 w-24 font-medium text-sm">
@@ -2419,10 +2431,10 @@ export default function CostList() {
                         {/* Group 1 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Order_Progress
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 id="S_St_Od_Progress_CD"
                                 value={costListData?.S_St_Od_Progress_CD || ""}
@@ -2445,10 +2457,10 @@ export default function CostList() {
                                   )}
                               </select>
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 id="S_Ed_Od_Progress_CD"
                                 value={costListData?.S_Ed_Od_Progress_CD || ""}
@@ -2476,20 +2488,19 @@ export default function CostList() {
                         {/* Group 2 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Delivery_CAT
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 disabled={!formState.S_St_Delivery_CD.enabled}
                                 id="S_St_Delivery_CD"
                                 value={costListData?.S_St_Delivery_CD || ""}
                                 onChange={handleCostListInputChange}
-                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                                  formState.S_St_Delivery_CD.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_St_Delivery_CD.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               >
                                 <option value=""></option>
                                 {Array.isArray(DeliveryData) &&
@@ -2507,20 +2518,19 @@ export default function CostList() {
                                   )}
                               </select>
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 disabled={!formState.S_Ed_Delivery_CD.enabled}
                                 id="S_Ed_Delivery_CD"
                                 value={costListData?.S_Ed_Delivery_CD || ""}
                                 onChange={handleCostListInputChange}
-                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                                  formState.S_Ed_Delivery_CD.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_Ed_Delivery_CD.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               >
                                 <option value=""></option>
                                 {Array.isArray(DeliveryData) &&
@@ -2543,20 +2553,19 @@ export default function CostList() {
                         {/* Group 3 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Schedule_CAT
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 disabled={!formState.S_St_Schedule_CD.enabled}
                                 id="S_St_Schedule_CD"
                                 value={costListData?.S_St_Schedule_CD || ""}
                                 onChange={handleCostListInputChange}
-                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                                  formState.S_St_Schedule_CD.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_St_Schedule_CD.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               >
                                 <option value=""></option>
                                 {Array.isArray(scheduleData) &&
@@ -2574,20 +2583,19 @@ export default function CostList() {
                                   )}
                               </select>
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 disabled={!formState.S_Ed_Schedule_CD.enabled}
                                 id="S_Ed_Schedule_CD"
                                 value={costListData?.S_Ed_Schedule_CD || ""}
                                 onChange={handleCostListInputChange}
-                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                                  formState.S_Ed_Schedule_CD.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_Ed_Schedule_CD.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               >
                                 <option value=""></option>
                                 {Array.isArray(scheduleData) &&
@@ -2610,20 +2618,19 @@ export default function CostList() {
                         {/* Group 4 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Target_CAT
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 disabled={!formState.S_St_Target_CD.enabled}
                                 id="S_St_Target_CD"
                                 value={costListData?.S_St_Target_CD || ""}
                                 onChange={handleCostListInputChange}
-                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                                  formState.S_St_Target_CD.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_St_Target_CD.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               >
                                 <option value=""></option>
                                 {Array.isArray(TargetData) &&
@@ -2641,20 +2648,19 @@ export default function CostList() {
                                   )}
                               </select>
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <select
                                 disabled={!formState.S_Ed_Target_CD.enabled}
                                 id="S_Ed_Target_CD"
                                 value={costListData?.S_Ed_Target_CD || ""}
                                 onChange={handleCostListInputChange}
-                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                                  formState.S_Ed_Target_CD.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_Ed_Target_CD.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               >
                                 <option value=""></option>
                                 {Array.isArray(TargetData) &&
@@ -2677,10 +2683,10 @@ export default function CostList() {
                         {/* Group 5 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Request_Delivery
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_St_Request_Delivery.enabled
@@ -2691,17 +2697,16 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_Request_Delivery.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Request_Delivery.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_Ed_Request_Delivery.enabled
@@ -2712,11 +2717,10 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_Request_Delivery.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Request_Delivery.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -2724,38 +2728,36 @@ export default function CostList() {
                         {/* Group 6 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Nav Delivery
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={!formState.S_St_NAV_Delivery.enabled}
                                 id="S_St_NAV_Delivery"
                                 value={costListData?.S_St_NAV_Delivery || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_NAV_Delivery.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_NAV_Delivery.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={!formState.S_Ed_NAV_Delivery.enabled}
                                 id="S_Ed_NAV_Delivery"
                                 value={costListData?.S_Ed_NAV_Delivery || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_NAV_Delivery.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_NAV_Delivery.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -2763,10 +2765,10 @@ export default function CostList() {
                         {/* Group 7 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Confirm_Delivery
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_St_Confirm_Delivery.enabled
@@ -2777,17 +2779,16 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_Confirm_Delivery.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Confirm_Delivery.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_Ed_Confirm_Delivery.enabled
@@ -2798,11 +2799,10 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_Confirm_Delivery.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Confirm_Delivery.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -2810,10 +2810,10 @@ export default function CostList() {
                         {/* Group 8 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Product_Delivery
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 id="S_St_Product_Delivery"
                                 value={
@@ -2824,10 +2824,10 @@ export default function CostList() {
                                 className="h-6 bg-[#ccffff] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 id="S_Ed_Product_Delivery"
                                 value={
@@ -2843,10 +2843,10 @@ export default function CostList() {
                         {/* Group 9 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Product_Received
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_St_Pd_Received_Date.enabled
@@ -2857,17 +2857,16 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_Pd_Received_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Pd_Received_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_Ed_Pd_Received_Date.enabled
@@ -2878,11 +2877,10 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_Pd_Received_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Pd_Received_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -2890,10 +2888,10 @@ export default function CostList() {
                         {/* Group 10 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Product_Complete
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_St_Pd_Complete_Date.enabled
@@ -2904,17 +2902,16 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_Pd_Complete_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Pd_Complete_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_Ed_Pd_Complete_Date.enabled
@@ -2925,11 +2922,10 @@ export default function CostList() {
                                 }
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_Pd_Complete_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Pd_Complete_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -2937,10 +2933,10 @@ export default function CostList() {
                         {/* Group 11 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               QC_Complete
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_St_I_Complete_Date.enabled
@@ -2949,17 +2945,16 @@ export default function CostList() {
                                 value={costListData?.S_St_I_Complete_Date || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_I_Complete_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_I_Complete_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={
                                   !formState.S_Ed_I_Complete_Date.enabled
@@ -2968,11 +2963,10 @@ export default function CostList() {
                                 value={costListData?.S_Ed_I_Complete_Date || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_I_Complete_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_I_Complete_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -2980,38 +2974,36 @@ export default function CostList() {
                         {/* Group 12 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Shipment_Date
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={!formState.S_St_Shipment_Date.enabled}
                                 id="S_St_Shipment_Date"
                                 value={costListData?.S_St_Shipment_Date || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_Shipment_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Shipment_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={!formState.S_Ed_Shipment_Date.enabled}
                                 id="S_Ed_Shipment_Date"
                                 value={costListData?.S_Ed_Shipment_Date || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_Shipment_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Shipment_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -3019,38 +3011,36 @@ export default function CostList() {
                         {/* Group 13 */}
                         <div className="mb-4">
                           <div className="flex gap-2 justify-end">
-                            <label className="w-28 font-medium text-sm">
+                            <label className="w-28 font-bold text-xs">
                               Cale_Date
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={!formState.S_St_Calc_Date.enabled}
                                 id="S_St_Calc_Date"
                                 value={costListData?.S_St_Calc_Date || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_St_Calc_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Calc_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
-                            <label className="w-auto font-medium text-sm">
+                            <label className="w-auto font-bold text-xs">
                               ~
                             </label>
-                            <div className="w-24">
+                            <div className="relative w-40 lg:w-44">
                               <input
                                 disabled={!formState.S_Ed_Calc_Date.enabled}
                                 id="S_Ed_Calc_Date"
                                 value={costListData?.S_Ed_Calc_Date || ""}
                                 onChange={handleCostListInputChange}
                                 type="date"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                                  formState.S_Ed_Calc_Date.enabled
-                                    ? "bg-[#ccffff] border-gray-500"
-                                    : "bg-white border-gray-500"
-                                }`}
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Calc_Date.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
                               />
                             </div>
                           </div>
@@ -3072,7 +3062,7 @@ export default function CostList() {
                   {/* Group 1 */}
                   <div className="flex flex-warp justify-start gap-2 mb-2 items-center">
                     <div className="flex item-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-8">
+                      <label className="w-auto font-bold text-xs mr-8">
                         Parts_No
                       </label>
                       <div className="items-center w-full mr-5">
@@ -3082,16 +3072,15 @@ export default function CostList() {
                           value={costListData?.S_Parts_No || ""}
                           onChange={handleCostListInputChange}
                           type="date"
-                          className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                            formState.S_Parts_No.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Parts_No.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         />
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-3">
+                      <label className="w-auto font-bold text-xs mr-3">
                         Parts_Pend
                       </label>
                       <div className="items-center w-full mr-5">
@@ -3100,11 +3089,10 @@ export default function CostList() {
                           id="S_Parts_Pending"
                           value={costListData?.S_Parts_Pending || ""}
                           onChange={handleCostListInputChange}
-                          className={`border-gray-500 border-solid border-2 rounded-md  w-full ${
-                            formState.S_Parts_Pending.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_Parts_Pending.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         >
                           <option value=""></option>
                           <option value="true">Yes</option>
@@ -3112,7 +3100,7 @@ export default function CostList() {
                         </select>
                       </div>
                       <div className="flex items-center gap-2 ">
-                        <label className="w-auto font-medium text-sm mr-7">
+                        <label className="w-auto font-bold text-xs mr-7">
                           Pt_CAT1
                         </label>
                         <div className="items-center w-full">
@@ -3121,11 +3109,10 @@ export default function CostList() {
                             id="S_Parts_CAT1"
                             value={costListData?.S_Parts_CAT1 || ""}
                             onChange={handleCostListInputChange}
-                            className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${
-                              formState.S_Parts_CAT1.enabled
-                                ? "bg-[#ccffff] border-gray-500"
-                                : "bg-white border-gray-500"
-                            }`}
+                            className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${formState.S_Parts_CAT1.enabled
+                              ? "bg-[#ccffff] border-gray-500"
+                              : "bg-white border-gray-500"
+                              }`}
                           >
                             <option value=""></option>
                             <option value="true">Yes</option>
@@ -3138,7 +3125,7 @@ export default function CostList() {
                   {/* Group 2 */}
                   <div className="flex flex-warp justify-start gap-2 mb-4 items-center">
                     <div className="flex item-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-9">
+                      <label className="w-auto font-bold text-xs mr-9">
                         Pt_CAT2
                       </label>
                       <div className="items-center w-full mr-5">
@@ -3147,11 +3134,10 @@ export default function CostList() {
                           id="S_Parts_CAT1"
                           value={costListData?.S_Parts_CAT1 || ""}
                           onChange={handleCostListInputChange}
-                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${
-                            formState.S_Parts_CAT1.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${formState.S_Parts_CAT1.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         >
                           <option value=""></option>
                           <option value="true">Yes</option>
@@ -3160,7 +3146,7 @@ export default function CostList() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-7">
+                      <label className="w-auto font-bold text-xs mr-7">
                         Pt_CAT3
                       </label>
                       <div className="items-center w-full">
@@ -3169,11 +3155,10 @@ export default function CostList() {
                           id="S_Parts_CAT3"
                           value={costListData?.S_Parts_CAT3 || ""}
                           onChange={handleCostListInputChange}
-                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${
-                            formState.S_Parts_CAT3.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${formState.S_Parts_CAT3.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         >
                           <option value=""></option>
                           <option value="true">Yes</option>
@@ -3185,7 +3170,7 @@ export default function CostList() {
                   {/* group3 */}
                   <div className="flex flex-warp justify-start gap-2 mb-2 items-center">
                     <div className="flex item-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-4">
+                      <label className="w-auto font-bold text-xs mr-4">
                         Reg_Person
                       </label>
                       <div className="items-center w-full mr-5">
@@ -3213,7 +3198,7 @@ export default function CostList() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-3">
+                      <label className="w-auto font-bold text-xs mr-3">
                         Parts_Mate
                       </label>
                       <div className="items-center w-full mr-5">
@@ -3222,17 +3207,16 @@ export default function CostList() {
                           id="S_Parts_Material"
                           value={costListData?.S_Parts_Material || ""}
                           onChange={handleCostListInputChange}
-                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${
-                            formState.S_Parts_Material.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${formState.S_Parts_Material.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         >
                           
                         </input>
                       </div>
                       <div className="flex items-center gap-2 ">
-                        <label className="w-auto font-medium text-sm mr-3">
+                        <label className="w-auto font-bold text-xs mr-3">
                           Parts_Note
                         </label>
                         <div className="items-center w-full">
@@ -3241,11 +3225,10 @@ export default function CostList() {
                             id="S_Parts_Instructions"
                             value={costListData?.S_Parts_Instructions || ""}
                             onChange={handleCostListInputChange}
-                            className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${
-                              formState.S_Parts_Instructions.enabled
-                                ? "bg-[#ccffff] border-gray-500"
-                                : "bg-white border-gray-500"
-                            }`}
+                            className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${formState.S_Parts_Instructions.enabled
+                              ? "bg-[#ccffff] border-gray-500"
+                              : "bg-white border-gray-500"
+                              }`}
                           >
                             
                           </input>
@@ -3256,7 +3239,7 @@ export default function CostList() {
                   {/* Group 4*/}
                   <div className="flex flex-warp justify-start gap-2 mb-4 items-center">
                     <div className="flex item-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-5">
+                      <label className="w-auto font-bold text-xs mr-5">
                         Pt_Remark
                       </label>
                       <div className="items-center w-full mr-5">
@@ -3265,18 +3248,17 @@ export default function CostList() {
                           id="S_Parts_Remark"
                           value={costListData?.S_Parts_Remark || ""}
                           onChange={handleCostListInputChange}
-                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${
-                            formState.S_Parts_Remark.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`border-gray-500 border-solid border-2 rounded-md  w-24 h-6 ${formState.S_Parts_Remark.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         >
                           
                         </input>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ">
-                      <label className="w-auto font-medium text-sm mr-5">
+                      <label className="w-auto font-bold text-xs mr-5">
                         Parts_Info
                       </label>
                       <div className="items-center w-full">
@@ -3293,7 +3275,7 @@ export default function CostList() {
                   {/* Group 5*/}
                   <div className="flex flex-warp justify-start gap-4 mb-2 ">
                     <div className="flex item-center gap-2">
-                      <label className="w-auto font-medium text-sm ">
+                      <label className="w-auto font-bold text-xs ">
                         Parts_Delivery
                       </label>
                       <div className="items-center">
@@ -3303,14 +3285,13 @@ export default function CostList() {
                           value={costListData?.S_St_Parts_Delivery || ""}
                           onChange={handleCostListInputChange}
                           type="date"
-                          className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                            formState.S_St_Parts_Delivery.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_St_Parts_Delivery.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         />
                       </div>
-                      <label className="font-medium text-sm">~</label>
+                      <label className="font-bold text-xs">~</label>
                       <div>
                         <input
                           disabled={!formState.S_Ed_Parts_Delivery.enabled}
@@ -3318,16 +3299,15 @@ export default function CostList() {
                           value={costListData?.S_Ed_Parts_Delivery || ""}
                           onChange={handleCostListInputChange}
                           type="date"
-                          className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
-                            formState.S_Ed_Parts_Delivery.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                          }`}
+                          className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Ed_Parts_Delivery.enabled
+                            ? "bg-[#ccffff] border-gray-500"
+                            : "bg-white border-gray-500"
+                            }`}
                         />
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ">
-                      <label className="w-auto font-medium text-sm ">
+                      <label className="w-auto font-bold text-xs ">
                         Pl_Progress
                       </label>
                       <div className="w-full">
@@ -3353,7 +3333,7 @@ export default function CostList() {
                               )}
                         </select>
                       </div>
-                      <label className="font-medium text-sm">~</label>
+                      <label className="font-bold text-xs">~</label>
                       <div className=" w-full pr-2">
                         <select
                           id="S_Ed_Pl_Progress_CD"
@@ -3390,7 +3370,7 @@ export default function CostList() {
                 </div>
                 <div className="flex gap-6 mb-2 justify-end pr-3">
                   <div className="flex item-center gap-2">
-                    <label className="w-auto font-medium text-sm ">
+                    <label className="w-auto font-bold text-xs ">
                       Process_Date
                     </label>
                     <div>
@@ -3402,7 +3382,7 @@ export default function CostList() {
                         className="bg-[#ccffff] border-solid border-2 border-gray-500 rounded-md px-1 w-24 h-6"
                       />
                     </div>
-                    <label className="font-medium text-sm">~</label>
+                    <label className="font-bold text-xs">~</label>
                     <div>
                       <input
                         id="S_Ed_Process_Date"
@@ -3417,7 +3397,7 @@ export default function CostList() {
 
                 <div className="flex gap-6  justify-end pr-3">
                   <div className="flex item-center gap-2">
-                    <label className="w-auto font-medium text-sm ">
+                    <label className="w-auto font-bold text-xs ">
                       Complete_Date
                     </label>
                     <div>
@@ -3429,7 +3409,7 @@ export default function CostList() {
                         className="bg-[#ccffff] border-solid border-2 border-gray-500 rounded-md px-1 w-24 h-6"
                       />
                     </div>
-                    <label className="font-medium text-sm">~</label>
+                    <label className="font-bold text-xs">~</label>
                     <div>
                       <input
                         id="S_Ed_Complete_Date"
@@ -3456,7 +3436,7 @@ export default function CostList() {
                         {/* div ย่อยที่ 1 */}
                         <div className="flex gap-6">
                           <div className="flex  item-center gap-2">
-                            <label className="w-auto font-medium text-sm ">
+                            <label className="w-auto font-bold text-xs ">
                               Select_Od_No
                             </label>
                           </div>
@@ -3469,7 +3449,7 @@ export default function CostList() {
                           {/* div ย่อยที่ 2 */}
                           <div className="flex gap-6">
                             <div className="flex  item-center gap-2">
-                              <label className="w-auto font-medium text-sm ">
+                              <label className="w-auto font-bold text-xs ">
                                 Select_Pt_No
                               </label>
                             </div>
@@ -3484,7 +3464,7 @@ export default function CostList() {
                               <div className=" ">
                                 <div className="flex item-center gap-2">
                                   <div className="flex  item-center gap-2">
-                                    <label className="w-auto font-medium text-sm ">
+                                    <label className="w-auto font-bold text-xs ">
                                       l_List_View_W(22.8)
                                     </label>
                                   </div>
@@ -3499,7 +3479,7 @@ export default function CostList() {
                               {/* div ย่อยที่ 4 */}
                               <div className="flex gap-6">
                                 <div className="flex item-center">
-                                  <label className="w-auto font-medium text-sm">
+                                  <label className="w-auto font-bold text-xs">
                                     Pl_List_ViewH(3~15cm)
                                   </label>
                                 </div>
@@ -3520,9 +3500,550 @@ export default function CostList() {
               </div>
 
               <div className="flex justify-end p-4">
-                <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                <button className="bg-blue-500 p-3 rounded-md hover:bg-blue-700 font-medium text-white">
                   Change_View
                 </button>
+              </div>
+              <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
+              <div className="overflow-x-auto w-full mt-4">
+                <table className="min-w-full table-auto border-collapse border border-gray-800 shadow-md rounded-md">
+                  <thead className="bg-gray-200 text-black">
+                    <tr>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Product_Delivery
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Order_No
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Parts_No
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Product_Grp
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Customer_CD
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Customer_Abb
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[400px]">
+                        Product_Name
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[400px]">
+                        Product_Size
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[250px]">
+                        Product_Draw
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Quantity
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Pd_Calc_Qty
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[200px]">
+                        Unit
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[150px]">
+                        Target
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[400px]">
+                        Product_Docu
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Sales_Grp
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Sales_Person
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Request1
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Request2
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Request3
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Material1
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Material2
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Coating_CD
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Item1
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Item2
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Item3
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Item4
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Price
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Unit_Price
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Pd_Received_Date
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Request_Delivery
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        NAV_Delivery
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        I_Completed_Date
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Pd_Calc_Date
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Shipment_Date
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Specific
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Confirm_Delivery
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Delivery
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Schedule
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Od_Progress
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Sl_Instructions
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Pd_Instructions
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Pd_Remark
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        I_Remark
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Pd_Complete_Date
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Supple_Docu
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process1
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process2
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process3
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process4
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process5
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process6
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process7
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process8
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process9
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process10
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process11
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process12
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process13
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process14
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process15
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process16
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process17
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process18
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process19
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process20
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process21
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process22
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process23
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process24
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process25
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process26
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process27
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process28
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process29
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process30
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process31
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process32
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process33
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process34
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process35
+                      </th>
+                      <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                        Process36
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCostListData.length > 0 &&
+                      filteredCostListData.map((order, index) => (
+                        <tr
+                          key={index}
+                          className="bg-white transition-colors duration-300"
+                        >
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Product_Delivery
+                              ? new Date(
+                                order.Product_Delivery
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Order_No}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Parts_No */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Product_Grp_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Customer_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Customer_Abb */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Product_Name}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Product_Size}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Product_Draw}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Quantity}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Pd_Calc_Qty}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Unit_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Target_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Product_Docu}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Sales_Grp_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Sales_Person_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Request1_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Request2_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Request3_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Material1}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Material2}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Coating_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Item1_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Item2_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Item3_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Item4_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Price_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Unit_Price}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Pd_Received_Date
+                              ? new Date(
+                                order.Pd_Received_Date
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Request_Delivery
+                              ? new Date(
+                                order.Request_Delivery
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.NAV_Delivery
+                              ? new Date(order.NAV_Delivery).toLocaleDateString(
+                                "en-GB"
+                              )
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.I_Completed_Date
+                              ? new Date(
+                                order.I_Completed_Date
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Pd_Calc_Date
+                              ? new Date(order.Pd_Calc_Date).toLocaleDateString(
+                                "en-GB"
+                              )
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Shipment_Date
+                              ? new Date(
+                                order.Shipment_Date
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Specific_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Confirm_Delivery
+                              ? new Date(
+                                order.Confirm_Delivery
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Delivery_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Schedule_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Od_Progress_CD}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Sl_Instructions}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Pd_Instructions}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Pd_Remark}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.I_Remark}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Pd_Complete_Date
+                              ? new Date(
+                                order.Pd_Complete_Date
+                              ).toLocaleDateString("en-GB")
+                              : ""}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {order.Supple_Docu}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process1 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process2 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process3 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process4 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process5 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process6 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process7 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process8 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process9 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process10 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process11 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process12 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process13 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process14 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process15 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process16 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process17 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process18 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process19 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process20 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process21 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process22 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process23 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process24 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process25 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process26 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process27 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process28 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process29 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process30 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process31 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process32 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process33 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process34 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process35 */}
+                          </td>
+                          <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                            {/* Process36 */}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
             </div>
             <div className="bg-white p-3 mt-5">
@@ -3559,20 +4080,20 @@ export default function CostList() {
                     Product <br />
                     部門 (F5)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-md hover:bg-blue-700 font-medium text-white">
                     Calc <br />
                     生産 (F6)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-md hover:bg-blue-700 font-medium text-white">
                     List <br />一 覽 (F7)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-md hover:bg-blue-700 font-medium text-white">
                     Data <br />
                     データ (F8)
                   </button>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-md hover:bg-blue-700 font-medium text-white">
                     <label className="flex justify-center items-center">
                       <IoIosArrowRoundForward className="font-medium text-2xl" />{" "}
                       CSV{" "}

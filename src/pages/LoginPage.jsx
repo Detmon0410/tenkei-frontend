@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [userID, setUserID] = useState("");
+  const [workerCD, setWorkerCD] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,7 +16,7 @@ const Login = () => {
 
 
     try {
-    const input = { User_ID: userID, User_Pass: password }; // สร้าง input object
+    const input = { Worker_CD: workerCD,Worker_Pass: password }; // สร้าง input object
     const res = await login(input); // รอผลจากฟังก์ชัน login
         setAuthUser(res);
         setError("login success"); // เคลียร์ข้อผิดพลาด
@@ -44,8 +44,8 @@ const Login = () => {
           </label>
           <input
             type="text"
-            value={userID}
-            onChange={(e) => setUserID(e.target.value)}
+            value={workerCD}
+            onChange={(e) => setWorkerCD(e.target.value)}
             required
             className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />

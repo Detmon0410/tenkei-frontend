@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOrder } from "../hooks/use-order";
 import { usePurchase } from "../hooks/use-purchase";
@@ -9,8 +9,8 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 export default function PlanInfo() {
-    const navigate = useNavigate();
-    const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
   const [searchOrderNo, setSearchOrderNo] = useState(initialSearchOrderNo);
   const [autoYearChange, setAutoYearChange] = useState(false);
@@ -40,6 +40,7 @@ export default function PlanInfo() {
     setTargetData,
     SupplyData,
     setSupplyData,
+    fetchOrders,
   } = useOrder();
   const {
     planData,
@@ -64,6 +65,7 @@ export default function PlanInfo() {
     deletePlan,
     deleteSchedule,
     deleteWip,
+    fetch_All_Plan,
   } = usePlan();
   const { ProcessCData } = useCost();
   const { purchaseData, setPurchaseData } = usePurchase();
@@ -83,9 +85,26 @@ export default function PlanInfo() {
   const [Stagnat_Scale, setStagnat_Scale] = useState("");
   const [ManHour_Scale, setManHour_Scale] = useState("");
   const [Search_Odpt_No, setSearch_Odpt_No] = useState("");
+  const RegPerson = useRef(null);
+  const PartsNo = useRef(null);
+  const SearchorderNoRef = useRef(null);
+  const [buttonState, setButtonState] = useState({
+    F1: false,
+    F2: false,
+    F3: false,
+    F4: false,
+    F5: false,
+    F6: false,
+    F7: false,
+    F8: false,
+    F9: false,
+    F10: false,
+    F11: false,
+    F12: true,
+  });
   const inputs = Array.from({ length: 36 }, (_, i) => i + 1);
 
-  const handleInputChange = (event, isPurchase, isPlan = false) => {
+  const handleInputChange = async (event, isPurchase, isPlan = false) => {
     const { id, value, type, checked } = event.target;
 
     if (isPurchase) {
@@ -108,13 +127,69 @@ export default function PlanInfo() {
     if (id === "Search_Order_No") {
       setSearchOrderNo(value);
       if (value) {
-        searchOrderData(value);
-        searchPartsData(value);
+        setSearchOrderNo(value);
+        const result = await searchOrderData(value);
+
+        if (result) {
+          searchPartsData(value);
+          setButtonState((prevState) => ({
+            ...prevState,
+            F1: true,
+            F3: true,
+            F4: true,
+            F5: true,
+            F6: true,
+            F7: false,
+            F8: true,
+            F11: true,
+          }));
+        } else {
+          setButtonState((prevState) => ({
+            ...prevState,
+            F1: false,
+            F3: false,
+            F4: false,
+            F5: false,
+            F6: false,
+            F7: false,
+            F8: false,
+            F11: false,
+          }));
+        }
       }
     }
   };
+  const calculateAmount = async () => {
+    if (planData?.Money_Object === true) {
+      const totalQty =
+        (planData?.Pt_Qty || 0) +
+        (planData?.Pt_Spare_Qty || 0) -
+        (planData?.Pt_NG_Qty || 0);
+      const unitPrice = orderData.Unit_Price;
+      if (!orderData) {
+        console.warn("No order data found for Order_No:", planData?.Order_No);
+        return 0;
+      }
+      if (totalQty > planData?.Pt_Qty) {
+        const amount = unitPrice * planData?.Pt_Qty;
+        return amount;
+      } else {
+        const amount = unitPrice * totalQty;
+        return amount;
+      }
+    }
+    return 0;
+  };
 
-  const isSearchOrderNoFilled = searchOrderNo !== "";
+  const handleMoneyObjectChange = async (event) => {
+    const value = event.target.checked;
+    const amount = await calculateAmount();
+    setPlanData((prevData) => ({
+      ...prevData,
+      Money_Object: value,
+      Amount: amount,
+    }));
+  };
 
   const handlePlanInputChange = async (event) => {
     const { id, value, type, checked } = event.target;
@@ -126,6 +201,8 @@ export default function PlanInfo() {
       formattedValue = dateWithCurrentTime.toISOString();
     }
 
+    const amount = await calculateAmount();
+
     setPlanData((prevPlanData) => ({
       ...prevPlanData,
       [id]:
@@ -136,30 +213,199 @@ export default function PlanInfo() {
           : value === ""
           ? null
           : value,
+      Amount: amount,
     }));
-
     if (id === "Search_Parts_No") {
       setSearchPlanNo(value);
-      setSearch_Odpt_No(`${searchOrderNo || ""}${value}`);
+      if (value) {
+        setSearch_Odpt_No(`${searchOrderNo || ""}${value}`);
+        setButtonState((prevState) => {
+          const updatedState = {
+            F1: false,
+            F2: true,
+            F7: true,
+            F10: true,
+            F11: true,
+          };
+          Object.keys(prevState).forEach((key) => {
+            if (!(key in updatedState)) {
+              updatedState[key] = false;
+            }
+          });
+    
+          return updatedState;
+        });
+      } else {
+        setButtonState((prevState) => {
+          const updatedState = {
+            F1: false,
+            F2: false,
+            F7: false,
+            F10: false,
+            F11: false,
+          };
+    
+        
+          Object.keys(prevState).forEach((key) => {
+            if (!(key in updatedState)) {
+              updatedState[key] = false;
+            }
+          });
+    
+          return updatedState;
+        });
+      }
     }
   };
 
   const handleSearch_Order_NoChange = async (newOrder_No) => {
     if (searchOrderNo) {
       await searchOrderData(searchOrderNo);
+    } else {
+      setOrderData("");
+      setSelectedSalesPerson("");
+      setSelectedCustomerAbb("");
+      setCoatingName("");
+      setDeliveryName("");
+      setPriceName("");
+      setUnitName("");
+      setTargetName("");
+      setProgressName("");
+      setPerson_Name("");
+      setupdPerson_Name("");
+      setSchedule_Name("");
+      setStagnat_Scale("");
+      setManHour_Scale("");
+      setSearch_Odpt_No("");
+      setPlanData("");
     }
   };
 
   useEffect(() => {
     handleSearch_Order_NoChange();
+    if (searchOrderNo && searchPlanNo){
+      setButtonState({
+        F1: false,
+        F2: true,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: true,
+        F8: false,
+        F9: true,
+        F10: true,
+        F11: false,
+        F12: false,
+      });
+    }else if (searchOrderNo && searchPlanNo === ""){
+      setButtonState({
+        F1: false,
+        F2: true,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: true,
+        F8: false,
+        F9: true,
+        F10: true,
+        F11: false,
+        F12: false,
+      });
+    }
+    else if (searchOrderNo === "" && searchPlanNo === "") {
+      setButtonState({
+        F1: true,
+        F2: true,
+        F3: true,
+        F4: true,
+        F5: true,
+        F6: true,
+        F7: true,
+        F8: true,
+        F9: true,
+        F10: true,
+        F11: true,
+        F12: false,
+      });
+    }
   }, [searchOrderNo]);
 
+  const handleF2Click = () => {
+    try {
+      searchPermission(false);
+      editPermission(true);
+      if (RegPerson.current) {
+        RegPerson.current.focus();
+      }
+      setButtonState((prevState) => ({
+        ...prevState,
+        F1: false,
+        F2: false,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F7: false,
+        F8: true,
+        F9: true,
+        F10: false,
+        F11: true,
+        F12: false,
+      }));
+    } catch (error) {
+      alert("Error occurs when F2_Click\nPlease contact system administrator.");
+    }
+  };
+
   const handleF3Click = () => {
+    searchPermission(false);
+    editPermission(true);
+    setButtonState({
+      F1: true,
+      F2: true,
+      F3: true,
+      F4: true,
+      F5: true,
+      F6: true,
+      F7: false,
+      F8: false,
+      F9: false,
+      F10: false,
+      F11: false,
+      F12: true,
+    });
     try {
       setPlanData((prevData) => ({
-        ...prevData,
-        Order_No: orderData?.Order_No || "",
+        ...Object.keys(prevData).reduce((acc, key) => {
+          acc[key] = ""; // ตั้งค่าฟิลด์ทั้งหมดเป็นค่าว่าง
+          return acc;
+        }, {}),
+        Pl_Quote_CD: "0",
+        Max_No: "0",
+        Order_No: prevData?.Order_No || orderData?.Order_No || "",
       }));
+      searchPermission(false);
+      editPermission(true);
+      setPerson_Name("");
+      setProgressName("");
+      setupdPerson_Name("");
+      setButtonState((prevState) => ({
+        ...prevState,
+        F1: false,
+        F2: false,
+        F3: false,
+        F4: false,
+        F5: false,
+        F6: false,
+        F9: true,
+        F11: true,
+        F12: false,
+      }));
+      if (PartsNo.current) {
+        PartsNo.current.focus();
+      }
     } catch (error) {
       console.error("Error in handleF3Click:", error);
       Swal.fire({
@@ -189,8 +435,105 @@ export default function PlanInfo() {
     }
   };
 
+  const handleF8Click = async () => {
+    try {
+      const confirm = await Swal.fire({
+        title: "Confirm",
+        text: "Another Parts_No input?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      });
+
+      if (confirm.isConfirmed) {
+        searchPermission(false);
+        editPermission(false);
+        const planExists = await searchPartsData(searchOrderNo);
+        if (planExists) {
+          searchPermission(true);
+          setSearchPlanNo("");
+          setTimeout(() => {
+            const selectElement = document.getElementById("Search_Parts_No");
+            if (selectElement) {
+              selectElement.focus();
+            }
+          }, 300);
+        }
+        setButtonState((prevState) => ({
+          ...prevState,
+          F1: true,
+          F3: true,
+          F4: true,
+          F5: true,
+        }));
+      }
+    } catch (error) {
+      console.error("Error in handleF8Click:", error);
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: "กรุณาติดต่อผู้ดูแลระบบ",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+    }
+  };
+  const confirmWhenSaveNull = async (value, fieldName, defaultValue) => {
+    if (value === null || value === "" || value === undefined) {
+      const displayValue = defaultValue !== undefined ? defaultValue : "N/A"; // ค่าดีฟอลต์ที่แสดงในกรณีที่ไม่มีค่า
+      await Swal.fire({
+        title: `${fieldName} is required!`,
+        text: `Please provide a valid value for ${fieldName}. Default value: ${displayValue}`,
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleF9Click = async () => {
     try {
+      const fieldsToCheck = [
+        { value: orderData.Order_No, fieldName: "Order_No", defaultValue: "" },
+        { value: planData?.Parts_No, fieldName: "Parts_No", defaultValue: "" },
+        {
+          value: planData?.Pt_Delivery,
+          fieldName: "Pt_Delivery",
+          defaultValue: await searchOrderData(orderData.Order_No),
+        },
+        {
+          value: planData?.Parts_CD,
+          fieldName: "Parts_CD",
+          defaultValue: "009",
+        },
+        {
+          value: planData?.Pt_Qty,
+          fieldName: "Pt_Qty",
+          defaultValue: await searchOrderData(orderData.Order_No),
+        },
+        {
+          value: planData?.Pt_Spare_Qty,
+          fieldName: "Pt_Spare_Qty",
+          defaultValue: 0,
+        },
+        { value: planData?.Pt_NG_Qty, fieldName: "Pt_NG_Qty", defaultValue: 0 },
+        {
+          value: planData?.Pl_Ed_Rev_Day,
+          fieldName: "Pl_Ed_Rev_Day",
+          defaultValue: 0,
+        },
+      ];
+
+      for (const field of fieldsToCheck) {
+        const isValid = await confirmWhenSaveNull(
+          field.value,
+          field.fieldName,
+          field.defaultValue
+        );
+        if (!isValid) return;
+      }
+
       const orderExists = await searchOrderData(orderData.Order_No);
       if (orderExists) {
         const PlanExists = await selectPartsData(
@@ -207,10 +550,41 @@ export default function PlanInfo() {
             cancelButtonText: "ไม่ใช่",
           });
           if (result.isConfirmed) {
+            if (planData?.Money_Object === false) {
+              const confirmMoneyChange = await Swal.fire({
+                title: "Do you change [Money_Object] On ?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "ใช่",
+                cancelButtonText: "ไม่ใช่",
+              });
+
+              if (confirmMoneyChange.isConfirmed) {
+                setPlanData((prevData) => ({
+                  ...prevData,
+                  Money_Object: true,
+                }));
+              }
+            }
             await createResult();
             await createPlan();
             await createSchedule();
             await createWip();
+            setSearch_Odpt_No(`${searchOrderNo || ""}${Search_Odpt_No}`);
+            editPermission(false);
+            setButtonState((prevState) => ({
+              ...prevState,
+              F1: true,
+              F2: true,
+              F3: true,
+              F4: true,
+              F5: true,
+              F6: true,
+              F7: true,
+              F8: true,
+              F9: false,
+              F12: true,
+            }));
           }
         } else {
           const result = await Swal.fire({
@@ -221,16 +595,48 @@ export default function PlanInfo() {
             cancelButtonText: "ไม่ใช่",
           });
           if (result.isConfirmed) {
+            if (planData?.Money_Object === false) {
+              const confirmMoneyChange = await Swal.fire({
+                title: "Do you change [Money_Object] On ?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "ใช่",
+                cancelButtonText: "ไม่ใช่",
+              });
+
+              if (confirmMoneyChange.isConfirmed) {
+                setPlanData((prevData) => ({
+                  ...prevData,
+                  Money_Object: true,
+                }));
+              }
+            }
             await createResult();
             await createPlan();
             await createSchedule();
             await createWip();
+
+            setSearch_Odpt_No(`${searchOrderNo || ""}${Search_Odpt_No}`);
+            editPermission(false);
+            setButtonState((prevState) => ({
+              ...prevState,
+              F1: true,
+              F2: true,
+              F3: true,
+              F4: true,
+              F5: true,
+              F6: true,
+              F7: true,
+              F8: true,
+              F9: false,
+              F12: true,
+            }));
           }
         }
       }
     } catch (error) {
       console.error("Error in handleF9Click:", error);
-      Swal.fire({
+      await Swal.fire({
         title: "เกิดข้อผิดพลาด",
         text: "กรุณาติดต่อผู้ดูแลระบบ",
         icon: "error",
@@ -264,26 +670,170 @@ export default function PlanInfo() {
       });
 
       if (result.isConfirmed) {
-        // ลบข้อมูล
+        const orderExists = await searchPartsData(searchOrderNo); 
+        editPermission(false);
+        searchPermission(true);
+        if (orderExists) {
+        
+          setButtonState((prevState) => ({
+            ...prevState,
+            F6: true,
+          }));
+        } else {
+
+          const odProgressCD = await searchOrderData(searchOrderNo); 
+    
+          if (odProgressCD < 7) {
+          
+            setOrderData((prevOrderData) => ({
+              ...prevOrderData,
+              Od_Progress_CD: 0,
+            }));
+    
+            setButtonState((prevState) => ({
+              ...prevState,
+              F2: false,
+              F6: false,
+              F8: false,
+            }));
+          }
+   
+        }
+
         await deleteWip(planData.Order_No, planData?.Parts_No);
         await deleteSchedule(planData.Order_No, planData?.Parts_No);
         await deletePlan(planData.Order_No, planData?.Parts_No);
         await deleteResult(planData.Order_No, planData?.Parts_No);
 
-        // แสดงข้อความแจ้งเตือนความสำเร็จ
+        
         Swal.fire(
           "ลบเรียบร้อย!",
           "ข้อมูลของคุณได้ถูกลบเรียบร้อยแล้ว.",
           "success"
         );
+        setButtonState((prevState) => ({
+          ...prevState,
+          F1: true,
+          F7: false,
+          F11: true,
+        }));
+        setOrderData("");
+        setSelectedSalesPerson("");
+        setSelectedCustomerAbb("");
+        setCoatingName("");
+        setDeliveryName("");
+        setPriceName("");
+        setUnitName("");
+        setTargetName("");
+        setProgressName("");
+        setPerson_Name("");
+        setupdPerson_Name("");
+        setSchedule_Name("");
+        setStagnat_Scale("");
+        setManHour_Scale("");
+        setPlanData("");
+        setSearchOrderNo("");
+        setSearchPlanNo("");
       }
     } catch (error) {
-      // จัดการข้อผิดพลาดและแจ้งผู้ใช้
+   
       console.error("Error during F10_Click:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
         text: "ไม่สามารถลบข้อมูลได้ โปรดติดต่อผู้ดูแลระบบ.",
+      });
+    }
+  };
+
+  const handleF11Click = async () => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirm",
+        html: "Would you like to make the next input?<br>ป้อนข้อมูลต่อไปหรือไม่ ?<br>次入力しますか?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      });
+  
+      if (result.isConfirmed) {
+        const originalPlanData = await fetch_All_Plan();
+  
+        const originalSearchOdptNo = `${searchOrderNo || ""}${originalPlanData?.Search_Odpt_No || ""}`;
+        const currentSearchOdptNo = `${searchOrderNo || ""}${Search_Odpt_No}`;
+  
+        if (currentSearchOdptNo !== originalSearchOdptNo) {
+          const confirmResult = await Swal.fire({
+            title: "Reconfirm",
+            html: "Editing contents will be cancelled!<br>Really, are you sure?<br>เนื้อหาที่ทําการแก้ไขจะถูกยกเลิก! แน่ใจจริงๆแล้ว หรือไม่?<br>編集中の内容が取消されます!<br>本当に宜しいで",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+          });
+  
+          if (!confirmResult.isConfirmed) {
+            return; 
+          }
+        }
+  
+        setOrderData("");
+        setSelectedSalesPerson("");
+        setSelectedCustomerAbb("");
+        setCoatingName("");
+        setDeliveryName("");
+        setPriceName("");
+        setUnitName("");
+        setTargetName("");
+        setProgressName("");
+        setPerson_Name("");
+        setupdPerson_Name("");
+        setSchedule_Name("");
+        setStagnat_Scale("");
+        setManHour_Scale("");
+        setPlanData("");
+        setSearchOrderNo("");
+        setSearchPlanNo("");
+        const response = await fetchOrders();
+  
+        setButtonState((prevState) => {
+          const newState = {};
+          for (const key in prevState) {
+            newState[key] = false;
+          }
+          return newState;
+        });
+  
+        editPermission(false);
+  
+        if (!response || !response.data || response.data.length === 0) {
+          Swal.fire({
+            title: "ไม่มีข้อมูลคำสั่งซื้อ",
+            icon: "warning",
+            confirmButtonText: "ตกลง",
+          });
+        } else {
+          searchPermission(true);
+          if (SearchorderNoRef.current) {
+            SearchorderNoRef.current.focus();
+          }
+          setButtonState((prevState) => {
+            const newState = {};
+            for (const key in prevState) {
+              newState[key] = false;
+            }
+            return newState;
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error in handleF11Click:", error);
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: "กรุณาลองอีกครั้ง",
+        icon: "error",
+        confirmButtonText: "ตกลง",
       });
     }
   };
@@ -445,6 +995,24 @@ export default function PlanInfo() {
     }
   }, [Search_Odpt_No]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const amount = await calculateAmount();
+      setPlanData((prevData) => ({
+        ...prevData,
+        Amount: amount,
+      }));
+    };
+
+    fetchData();
+  }, [
+    planData?.Money_Object,
+    planData?.Pt_Qty,
+    planData?.Pt_Spare_Qty,
+    planData?.Pt_NG_Qty,
+    orderData,
+  ]);
+
   const rows = inputs.map((id) => {
     const processKey = planData?.[`PPC${id}`];
     const ProcessNamesForRow = (ProcessCData || [])
@@ -455,6 +1023,7 @@ export default function PlanInfo() {
         <div>
           <div className="flex space-x-2 w-full">
             <input
+              disabled
               id={`QPPC${id}`}
               type="text"
               value={planData?.[`QPPC${id}`] || ""}
@@ -466,6 +1035,7 @@ export default function PlanInfo() {
                 ▼
               </button>
               <input
+                disabled
                 id={`QRMT${id}`}
                 type="text"
                 value={planData?.[`QRMT${id}`] || ""}
@@ -479,6 +1049,7 @@ export default function PlanInfo() {
       plan_process: (
         <div>
           <select
+            disabled
             id={`PPC${id}`}
             value={planData?.[`PPC${id}`] || ""}
             onChange={handlePlanInputChange}
@@ -502,6 +1073,7 @@ export default function PlanInfo() {
       min: (
         <div>
           <input
+            disabled
             id={`PMT${id}`}
             type="text"
             value={
@@ -518,6 +1090,7 @@ export default function PlanInfo() {
       mind: (
         <div>
           <input
+            disabled
             id={`PPT${id}`}
             type="text"
             value={
@@ -534,6 +1107,7 @@ export default function PlanInfo() {
       time: (
         <div className="space-x-1">
           <select
+            disabled
             id={`T_Type${id}`}
             value={planData?.[`T_Type${id}`] || ""}
             onChange={handlePlanInputChange}
@@ -547,6 +1121,7 @@ export default function PlanInfo() {
             <option value="L">L</option>
           </select>
           <select
+            disabled
             id={`P_Type${id}`}
             value={planData?.[`P_Type${id}`] || ""}
             onChange={handlePlanInputChange}
@@ -561,6 +1136,7 @@ export default function PlanInfo() {
             <option value="O">O</option>
           </select>
           <select
+            disabled
             id={`S_Type${id}`}
             value={planData?.[`S_Type${id}`] || ""}
             onChange={handlePlanInputChange}
@@ -578,6 +1154,7 @@ export default function PlanInfo() {
       plan_date: (
         <div>
           <input
+            disabled
             id={`PPD${id}`}
             type="date"
             value={
@@ -593,6 +1170,7 @@ export default function PlanInfo() {
       instructions: (
         <div>
           <input
+            disabled
             id={`PPV${id}`}
             type="text"
             value={planData?.[`PPV${id}`] || ""}
@@ -604,6 +1182,7 @@ export default function PlanInfo() {
       result_date: (
         <div>
           <input
+            disabled
             id={`RPD${id}`}
             type="date"
             value={
@@ -619,6 +1198,7 @@ export default function PlanInfo() {
       resultmachine: (
         <div>
           <input
+            disabled
             id={`RMT${id}`}
             type="text"
             value={
@@ -635,6 +1215,7 @@ export default function PlanInfo() {
       result_person: (
         <div>
           <input
+            disabled
             id={`RPT${id}`}
             type="text"
             value={
@@ -651,6 +1232,7 @@ export default function PlanInfo() {
       resultqty: (
         <div>
           <input
+            disabled
             id={`RPN${id}`}
             type="text"
             value={
@@ -802,11 +1384,42 @@ export default function PlanInfo() {
                         Search_Order_No
                       </label>
                       <input
+                        ref={SearchorderNoRef}
                         id="Search_Order_No"
                         type="text"
                         value={searchOrderNo || ""}
                         onChange={handleInputChange}
                         className="border-2 border-gray-500 rounded-md px-2 py-1 text-xs bg-[#ccffff] w-32"
+                        onBlur={async (e) => {
+                          const value = e.target.value;
+                          if (value) {
+                            const result = await searchOrderData(value);
+                            if (!result) {
+                              Swal.fire({
+                                title: "ไม่พบข้อมูล",
+                                html: `${value} is not yet registered !<br>${value} ที่ป้อนไปยังไม่ได้ถูกลงทะเบียน !<br>${value} は登録されていません!`,
+                                icon: "warning",
+                                confirmButtonText: "ตกลง",
+                              });
+                            }
+                          }
+                        }}
+                        onKeyDown={async (e) => {
+                          if (e.key === "Enter") {
+                            const value = e.target.value;
+                            if (value) {
+                              const result = await searchOrderData(value);
+                              if (!result) {
+                                Swal.fire({
+                                  title: "ไม่พบข้อมูล",
+                                  html: `${value} is not yet registered !<br>${value} ที่ป้อนไปยังไม่ได้ถูกลงทะเบียน !<br>${value} は登録されていません!`,
+                                  icon: "warning",
+                                  confirmButtonText: "ตกลง",
+                                });
+                              }
+                            }
+                          }
+                        }}
                       />
                     </div>
 
@@ -917,6 +1530,7 @@ export default function PlanInfo() {
                         <div className="flex gap-2 w-auto item ">
                           <label className="w-16 text-xs">Product_Grp</label>
                           <select
+                            readOnly
                             id="Product_Grp_CD"
                             className="border-2 border-gray-500 rounded-md px-2 py-1 text-xs bg-[#ffff99] w-36"
                           >
@@ -1676,6 +2290,8 @@ export default function PlanInfo() {
                           <label className="w-10  text-xs">Parts_No</label>
                           <div className="w-auto">
                             <input
+                              ref={PartsNo}
+                              disabled
                               id="Parts_No"
                               value={planData?.Parts_No || ""}
                               onChange={handlePlanInputChange}
@@ -1688,6 +2304,7 @@ export default function PlanInfo() {
                           <label className="w-16 text-xs">Parts_Delivery</label>
                           <div className="w-auto flex gap-1">
                             <input
+                              disabled
                               id="Pt_Delivery"
                               value={
                                 planData?.Pt_Delivery
@@ -1709,6 +2326,8 @@ export default function PlanInfo() {
                           <label className="w-14 text-xs">RegPerson</label>
                           <div className="w-auto flex gap-1 mr-1">
                             <select
+                              ref={RegPerson}
+                              disabled
                               id="Pl_Reg_Person_CD"
                               value={planData?.Pl_Reg_Person_CD || ""}
                               onChange={handlePlanInputChange}
@@ -1729,6 +2348,7 @@ export default function PlanInfo() {
                               )}
                             </select>
                             <input
+                              disabled
                               id="Pl_Reg_Person_Name"
                               value={Person_Name || ""}
                               onChange={(event) => setWorkerData(event)}
@@ -1746,24 +2366,27 @@ export default function PlanInfo() {
                         <div className="flex gap-2 w-auto ml-[18px]">
                           <div className="w-auto flex gap-1 ">
                             <input
+                              disabled
                               id="Pt_CAT1"
-                              value={planData?.Pt_CAT1 || ""}
+                              checked={planData?.Pt_CAT1 === true}
                               onChange={handlePlanInputChange}
                               type="checkbox"
                               className="form-checkbox border-gray-400 rounded ml-5 "
                             />
                             <label className="text-xs mt-2">Pt_CAT1</label>
                             <input
+                              disabled
                               id="Pt_CAT2"
-                              value={planData?.Pt_CAT2 || ""}
+                              checked={planData?.Pt_CAT2 === true}
                               onChange={handlePlanInputChange}
                               type="checkbox"
                               className="form-checkbox border-gray-400 rounded ml-5"
                             />
                             <label className="text-xs mt-2">Pt_CAT2</label>
                             <input
+                              disabled
                               id="Pt_CAT3"
-                              value={planData?.Pt_CAT3 || ""}
+                              checked={planData?.Pt_CAT3 === true}
                               onChange={handlePlanInputChange}
                               type="checkbox"
                               className="form-checkbox border-gray-400 rounded ml-5"
@@ -1778,6 +2401,7 @@ export default function PlanInfo() {
                           </label>
                           <div className="w-auto flex gap-1">
                             <select
+                              disabled
                               id="Pl_Progress_CD"
                               value={planData?.Pl_Progress_CD || ""}
                               onChange={handlePlanInputChange}
@@ -1801,6 +2425,7 @@ export default function PlanInfo() {
                               )}
                             </select>
                             <input
+                              disabled
                               type="text"
                               id="Pl_Progress_Name"
                               value={ProgressName || ""}
@@ -1813,6 +2438,7 @@ export default function PlanInfo() {
                           <label className="w-auto  text-xs">Plan_Reg</label>
                           <div className="w-auto">
                             <input
+                              disabled
                               id="Pl_Reg_Date"
                               value={
                                 planData?.Pl_Reg_Date
@@ -1834,6 +2460,7 @@ export default function PlanInfo() {
                             <label className="w-11 text-xs">Pt_Name</label>
                             <div className="w-auto">
                               <select
+                                disabled
                                 id="Parts_CD"
                                 value={planData?.Parts_CD || ""}
                                 onChange={handlePlanInputChange}
@@ -1865,6 +2492,10 @@ export default function PlanInfo() {
                             <label className="w-10 text-xs ml-7">Pt_Mate</label>
                             <div className="w-auto">
                               <input
+                                disabled
+                                id="Pt_Material"
+                                value={planData?.Pt_Material || ""}
+                                onChange={handlePlanInputChange}
                                 type="text"
                                 className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-24 h-7"
                               />
@@ -1875,6 +2506,7 @@ export default function PlanInfo() {
                             <label className="w-11 text-xs">Pt_Qty</label>
                             <div className="w-auto flex gap-1">
                               <input
+                                disabled
                                 id="Pt_Qty"
                                 value={planData?.Pt_Qty || ""}
                                 onChange={handlePlanInputChange}
@@ -1882,6 +2514,7 @@ export default function PlanInfo() {
                                 className="bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-10 h-7"
                               />
                               <select
+                                disabled
                                 id="Pt_Unit_CD"
                                 value={planData?.Pt_Unit_CD || ""}
                                 onChange={handlePlanInputChange}
@@ -1903,6 +2536,7 @@ export default function PlanInfo() {
                               </select>
                             </div>
                             <input
+                              disabled
                               id="Pt_Split"
                               value={planData?.Pt_Split || ""}
                               onChange={handlePlanInputChange}
@@ -1912,6 +2546,7 @@ export default function PlanInfo() {
                             <label className="text-xs ">Split</label>
                             <label className="w-7 text-xs ml-4">Sp_Qty</label>
                             <input
+                              disabled
                               id="Pt_Spare_Qty"
                               value={planData?.Pt_Spare_Qty || ""}
                               onChange={handlePlanInputChange}
@@ -1926,6 +2561,7 @@ export default function PlanInfo() {
                             </label>
                             <div className="w-auto">
                               <input
+                                disabled
                                 id="Connect_Od_No"
                                 value={planData?.Connect_Od_No || ""}
                                 onChange={handlePlanInputChange}
@@ -1936,6 +2572,7 @@ export default function PlanInfo() {
                             <label className="w-8 text-xs ml-1">NG_Qty</label>
                             <div className="w-auto flex gap-1">
                               <input
+                                disabled
                                 id="Pt_NG_Qty"
                                 value={planData?.Pt_NG_Qty || ""}
                                 onChange={handlePlanInputChange}
@@ -1951,6 +2588,7 @@ export default function PlanInfo() {
                             </label>
                             <div className="w-auto flex gap-1">
                               <input
+                                disabled
                                 id="Connect_Pt_No"
                                 value={planData?.Connect_Pt_No || ""}
                                 onChange={handlePlanInputChange}
@@ -1958,6 +2596,7 @@ export default function PlanInfo() {
                                 className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-10 h-7"
                               />
                               <input
+                                disabled
                                 id="Connect_Pt_Abb"
                                 value={planData?.Connect_Pt_Abb || ""}
                                 onChange={handlePlanInputChange}
@@ -1966,6 +2605,7 @@ export default function PlanInfo() {
                               />
                             </div>
                             <input
+                              disabled
                               id="Pt_Pending"
                               value={planData?.Pt_Pending || ""}
                               onChange={handlePlanInputChange}
@@ -1981,6 +2621,7 @@ export default function PlanInfo() {
                             </label>
                             <div className="w-auto flex gap-1">
                               <input
+                                disabled
                                 id="Connect_Pr_No"
                                 value={planData?.Connect_Pr_No || ""}
                                 onChange={handlePlanInputChange}
@@ -1988,6 +2629,7 @@ export default function PlanInfo() {
                                 className="bg-[#ccffcc] border-solid border-2 border-gray-500 rounded-md px-1 w-10 h-7"
                               />
                               <input
+                                disabled
                                 id="Connect_Pr_Abb"
                                 value={planData?.Connect_Pr_Abb || ""}
                                 onChange={handlePlanInputChange}
@@ -1996,6 +2638,7 @@ export default function PlanInfo() {
                               />
                             </div>
                             <input
+                              disabled
                               id="Outside"
                               value={planData?.Outside || ""}
                               onChange={handlePlanInputChange}
@@ -2084,6 +2727,7 @@ export default function PlanInfo() {
                               >
                                 <label className="text-xs mr-2">{info}</label>
                                 <select
+                                  disabled
                                   id={`Info${info}`}
                                   value={planData?.[`Info${info}`] || ""}
                                   onChange={handlePlanInputChange}
@@ -2120,8 +2764,11 @@ export default function PlanInfo() {
                                   Chk {chk}
                                 </label>
                                 <input
+                                  disabled
                                   id={`Info_Chk${chk}`}
-                                  value={planData?.[`Info_Chk${chk}`] || ""}
+                                  checked={
+                                    planData?.[`Info_Chk${chk}`] === true
+                                  }
                                   onChange={handlePlanInputChange}
                                   type="checkbox"
                                   className="form-checkbox border-gray-400 rounded ml-2"
@@ -2154,6 +2801,7 @@ export default function PlanInfo() {
                             <label className="w-auto text-xs">Pt_Comp</label>
                             <div className="w-auto">
                               <input
+                                disabled
                                 id="Pt_Complete_Date"
                                 value={
                                   planData?.Pt_Complete_Date
@@ -2173,6 +2821,7 @@ export default function PlanInfo() {
                             <label className="w-auto text-xs">QC_Comp</label>
                             <div className="w-auto">
                               <input
+                                disabled
                                 id="Pt_I_Date"
                                 value={
                                   planData?.Pt_I_Date
@@ -2192,6 +2841,7 @@ export default function PlanInfo() {
                             <label className="w-auto text-xs">Plan_Upd</label>
                             <div className="w-auto">
                               <input
+                                disabled
                                 id="Pl_Upd_Date"
                                 value={
                                   planData?.Pl_Upd_Date
@@ -2209,6 +2859,7 @@ export default function PlanInfo() {
                             <label className="w-auto text-xs">UpdPerson</label>
                             <div className="w-auto">
                               <select
+                                disabled
                                 id="Pl_Upd_Person_CD"
                                 value={planData?.Pl_Upd_Person_CD}
                                 onChange={handlePlanInputChange}
@@ -2229,6 +2880,7 @@ export default function PlanInfo() {
                                 )}
                               </select>
                               <input
+                                disabled
                                 id="Pl_Upd_Person_Name"
                                 value={updPerson_Name || ""}
                                 onChange={(event) => setWorkerData(event)}
@@ -2242,6 +2894,7 @@ export default function PlanInfo() {
                             <label className="w-auto text-xs">Schedule</label>
                             <div className="flex gap-2 w-auto">
                               <select
+                                disabled
                                 id="Pl_Schedule_CD"
                                 value={planData?.Pl_Schedule_CD || ""}
                                 onChange={handlePlanInputChange}
@@ -2265,6 +2918,7 @@ export default function PlanInfo() {
                                 )}
                               </select>
                               <input
+                                disabled
                                 id="Pl_Schedule_Name"
                                 value={Schedule_Name || ""}
                                 onChange={(event) => setScheduleData(event)}
@@ -2280,6 +2934,7 @@ export default function PlanInfo() {
                             </label>
                             <div className="flex gap-2 w-auto">
                               <input
+                                disabled
                                 id="Stagnat_Scale"
                                 value={Stagnat_Scale || ""}
                                 onChange={(event) => setScheduleData(event)}
@@ -2287,6 +2942,7 @@ export default function PlanInfo() {
                                 className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-14"
                               />
                               <input
+                                disabled
                                 id="ManHour_Scale"
                                 value={ManHour_Scale || ""}
                                 onChange={(event) => setScheduleData(event)}
@@ -2313,12 +2969,21 @@ export default function PlanInfo() {
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-40 ml-1"
                             />
+                            <input
+                              disabled
+                              id="Pl_Quote_CD"
+                              value={planData?.Pl_Quote_CD || ""}
+                              onChange={handlePlanInputChange}
+                              type="hidden"
+                              className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-40 ml-1"
+                            />
                           </div>
                         </div>
                         <div className="flex gap-2 w-auto ml-3">
                           <label className="w-20 text-xs">Start_Rev_Days</label>
                           <div className="w-auto flex gap-1">
                             <input
+                              disabled
                               id="Pl_St_Rev_Day"
                               value={planData?.Pl_St_Rev_Day || ""}
                               onChange={handlePlanInputChange}
@@ -2331,6 +2996,7 @@ export default function PlanInfo() {
                           <label className="w-20 text-xs">End_Rev_Days</label>
                           <div className="w-auto flex gap-1">
                             <input
+                              disabled
                               id="Pl_Ed_Rev_Day"
                               value={planData?.Pl_Ed_Rev_Day || ""}
                               onChange={handlePlanInputChange}
@@ -2357,6 +3023,7 @@ export default function PlanInfo() {
                           <label className="w-10  text-xs">PI_Quote</label>
                           <div className="w-auto">
                             <input
+                              disabled
                               id="PI_Quote"
                               value={planData?.PI_Quote || ""}
                               onChange={handlePlanInputChange}
@@ -2379,6 +3046,7 @@ export default function PlanInfo() {
                           <label className="w-10 text-xs">Type</label>
                           <div className="w-auto flex gap-1">
                             <select
+                              disabled
                               id="Sc_Make_Type"
                               value={planData?.Sc_Make_Type || ""}
                               onChange={handlePlanInputChange}
@@ -2393,9 +3061,10 @@ export default function PlanInfo() {
                         </div>
                         <div className="flex gap-2 w-auto ml-5">
                           <input
+                            disabled
                             id="Money_Object"
-                            value={planData?.Money_Object || ""}
-                            onChange={handlePlanInputChange}
+                            checked={planData?.Money_Object === true}
+                            onChange={handleMoneyObjectChange}
                             type="checkbox"
                             className="form-checkbox border-gray-400 rounded ml-2"
                           />
@@ -2405,8 +3074,9 @@ export default function PlanInfo() {
 
                           <div className="w-auto flex gap-1">
                             <input
+                              disabled
                               id="Amount"
-                              value={planData?.Amount || ""}
+                              value={planData?.Amount || 0}
                               onChange={handlePlanInputChange}
                               type="text"
                               className="bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-24ml-1"
@@ -2599,116 +3269,88 @@ export default function PlanInfo() {
                     <div className="bg-white p-3 mt-5">
                       <div className="flex flex-wrap gap-4">
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500
+                        
+                        `}
+                          disabled={!buttonState.F1}
                         >
                           Plan Copy <br /> 引用 (F1)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F2}
+                          onClick={handleF2Click}
                         >
                           Edit <br /> 編集 (F2)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F3}
                           onClick={handleF3Click}
                         >
                           New Add <br /> 追加 (F3)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F4}
                           onClick={handleF4Click}
                         >
                           Sub-Con <br /> 手配 (F4)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F5}
                         >
                           Plan <br /> 計画 (F5)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F6}
                         >
                           P Sheet All <br /> 全頁 (F6)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F7}
                         >
                           P Sheet 1P <br /> 1頁 (F7)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          onClick={handleF8Click}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F8}
                         >
                           NextParts <br /> 別部 (F8)
                         </button>
                         <button
-                          className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center"
+                          className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
                           onClick={handleF9Click}
+                          disabled={!buttonState.F9}
                         >
                           Save <br /> 登録 (F9)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500`}
+                          disabled={!buttonState.F10}
                           onClick={handleF10Click}
                         >
                           Delete <br /> 削除 (F10)
                         </button>
                         <button
-                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
-                            !isSearchOrderNoFilled
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          disabled={!isSearchOrderNoFilled}
+                          onClick={handleF11Click}
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500
+                          `}
+                          disabled={!buttonState.F11}
                         >
                           NextInput <br /> 次へ (F11)
                         </button>
                         <button
-                          className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white w-auto text-center"
+                          className={`bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-sm text-white w-auto text-center ${
+                            buttonState.F12
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          disabled={buttonState.F12}
                           onClick={handleF12Click}
                         >
                           Exit <br /> 終了 (F12)
@@ -2887,4 +3529,73 @@ export default function PlanInfo() {
 
 const searchPermission = (status) => {
   document.getElementById("Search_Order_No").disabled = !status;
+  document.getElementById("Search_Parts_No").disabled = !status;
+};
+const editPermission = (status) => {
+  const fields = [
+    "Parts_No",
+    "Pt_Delivery",
+    "Pl_Reg_Person_CD",
+    "Parts_CD",
+    "Pt_Material",
+    "Pt_Qty",
+    "Pt_Unit_CD",
+    "Pt_Split",
+    "Pt_Spare_Qty",
+    "Pt_NG_Qty",
+    "Connect_Od_No",
+    "Connect_Pt_No",
+    "Connect_Pr_No",
+    "Pt_Pending",
+    "Outside",
+    "Money_Object",
+    "Pl_St_Rev_Day",
+    "Pl_Ed_Rev_Day",
+    "Info1",
+    "Info2",
+    "Info3",
+    "Info4",
+    "Info5",
+    "Info6",
+    "Info_Chk1",
+    "Info_Chk2",
+    "Info_Chk3",
+    "Info_Chk4",
+    "Info_Chk5",
+    "Info_Chk6",
+    "Pt_CAT1",
+    "Pt_CAT2",
+    "Pt_CAT3",
+    "Pl_Progress_CD",
+    "Pt_Instructions",
+    "Pt_Remark",
+    "Pt_Information",
+    "Pl_Schedule_CD",
+    "Pl_Reg_Date",
+    "Pt_Complete_Date",
+    "Pt_I_Date",
+    "Pl_Upd_Date",
+  ];
+
+  fields.forEach((field) => {
+    const element = document.getElementById(field);
+    if (element) {
+      element.disabled = !status;
+    }
+  });
+
+  for (let i = 1; i <= 36; i++) {
+    document.getElementById(`PPC${i}`).disabled = !status;
+    document.getElementById(`PMT${i}`).disabled = !status;
+    document.getElementById(`PPT${i}`).disabled = !status;
+    document.getElementById(`T_Type${i}`).disabled = !status;
+    document.getElementById(`P_Type${i}`).disabled = !status;
+    document.getElementById(`S_Type${i}`).disabled = !status;
+    document.getElementById(`PPD${i}`).disabled = !status;
+    document.getElementById(`PPV${i}`).disabled = !status;
+    document.getElementById(`RPD${i}`).disabled = !status;
+    document.getElementById(`RMT${i}`).disabled = !status;
+    document.getElementById(`RPT${i}`).disabled = !status;
+    document.getElementById(`RPN${i}`).disabled = !status;
+  }
 };
