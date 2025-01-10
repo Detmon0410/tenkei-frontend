@@ -166,7 +166,7 @@ export default function PlanContextProvider({ children }) {
   const fetch_All_Plan = async () => {
     try {
       const response = await axios.get("/plan/fetch-all-plan");
-      setPlanData(response.data); 
+      setPlanData(response.data.data.plan); 
 
       return response;
     } catch (error) {

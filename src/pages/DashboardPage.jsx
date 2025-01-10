@@ -41,12 +41,39 @@ const CallApisComponent = () => {
 
     try {
       const responses = await Promise.all([
-        axios.post('http://localhost:4000/TT_NAV_Pc_CSV'),
-        axios.post('http://localhost:4000/QT_NAV_Pc_CSV_Upd_Add'),
-        axios.post('http://localhost:4000/QT_NAV_Pc_CSV_Upd_Upd'),
-        axios.post('http://localhost:4000/QT_NAV_Pc_CSV_Add'),
-        axios.post('http://localhost:4000/QT_NAV_Pc_CSV_Upd_Ref'),
-        axios.get('http://localhost:4000/RD_NAV_Pc_Upd_Ref'),
+        axios.post('http://localhost:4000/csv/import_Purchase')
+        // axios.post('http://localhost:4000/navPCCSV/TT_NAV_Pc_CSV'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Upd_Add'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Upd_Upd'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Add'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Upd_Ref'),
+        // axios.get('http://localhost:4000/navPCCSV/RD_NAV_Pc_Upd_Ref'),
+      ]);
+
+      const data = responses.map((response) => response.data);
+      setApiResults(data);
+      Swal.fire('Success!', 'All APIs were called successfully.', 'success');
+    } catch (err) {
+      setError(err.message);
+      Swal.fire('Error!', 'Failed to call one or more APIs.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const callOrderApi = async () => {
+    setLoading(true);
+    setError(null);
+    setApiResults([]);
+
+    try {
+      const responses = await Promise.all([
+        axios.post('http://localhost:4000/csv/Import_Order')
+        // axios.post('http://localhost:4000/navPCCSV/TT_NAV_Pc_CSV'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Upd_Add'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Upd_Upd'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Add'),
+        // axios.post('http://localhost:4000/navPCCSV/QT_NAV_Pc_CSV_Upd_Ref'),
+        // axios.get('http://localhost:4000/navPCCSV/RD_NAV_Pc_Upd_Ref'),
       ]);
 
       const data = responses.map((response) => response.data);
@@ -63,7 +90,7 @@ const CallApisComponent = () => {
   const buttonsData = [
     { label: 'Order Info', subLabel: '(依頼書別受注処理)', to: '/order-info' },
     { label: 'Order List', subLabel: '(受注一覧)', to: '/order-list' },
-    { label: 'NAV Order', subLabel: 'CSV Import', textColor: "text-red-600", to: '/nav-order-csv-import' },
+    { label: 'NAV Order', subLabel: 'CSV Import', textColor: "text-red-600",onClick: callOrderApi },//to: '/nav-order-csv-import'
     { label: 'NAV Purchase', subLabel: 'CSV Import', textColor: "text-red-600", onClick: callAllApis },
     { label: 'Purchase Info', subLabel: '(依頼書別手配処理)', to: '/purchase-info' },
     { label: 'Purchase List', subLabel: '(手配一覧)', to: '/purchase-list' },

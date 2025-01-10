@@ -6,8 +6,8 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { useCostList } from "../hooks/use-costlist";
 import { useCost } from "../hooks/use-cost";
 import { useOrder } from "../hooks/use-order";
-import Select from 'react-select';
 import Swal from "sweetalert2";
+//import Select from 'react-select';
 
 export default function CostList() {
   const navigate = useNavigate();
@@ -828,97 +828,119 @@ export default function CostList() {
                     </label>
                   </div>
                   <br />
-                  <div className="w-full mt-5 overflow-x-auto pr-10">
-                    <div className="min-w-[2000px] w-full mb-7">
-                      {/* Group 1 */}
-                      <div className="flex pl-5">
-                        {/* Start Group 1 */}
-                        <div className="px-2 w-auto text-center pr-[52px]">
-                          <label className="font-bold text-xs">Format</label>
+                  <div className="col-span-12 me-5 mt-5 ml-14 overflow-x-auto">
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="col-span-9">
+                        {/* Group 1 */}
+                        <div className="gap-2 flex mb-4 justify-start me-5">
+                          <div className="flex gap-2 w-48">
+                            <label className="w-24 font-medium text-sm">
+                              Format
+                            </label>
+                            <div className="w-24">
+                              <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                                <option value="Progress">Progress</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 w-48 ml-4">
+                            <label className="w-24 font-medium text-sm ">
+                              Change_Page
+                            </label>
+                            <div className="w-24">
+                              <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                                <option value="No_Change_Page">
+                                  No_Change_Page
+                                </option>
+                                <option value="Product_Section">
+                                  Product_Section
+                                </option>
+                                <option value="Specific_Item">
+                                  Specific_Item
+                                </option>
+                                <option value="Section_SpecItem">
+                                  Section_SpecItem
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="flex ml-4 w-48 ">
+                            <label className="w-24 font-medium text-sm">
+                              Target
+                            </label>
+                            <div className="w-24">
+                              <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full">
+                                <option value="Production">Production</option>
+                                <option value="QC">QC</option>
+                                <option value="Administrator">
+                                  Administrator
+                                </option>
+                              </select>
+                            </div>
+                          </div>
                         </div>
-                        <div className="relative w-40 lg:w-44">
-                          <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
-                            <option value="Progress">Progress</option>
-                          </select>
-                        </div>
-
-                        <div className="px-2 w-auto text-center pl-7">
-                          <label className="font-bold text-xs ">
-                            Change_Page
-                          </label>
-                        </div>
-
-                        <div className="relative w-40 lg:w-44">
-                          <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
-                            <option value="No_Change_Page">
-                              No_Change_Page
-                            </option>
-                            <option value="Product_Section">
-                              Product_Section
-                            </option>
-                            <option value="Specific_Item">Specific_Item</option>
-                            <option value="Section_SpecItem">
-                              Section_SpecItem
-                            </option>
-                          </select>
-                        </div>
-
-                        <div className="px-2 w-auto text-center pl-7">
-                          <label className="font-bold text-xs">Target</label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <select className="border-gray-500 border-solid border-2 rounded-md bg-[#ffff99] w-full h-8 ps-2.5 text-md">
-                            <option value="Production">Production</option>
-                            <option value="QC">QC</option>
-                            <option value="Administrator">Administrator</option>
-                          </select>
-                        </div>
-
-                        {/* End Group 1 */}
-                      </div>
-
-                      {/* Group 2 */}
-                      <div className="flex pl-5 mt-5">
-                        <div className="px-2 w-auto text-center pr-[38px]">
-                          <label className="font-bold text-xs">Order_No</label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <input
-                            disabled={!formState.S_Order_No.enabled}
-                            id="S_Order_No"
-                            value={costListData?.S_Order_No || ""}
-                            onChange={handleCostListInputChange}
-                            type="text"
-                            className={`border-solid border-2 rounded-md py-0.5 w-full ${formState.Order_No
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-gray-200 border-gray-400"
-                              }`}
-                          />
-                        </div>
-
-                        <div className="flex items-center space-x-5 ml-10 bg-[#ffff99] mx-2 w-auto text-center mr-[62px]">
-                          <div className="flex w-24 gap-1 items-center">
-                            <div className="w-auto flex me-1">
+                        {/* Group 2 */}
+                        <div className="gap-2 flex mb-4 items-center justify-between me-5">
+                          <div className="flex gap-2 w-48">
+                            <label className="w-24 font-medium text-sm">
+                              Order_No
+                            </label>
+                            <div className="w-24">
                               <input
-                                id="Info_View"
-                                value={costListData?.Info_View || ""}
+                                disabled={!formState.S_Order_No.enabled}
+                                id="S_Order_No"
+                                value={costListData?.S_Order_No || ""}
                                 onChange={handleCostListInputChange}
-                                type="checkbox"
-                                className="w-6 h-6"
+                                type="text"
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
+                                  formState.S_Order_No.enabled
+                                    ? "bg-[#ccffff] border-gray-500"
+                                    : "bg-white border-gray-500"
+                                }`}
                               />
                             </div>
-                            <label className="text-xs font-medium ">
-                              Into_View
-                            </label>
                           </div>
-                          <div className="flex w-24 gap-1 items-center">
-                            <div className="w-auto flex me-1">
+                          <div className="flex w-48 bg-[#ffff99]">
+                            <div className="flex w-24 gap-1 items-center">
+                              <div className="w-auto flex me-1">
+                                <input
+                                  id="Info_View"
+                                  value={costListData?.Info_View || ""}
+                                  onChange={handleCostListInputChange}
+                                  type="checkbox"
+                                  className="w-6 h-6"
+                                />
+                              </div>
+                              <label className="text-xs font-medium ">
+                                Into_View
+                              </label>
+                            </div>
+                            <div className="flex w-24 gap-1 items-center">
+                              <div className="w-auto flex me-1">
+                                <input
+                                  id="Pl_Color_Separate"
+                                  value={costListData?.Pl_Color_Separate || ""}
+                                  onChange={handleCostListInputChange}
+                                  type="checkbox"
+                                  className="w-6 h-6"
+                                />
+                              </div>
+                              <label className="text-xs font-medium ">
+                                PI_Colo
+                              </label>
+                            </div>
+                          </div>
+                          <div className="flex  mr-3 w-56">
+                            <label className="w-32 font-medium text-sm">
+                              Mark_Days
+                            </label>
+                            <div className="w-32 ">
                               <input
-                                id="Pl_Color_Separate"
-                                value={costListData?.Pl_Color_Separate || ""}
+                                id="Mark_Days"
+                                value={costListData?.Mark_Days || ""}
                                 onChange={handleCostListInputChange}
-                                type="checkbox"
-                                className="w-6 h-6"
+                                type="date"
+                                className="h-6 bg-[#ffff99] border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                               />
                             </div>
                           </div>
@@ -1024,525 +1046,11 @@ export default function CostList() {
                               />
                             </div>
 
-                        <div className="px-2 w-auto text-center pl-[48px]">
-                          <label className="font-bold text-xs">
-                            Ctl_Person
-                          </label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            id="S_Od_Ctl_Person_CD"
-                            value={costListData?.S_Od_Ctl_Person_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
-                          >
-                            <option value=""></option>
-                            {Array.isArray(WorkerData) &&
-                              WorkerData.length > 0 ? (
-                              WorkerData.map((item, index) => (
-                                <option key={index} value={item.Worker_CD}>
-                                  {item.Worker_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-                        <input
-                          disabled={!formState.Ctl_Person_Input}
-                          id="S_Od_Ctl_Person_Name"
-                          value={selectedSalesGrpAbb || ""}
-                          onChange={(event) => setWorkerData(event)}
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                        />
-                      </div>
-                      {/* Group 3 */}
-                      <div className="flex pl-5 mt-5">
-                        <div className="px-2 w-auto text-center pr-7">
-                          <label className="font-bold text-xs">NAV_Name</label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <input
-                            disabled={!formState.S_NAV_Name.enabled}
-                            id="S_NAV_Name"
-                            value={costListData?.S_NAV_Name || ""}
-                            onChange={handleCostListInputChange}
-                            type="text"
-                            className={`border-solid border-2 rounded-md py-0.5 w-full ${formState.S_NAV_Name.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                              }`}
-                          />
-                        </div>
+                            <label className="w-auto font-medium text-sm">
+                              ~
+                            </label>
 
                             <div className="w-24 ">
-                              <select
-                                disabled={!formState.S_Ed_Pd_Grp_CD}
-                                id="S_Ed_Pd_Grp_CD"
-                                value={costListData?.S_Ed_Pd_Grp_CD || ""}
-                                onChange={handleCostListInputChange}
-                                className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
-                              >
-                                <option value=""></option>
-                                {Array.isArray(WorkgData) &&
-                                      WorkgData.length > 0 ? (
-                                        WorkgData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.WorkG_CD}
-                                          >
-                                            {item.WorkG_CD}
-                                          </option>
-                                        ))
-                                      ) : (
-                                        <option value="">ไม่มีข้อมูล</option>
-                                      )}
-                              </select>
-                            </div>
-                            <div className="w-24">
-                              <input
-                                disabled={!formState.S_Ed_Pd_Grp_Abb}
-                                id="S_Ed_Pd_Grp_Abb"
-                                value={destinationName|| ""}
-                                onChange={(event) => setWorkgData(event)}
-                                type="text"
-                                className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                              />
-                            </div>
-                          </div>
-
-                        <div className="relative w-24">
-                          <select
-                            id="S_Ed_Pd_Grp_CD"
-                            value={costListData?.S_Ed_Pd_Grp_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
-                          >
-                            <option value=""></option>
-                            {Array.isArray(WorkgData) &&
-                              WorkgData.length > 0 ? (
-                              WorkgData.map((item, index) => (
-                                <option key={index} value={item.WorkG_CD}>
-                                  {item.WorkG_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-                        <input
-                          disabled={!formState.Product_Grp_Select2}
-                          id="S_Ed_Pd_Grp_Abb"
-                          value={destinationName2}
-                          onChange={(event) => setWorkgData(event)}
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                        />
-
-                        <div className="px-2 w-auto text-center ">
-                          <label className="font-bold text-xs">Sales_grp</label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            id="S_Sl_Grp_CD"
-                            value={costListData?.S_Sl_Grp_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
-                          >
-                            <option value=""></option>
-                            {Array.isArray(WorkgData) &&
-                              WorkgData.length > 0 ? (
-                              WorkgData.map((item, index) => (
-                                <option key={index} value={item.WorkG_CD}>
-                                  {item.WorkG_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Sales_Grp_Input}
-                          id="S_Sl_Grp_Name"
-                          value={destinationName5}
-                          onChange={(event) => setWorkgData(event)}
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                        />
-                      </div>
-                      {/* Group 4 */}
-                      <div className="flex pl-5 mt-5">
-                        <div className="px-2 w-auto text-center">
-                          <label className="font-bold text-xs">
-                            Product_Name
-                          </label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <input
-                            id="S_Product_Name"
-                            value={costListData?.S_Product_Name || ""}
-                            onChange={handleCostListInputChange}
-                            type="text"
-                            className="border-solid border-2 rounded-md py-0.5 w-full bg-[#ccffff] border-gray-500"
-                          />
-                        </div>
-
-                        <div className="px-2 w-auto text-center pl-7">
-                          <label className="font-bold text-xs">
-                            Not_Pd_Grp1
-                          </label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            id="S_No_Pd_Grp_CD1"
-                            value={costListData?.S_No_Pd_Grp_CD1 || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
-                          >
-                            <option value=""></option>
-                            {Array.isArray(WorkgData) &&
-                              WorkgData.length > 0 ? (
-                              WorkgData.map((item, index) => (
-                                <option key={index} value={item.WorkG_CD}>
-                                  {item.WorkG_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-                        <input
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                          value={destinationName3}
-                          disabled={!formState.Not_Pd_Grp1_Input}
-                        />
-
-                        <div className="px-2 w-auto text-center pl-7">
-                          <label className="font-bold text-xs">
-                            Price_CAT
-                          </label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            disabled={!formState.S_Price_CD.enabled}
-                            id="S_Price_CD"
-                            value={costListData?.S_Price_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className={`border-solid border-2 rounded-md py-0.5 w-full h-8 ${formState.S_Price_CD.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                              }`}
-                          >
-                            <option value=""></option>
-                            {Array.isArray(PriceData) &&
-                              PriceData.length > 0 ? (
-                              PriceData.map((item, index) => (
-                                <option key={index} value={item.Price_CD}>
-                                  {item.Price_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Price_CAT_Input}
-                          id="S_Price_Name"
-                          value={PriceName || ""}
-                          onChange={(event) => setPriceData(event)}
-                          type="text"
-                          className={`border-solid border-2 rounded-md py-0.5 w-32 ml-1 ${formState.Price_CAT_Input
-                            ? "bg-[#ccffff] border-gray-500"
-                            : "bg-gray-200 border-gray-400"
-                            }`}
-                        />
-
-
-                        <div className="px-2 w-auto text-center pl-[54px]">
-                          <label className="font-bold text-xs">
-                            Sales_Person
-                          </label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <select
-                            id="S_Sl_Person_CD"
-                            value={costListData?.S_Sl_Person_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
-                            disabled={!formState.Sales_Person}
-                          >
-                            <option value=""></option>
-                            {Array.isArray(WorkerData) &&
-                              WorkerData.length > 0 ? (
-                              WorkerData.map((item, index) => (
-                                <option key={index} value={item.Worker_CD}>
-                                  {item.Worker_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Sales_Person_Input}
-                          id="S_Sl_Person_Name"
-                          value={selectedSalesGrpAbb2 || ""}
-                          onChange={(event) => setWorkerData(event)}
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                        />
-
-
-                      </div>
-                      {/* Group 5 */}
-                      <div className="flex pl-5 mt-5">
-                        <div className="px-2 w-auto text-center pr-10">
-                          <label className="font-bold text-xs">NAV_Size</label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <input
-                            disabled={!formState.S_NAV_Size.enabled}
-                            id="S_NAV_Size"
-                            value={costListData?.S_NAV_Size || ""}
-                            onChange={handleCostListInputChange}
-                            type="text"
-                            className={`border-solid border-2 rounded-md py-0.5 w-full ${formState.S_NAV_Size.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                              }`}
-                          />
-                        </div>
-
-                        <div className="px-2 w-auto text-center pl-7">
-                          <label className="font-bold text-xs">
-                            Not_Pd_Grp2
-                          </label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            id="S_No_Pd_Grp_CD2"
-                            value={costListData?.S_No_Pd_Grp_CD2 || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full h-8"
-                          >
-                            <option value=""></option>
-                            {Array.isArray(WorkgData) &&
-                              WorkgData.length > 0 ? (
-                              WorkgData.map((item, index) => (
-                                <option key={index} value={item.WorkG_CD}>
-                                  {item.WorkG_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                        />
-
-
-                        <div className="px-2 w-auto text-center pl-7">
-                          <label className="w-auto font-bold text-xs">
-                            Request_CAT
-                          </label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            disabled={!formState.S_Request1_CD.enabled}
-                            id="S_Request1_CD"
-                            value={costListData?.S_Request1_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className={`border-solid border-2 rounded-md py-0.5 w-full h-8 ${formState.S_Request1_CD.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                              }`}
-                          >
-                            <option value=""></option>
-                            {Array.isArray(Request1Data) &&
-                              Request1Data.length > 0 ? (
-                              Request1Data.map((item, index) => (
-                                <option key={index} value={item.Request1_CD}>
-                                  {item.Request1_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Request_CAT_Input}
-                          id="S_Request1_Name"
-                          value={request1Name}
-                          onChange={(event) => setRequest1Data(event)}
-                          type="text"
-                          className={`border-solid border-2 rounded-md py-0.5 w-32 ml-1 ${formState.Request_CAT_Input
-                            ? "bg-[#ccffff] border-gray-500"
-                            : "bg-gray-200 border-gray-400"
-                            }`}
-                        />
-
-                        <div className="relative w-24 ml-1">
-                          <select
-                            disabled={!formState.S_Request2_CD.enabled}
-                            id="S_Request2_CD"
-                            value={costListData?.S_Request2_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className={`border-solid border-2 rounded-md py-0.5 w-full h-8 ${formState.Request_CAT_Select2
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-gray-200 border-gray-400"
-                              }`}
-                          >
-                            <option value=""></option>
-                            {Array.isArray(Request2Data) &&
-                              Request2Data.length > 0 ? (
-                              Request2Data.map((item, index) => (
-                                <option key={index} value={item.Request2_CD}>
-                                  {item.Request2_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Request_CAT_Input2}
-                          id="S_Request2_Name"
-                          value={request2Name}
-                          onChange={(event) => setRequest2Data(event)}
-                          type="text"
-                          className={`border-solid border-2 rounded-md py-0.5 w-32 ml-1 ${formState.Request_CAT_Input2
-                            ? "bg-[#ccffff] border-gray-500"
-                            : "bg-gray-200 border-gray-400"
-                            }`}
-                        />
-
-                        <div className="relative w-24 ml-1">
-                          <select
-                            disabled={!formState.S_Request3_CD.enabled}
-                            id="S_Request3_CD"
-                            value={costListData?.S_Request3_CD || ""}
-                            onChange={handleCostListInputChange}
-                            className={`border-solid border-2 rounded-md py-0.5 w-full h-8 ${formState.Request_CAT_Select3
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-gray-200 border-gray-400"
-                              }`}
-                          >
-                            <option value=""></option>
-                            {Array.isArray(Request3Data) &&
-                              Request3Data.length > 0 ? (
-                              Request3Data.map((item, index) => (
-                                <option key={index} value={item.Request3_CD}>
-                                  {item.Request3_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Request_CAT_Input3}
-                          id="S_Request3_Name"
-                          value={request3Name}
-                          onChange={(event) => setRequest3Data(event)}
-                          type="text"
-                          className={`border-solid border-2 rounded-md py-0.5 w-32 ml-1 ${formState.Request_CAT_Input3
-                            ? "bg-[#ccffff] border-gray-500"
-                            : "bg-gray-200 border-gray-400"
-                            }`}
-                        />
-
-
-                      </div>
-                      {/* Group 6 */}
-                      <div className="flex pl-5 mt-5">
-                        <div className="px-2 w-auto text-center pr-5">
-                          <label className="font-bold text-xs">
-                            Product_Size
-                          </label>
-                        </div>
-                        <div className="relative w-40 lg:w-44">
-                          <input
-                            disabled={!formState.S_Product_Size.enabled}
-                            id="S_Product_Size"
-                            value={costListData?.S_Product_Size || ""}
-                            onChange={handleCostListInputChange}
-                            type="text"
-                            className={`border-solid border-2 rounded-md py-0.5 w-full ${formState.S_Product_Size.enabled
-                              ? "bg-[#ccffff] border-gray-500"
-                              : "bg-white border-gray-500"
-                              }`}
-                          />
-                        </div>
-
-
-                        <div className="px-2 w-auto text-center pl-10">
-                          <label className="font-bold text-xs">
-                            Customer1
-                          </label>
-                        </div>
-                        <div className="relative w-24">
-                          <select
-                            id="S_Customer_CD1"
-                            value={costListData?.S_Customer_CD1 || ""}
-                            onChange={handleCostListInputChange}
-                            className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full h-8"
-                          >
-                            <option value=""></option>
-                            {Array.isArray(CustomerData) &&
-                              CustomerData.length > 0 ? (
-                              CustomerData.map((item, index) => (
-                                <option
-                                  key={index}
-                                  value={item.Customer_CD}
-                                >
-                                  {item.Customer_CD}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">ไม่มีข้อมูล</option>
-                            )}
-                          </select>
-                        </div>
-
-                        <input
-                          disabled={!formState.Customer1_Input}
-                          id="S_Customer_Abb1"
-                          value={selectedCustomerAbb || ""}
-                          onChange={(event) => setCustomerData(event)}
-                          type="text"
-                          className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                        />
-
-
-
-
-                        <div className="flex justify-between gap-2 ">
-                          <div className="flex gap-2 w-full ml-4">
-                            <label className="w-24 font-bold text-xs">
-                              Customer1
-                            </label>
-                            <div className="w-24">
                               <select
                                 id="S_Sl_Grp_CD"
                                 value={costListData?.S_Sl_Grp_CD || ""}
@@ -1572,27 +1080,37 @@ export default function CostList() {
                                 value={destinationName5|| ""}
                                 onChange={(event) => setWorkgData(event)}
                                 type="text"
-                                className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-24"
+                                className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
                               />
                             </div>
                           </div>
 
-                          <div className="flex  w-28 ">
-                            <label className="ml-4 w-24 font-bold text-xs">
-                              Mate1
+                          <div className="flex justify-between w-auto gap-2 ms-5">
+                            <label className="w-20 font-medium text-sm">
+                              Sales_grp
                             </label>
-                            <div className="w-auto ml-5">
-                              <input
-                                disabled={!formState.S_Material1.enabled}
-                                id="S_Material1"
-                                value={costListData?.S_Material1 || ""}
+                            <div className="w-24">
+                              <select
+                                id="S_Sl_Grp_CD"
+                                value={costListData?.S_Sl_Grp_CD || ""}
                                 onChange={handleCostListInputChange}
-                                type="text"
-                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Material1.enabled
-                                  ? "bg-[#ccffff] border-gray-500"
-                                  : "bg-white border-gray-500"
-                                  }`}
-                              />
+                                className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
+                              >
+                                <option value=""></option>
+                                {Array.isArray(WorkgData) &&
+                                      WorkgData.length > 0 ? (
+                                        WorkgData.map((item, index) => (
+                                          <option
+                                            key={index}
+                                            value={item.WorkG_CD}
+                                          >
+                                            {item.WorkG_CD}
+                                          </option>
+                                        ))
+                                      ) : (
+                                        <option value="">ไม่มีข้อมูล</option>
+                                      )}
+                              </select>
                             </div>
                           </div>
 
@@ -1963,72 +1481,80 @@ export default function CostList() {
                               </div>
                             </div>
 
-                        <div className="flex gap-2 w-52">
-                          <label className="w-auto font-bold text-xs">
-                            Customer3
-                          </label>
-                          <div className="w-28">
-                            <select
-                              id="S_Customer_CD3"
-                              value={costListData?.S_Customer_CD3 || ""}
-                              onChange={handleCostListInputChange}
-                              className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
-                            >
-                              <option value=""></option>
-                              {Array.isArray(CustomerData) &&
-                                CustomerData.length > 0 ? (
-                                CustomerData.map((item, index) => (
-                                  <option key={index} value={item.Customer_CD}>
-                                    {item.Customer_CD}
-                                  </option>
-                                ))
-                              ) : (
-                                <option value="">ไม่มีข้อมูล</option>
-                              )}
-                            </select>
+                        <div className="flex justify-between gap-2 ">
+                          <div className="flex gap-2 w-full ml-4">
+                            <label className="w-24 font-bold text-xs">
+                              Customer1
+                            </label>
+                            <div className="w-auto">
+                              <input
+                                type="text"
+                                className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-24"
+                              />
+                            </div>
                           </div>
-                          <div className="w-28">
-                            <input
-                              disabled={!formState.Customer3_Input}
-                              id="S_Customer_Abb3"
-                              value={selectedCustomerAbb3 || ""}
-                              onChange={(event) => setCustomerData(event)}
-                              type="text"
-                              className="bg-white border-2 border-gray-500 rounded-md w-32 ml-1"
-                            />
+
+                          <div className="flex  w-28 ">
+                            <label className="ml-4 w-24 font-bold text-xs">
+                              Mate1
+                            </label>
+                            <div className="w-auto ml-5">
+                              <input
+                                disabled={!formState.S_Material1.enabled}
+                                id="S_Material1"
+                                value={costListData?.S_Material1 || ""}
+                                onChange={handleCostListInputChange}
+                                type="text"
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${formState.S_Material1.enabled
+                                  ? "bg-[#ccffff] border-gray-500"
+                                  : "bg-white border-gray-500"
+                                  }`}
+                              />
+                            </div>
+                          </div>
+
+                              <div className="flex  w-28 ">
+                                <label className="ml-4 w-24 font-medium text-sm">
+                                  Mate2
+                                </label>
+                                <div className="w-auto ml-5">
+                                  <input
+                                    disabled={!formState.S_Material2.enabled}
+                                    id="S_Material2"
+                                    value={costListData?.S_Material2 || ""}
+                                    onChange={handleCostListInputChange}
+                                    type="text"
+                                    className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
+                                      formState.S_Material2.enabled
+                                        ? "bg-[#ccffff] border-gray-500"
+                                        : "bg-white border-gray-500"
+                                    }`}
+                                  />
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex gap-2 w-40">
-                          <label className="w-auto font-bold text-xs">
-                            Customer3
-                          </label>
-                          <div className="relative w-40 lg:w-44">
-                            <input
-                              type="text"
-                              className="h-6 bg-white border-solid border-2 border-gray-500 rounded-md px-1 w-full"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex gap-2 w-40">
-                          <label className="w-auto font-bold text-xs">
-                            Item2
-                          </label>
-                          <div className="w-28">
-                            <select
-                              disabled={!formState.S_Item2_CD.enabled}
-                              id="S_Item2_CD"
-                              value={costListData?.S_Item2_CD || ""}
-                              onChange={handleCostListInputChange}
-                              className={`border-gray-500 border-solid border-2 rounded-md  w-full ${formState.S_Item2_CD.enabled
-                                ? "bg-[#ccffff] border-gray-500"
-                                : "bg-white border-gray-500"
+                        {/* Group 7 */}
+                        <div className="gap-2 flex mb-4 justify-between me-5">
+                          <div className="flex gap-2 w-48">
+                            <label className="w-24 font-medium text-sm">
+                              Cus_Draw_No
+                            </label>
+                            <div className="w-24">
+                              <input
+                                disabled={!formState.S_Customer_Draw.enabled}
+                                id="S_Customer_Draw"
+                                value={costListData?.S_Customer_Draw || ""}
+                                onChange={handleCostListInputChange}
+                                type="text"
+                                className={`h-6 border-solid border-2 rounded-md px-1 w-full ${
+                                  formState.S_Customer_Draw.enabled
+                                    ? "bg-[#ccffff] border-gray-500"
+                                    : "bg-white border-gray-500"
                                 }`}
-                            >
-                              <option value=""></option>
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                            </select>
+                              />
+                            </div>
                           </div>
                           <div className="flex gap-2 w-52">
                             <label className="w-auto font-medium text-sm">
@@ -2985,7 +2511,6 @@ export default function CostList() {
                           </div>
                         </div>
                       </div>
-
                       <div className="col-span-3">
                         {/* Group 1 */}
                         <div className="mb-4">
