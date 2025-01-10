@@ -5,10 +5,10 @@ export const CostListContext = createContext();
 
 export default function CostListContextProvider({ children }) {
   const [costListData, setCostListData] = useState(null);
+  const [qrCostListData, setQrCostListData] = useState(null);
   const [WorkerData, setWorkerData] = useState([]);
   const [scheduleData, setScheduleData] = useState(null);
   const [plprogressData, setPlProgressData] = useState(null);
-  //const [formState, setFormState] = useState(initialFormState);
   // ฟังก์ชันสำหรับดึงข้อมูล cost list
   const fetchCostList = async (costListData) => {
     try {
@@ -23,6 +23,19 @@ export default function CostListContextProvider({ children }) {
       }
     } catch (error) {
       console.error("Error fetching cost list data:", error);
+    }
+  };
+
+  const fetchQR_costlist = async () => {
+    try {
+      const response = await axios.post("/costlist/costlist-detail");
+
+      setQrCostListData(response.data);
+      console.log("Response Data:", response.data);
+      return response;
+    } catch (error) {
+      console.error("Error fetching worker groups:", error);
+      throw error;
     }
   };
 
@@ -68,6 +81,7 @@ const fetchPlprogress = async () => {
     fetchWorker(); 
     fetchSchedule();
     fetchPlprogress();
+    fetchQR_costlist();
     
 
 }, []);
@@ -199,6 +213,8 @@ const fetchPlprogress = async () => {
         <CostListContext.Provider
           value={{
             initialFormState,
+            qrCostListData,
+            setQrCostListData,
             costListData,
             setCostListData,
             fetchCostList,
