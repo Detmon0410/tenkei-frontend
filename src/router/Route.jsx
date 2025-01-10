@@ -69,6 +69,7 @@ import { AdminMenuDashboardPage } from "../pages/AdminMenuDashboardPage";
 import { ConvertDashboardPage } from "../pages/ConvertDashboardPage";
 import { Reserve1DashboardPage } from "../pages/Reserve1DashboardPage";
 import { SearchDashboardPage } from "../pages/SearchDashboardPage";
+import RdProGPlanPage from "../pages/reports/RdProGPlanPage";
 
 const router = createBrowserRouter([
   {
@@ -346,6 +347,10 @@ const router = createBrowserRouter([
   {
     path: "/process-dashboard",
     element: <ProcessDashboardPage />,
+  },
+  {
+    path: "/reports/RD_ProG_Plan",
+    element: <RdProGPlanPage />,
   },
 ]);
 
