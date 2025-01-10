@@ -657,11 +657,11 @@ export default function CostList() {
       return newTableVisibility;
     });
   
-    // ดึงข้อมูลจาก API
-    const costListData = { Order_No :"id",Customer_CD : 'value'}; // ถ้าคุณมีข้อมูลที่ต้องการส่งไปใน API ให้ระบุที่นี่
-    await fetchCostList(costListData);  // เรียกฟังก์ชัน fetchCostList
+    // // ดึงข้อมูลจาก API
+    // const costListData = { Order_No :"id",Customer_CD : 'value'}; // ถ้าคุณมีข้อมูลที่ต้องการส่งไปใน API ให้ระบุที่นี่
+    // await fetchCostList(costListData);  // เรียกฟังก์ชัน fetchCostList
   
-    // console.log("F3 clicked, data fetched",costListData);
+    // // console.log("F3 clicked, data fetched",costListData);
   };
   
   const handleF11Click = () => {
