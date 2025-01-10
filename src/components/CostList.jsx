@@ -12,6 +12,92 @@ import Swal from "sweetalert2";
 export default function CostList() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [filteredOrderData, setFilteredOrderData] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [columnsVisibility, setColumnsVisibility] = useState({
+      Product_Delivery: true,
+      Order_No: true,
+      Parts_No: true,
+      Product_Grp: true,
+      Customer_CD: true,
+      Customer_Abb: true,
+      Product_Name: true,
+      Product_Size: true,
+      Product_Draw: true,
+      Quantity: true,
+      Pd_Calc_Qty: true,
+      Unit: true,
+      Target: true,
+      Product_Docu: true,
+      Sales_Grp: true,
+      Sales_Person: true,
+      Request1: true,
+      Request2: true,
+      Request3: true,
+      Material1: true,
+      Material2: true,
+      Coating_CD: true,
+      Item1: true,
+      Item2: true,
+      Item3: true,
+      Item4: true,
+      Price: true,
+      Unit_Price: true,
+      Pd_Received_Date: true,
+      Request_Delivery: true,
+      NAV_Delivery: true,
+      I_Completed_Date: true,
+      Pd_Calc_Date: true,
+      Shipment_Date: true,
+      Specific: true,
+      Confirm_Delivery: true,
+      Delivery: true,
+      Schedule: true,
+      Od_Progress: true,
+      Sl_Instructions: true,
+      Pd_Instructions: true,
+      Pd_Remark: true,
+      I_Remark: true,
+      Pd_Complete_Date: true,
+      Supple_Docu: true,
+      Process1: true,
+      Process2: true,
+      Process3: true,
+      Process4: true,
+      Process5: true,
+      Process6: true,
+      Process7: true,
+      Process8: true,
+      Process9: true,
+      Process10: true,
+      Process11: true,
+      Process12: true,
+      Process13: true,
+      Process14: true,
+      Process15: true,
+      Process16: true,
+      Process17: true,
+      Process18: true,
+      Process19: true,
+      Process20: true,
+      Process21: true,
+      Process22: true,
+      Process23: true,
+      Process24: true,
+      Process25: true,
+      Process26: true,
+      Process27: true,
+      Process28: true,
+      Process29: true,
+      Process30: true,
+      Process31: true,
+      Process32: true,
+      Process33: true,
+      Process34: true,
+      Process35: true,
+      Process36: true,
+    });
+  
   const [buttonState, setButtonState] = useState({
       F1: false,
       F2: false,
@@ -27,6 +113,8 @@ export default function CostList() {
       F12: true,
     });
   const { initialFormState, 
+          qrCostListData,
+          setQrCostListData,
           WorkerData, 
           setWorkerData,
           costListData,
@@ -37,6 +125,7 @@ export default function CostList() {
         } = useCostList();
 
     const {
+      fetchOrders,
       OdProgressData,
       setWorkgData,
       WorkgData,
@@ -59,7 +148,6 @@ export default function CostList() {
       DeliveryData,
       TargetData,
     } = useOrder();
-  // const [costListData, setCostListData] = useCostList();
   const { searchOrderNo: initialSearchOrderNo = "" } = location.state || {};
   const [formState, setFormState] = useState(initialFormState);
   const [selectedSalesGrpAbb, setSelectedSalesGrpAbb] = useState("");
@@ -642,27 +730,235 @@ export default function CostList() {
       return updatedData;
     });
   };
+
+  const handleF2Click = () => {
+    setShowDialog(true);
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setColumnsVisibility((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+  };
+
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+  };
+  const handleCheckAll = (event) => {
+    const isChecked = event.target.checked;
+    const updatedVisibility = Object.keys(columnsVisibility).reduce(
+      (acc, column) => {
+        acc[column] = isChecked;
+        return acc;
+      },
+      {}
+    );
+    setColumnsVisibility(updatedVisibility);
+  };
   
   const handleF3Click = async () => {
-    setIsTableVisible((prevIsTableVisible) => {
-      // Toggle การแสดงตาราง
-      const newTableVisibility = !prevIsTableVisible;
   
       // Toggle ปุ่ม F2
       setButtonState((prevState) => ({
         ...prevState,
-        F2: newTableVisibility, // เปิด/ปิด F2 ตามสถานะของตาราง
+        F2: true, // เปิด F2 เสมอ
       }));
   
-      return newTableVisibility;
-    });
   
-    // // ดึงข้อมูลจาก API
-    // const costListData = { Order_No :"id",Customer_CD : 'value'}; // ถ้าคุณมีข้อมูลที่ต้องการส่งไปใน API ให้ระบุที่นี่
-    // await fetchCostList(costListData);  // เรียกฟังก์ชัน fetchCostList
+    //console.log("Sending costListData to API:", costListData);
   
-    // // console.log("F3 clicked, data fetched",costListData);
+    try {
+      const response = await fetchOrders();
+      const orders = response.data?.data?.orders;
+
+      // console.log("Orders fetched:", orders);
+      // console.log("Filters to apply:", planListData);
+
+      if (!Array.isArray(orders)) {
+        // console.error("Orders data is not an array:", orders);
+        setFilteredOrderData([]);
+        return;
+      }
+
+      const keyMapping = {
+        S_St_Od_Progress_CD: "Od_Progress_CD",
+        S_Ed_Od_Progress_CD: "Od_Progress_CD",
+        S_Order_No: "Order_No",
+        S_Od_Ctl_Person_CD: "Od_Ctl_Person_CD",
+        S_St_Delivery_CD: "Delivery_CD",
+        S_Ed_Delivery_CD: "Delivery_CD",
+        S_NAV_Name: "NAV_Name",
+        S_St_Pd_Grp_CD: "Product_Grp_CD",
+        S_Ed_Pd_Grp_CD: "Product_Grp_CD",
+        S_Sl_Grp_CD: "Sales_Grp_CD",
+        S_St_Schedule_CD: "Schedule_CD",
+        S_Ed_Schedule_CD: "Schedule_CD",
+        S_Product_Name: "Product_Name",
+        S_No_Pd_Grp_CD1: "Product_Grp_CD",
+        S_Price_CD: "Price_CD",
+        S_Sl_Person_CD: "Sales_Person_CD",
+        S_St_Target_CD: "Target_CD",
+        S_NAV_Size: "NAV_Size",
+        S_No_Pd_Grp_CD2: "Product_Grp_CD",
+        S_Request1_CD: "Request1_CD",
+        S_Request2_CD: "Request2_CD",
+        S_Request3_CD: "Request3_CD",
+        S_St_Request_Delivery: "Request_Delivery",
+        S_Ed_Request_Delivery: "Request_Delivery",
+        S_Product_Size: "Product_Size",
+        S_Customer_CD1: "Customer_CD",
+        S_Material1: "Material1",
+        S_St_NAV_Delivery: "NAV_Delivery",
+        S_Ed_NAV_Delivery: "NAV_Delivery",
+        S_Customer_Draw: "Customer_Draw",
+        S_Customer_CD2: "Customer_CD",
+        S_Item1_CD: "Item1_CD",
+        S_Material2: "Material2",
+        S_St_Confirm_Delivery: "Confirm_Delivery",
+        S_Ed_Confirm_Delivery: "Confirm_Delivery",
+        S_Company_Draw: "Company_Draw",
+        S_Customer_CD3: "Customer_CD",
+        S_Item2_CD: "Item2_CD",
+        S_Material3: "Material3",
+        S_St_Product_Delivery: "Product_Delivery",
+        S_Ed_Product_Delivery: "Product_Delivery",
+        S_Product_Draw: "Product_Draw",
+        S_No_Customer_CD: "Customer_CD",
+        S_Item3_CD: "Item3_CD",
+        S_Material4: "Material4",
+        S_St_Pd_Received_Date: "Pd_Received_Date",
+        S_Ed_Pd_Received_Date: "Pd_Received_Date",
+        S_Sl_instructions: "Sl_instructions",
+        S_Specific_CD1: "Specific_CD",
+        S_Coating_CD1: "Coating_CD",
+        S_Item4_CD: "S_Item4_CD",
+        S_Material5: "Material5",
+        S_St_Pd_Complete_Date: "Pd_Complete_Date",
+        S_Ed_Pd_Complete_Date: "Pd_Complete_Date",
+        S_Pd_instructions: "Pd_Instructions",
+        S_Specific_CD2: "Specific_CD",
+        S_Coating_CD2: "Coating_CD",
+        S_Od_Pending: "Od_Pending",
+        S_Od_CAT1: "Od_CAT1",
+        S_St_I_Complete_Date: "I_Completed_Date",
+        S_Ed_I_Complete_Date: "I_Completed_Date",
+        S_Pd_Remark: "Pd_Remark",
+        S_No_Specific_CD1: "Specific_CD",
+        S_Coating_CD3: "Coating_CD",
+        S_Temp_Shipment: "Temp_Shipment",
+        S_Od_CAT2: "Od_CAT2",
+        S_St_Shipment_Date: "Shipment_Date",
+        S_Ed_Shipment_Date: "Shipment_Date",
+        S_I_Remark: "I_Remark",
+        S_No_Specific_CD2: "Specific_CD",
+        S_No_Coating_CD: "Coating_CD",
+        S_Unreceived: "Unreceived",
+        S_Od_CAT3: "Od_CAT3",
+        S_St_Calc_Date: "Pd_Calc_Date",
+        S_Ed_Calc_Date: "Pd_Calc_Date",
+      };
+
+      const filters = Object.entries(costListData)
+        .filter(([key, value]) => value)
+        .map(([key, value]) => [keyMapping[key] || key, value]);
+
+      // console.log("Filters after mapping:", filters);
+
+      const filteredData = orders.filter((order) =>
+        filters.every(([key, value]) => {
+          // console.log(
+          //   `Checking order[${key}] (${order[key]}) against value (${JSON.stringify(value)})`
+          // );
+
+          // กรณี value เป็นออบเจกต์ และมี key "not"
+          if (typeof value === "object" && value.not) {
+            return order[key] !== value.not; // ตรวจสอบว่าไม่เท่ากับค่าใน "not"
+          }
+
+          // กรณี value เป็น string หรือค่าปกติ
+          if (typeof order[key] === "string") {
+            return order[key]?.toLowerCase().includes(value.toLowerCase());
+          }
+
+          // ตรวจสอบแบบปกติ
+          return order[key] === value;
+        })
+      );
+
+      // console.log("Filtered Data:", filteredData);
+
+      if (filteredData.length > 0) {
+        setFilteredOrderData(filteredData);
+      } else {
+        // console.log("No matching orders found.");
+        setFilteredOrderData([]);
+      }
+    } catch (error) {
+      console.error("Error handling F3 click:", error);
+      setFilteredOrderData([]);
+    }
   };
+
+    const handleF8Click = () => {
+      // เปิดหน้าต่างใหม่
+      const newWindow = window.open('', '_blank', 'width=600,height=400');
+  
+      // ดึงข้อมูลจาก API
+      fetchCostList().then(() => {
+        // สร้าง HTML ที่จะแสดงในหน้าต่างใหม่
+        const tableHTML = `
+                          <html>
+                            <head><title>QR_Cs_List_Detail</title></head>
+                            <body>
+                              <h2>QR Cost List Detail</h2>
+                              <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                  <tr>
+                                    <th>Order No</th>
+                                    <th>Parts_No</th>
+                                    <th>Proccess_No</th>
+                                    <th>Proccess_Name</th>
+                                    <th>ProccessG_Name</th>
+                                    <th>CostG_CD</th>
+                                    <th>Machine_Cost_Time</th>
+                                    <th>Person_Time</th>
+                                    <th>Person_Cost_Time</th>
+                                    <th>CS_Complete_Date</th>
+
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                ${qrCostListData.map(item => 
+                                  item.Plan[0].costs.map(cost => `
+                                    <tr>
+                                      <td>${cost.Order_No || ''}</td>
+                                      <td>${cost.Parts_No || ''}</td>
+                                      <td>${cost.Cost_No || ''}</td>
+                                      <td>${cost.Process_No || ''}</td>
+                                      <td>${cost.OdPt_No || ''}</td>
+                                      <td>${cost.Order_No || ''}</td>
+                                      <td>${cost.Parts_No || ''}</td>
+                                      <td>${cost.Cost_No || ''}</td>
+                                      <td>${cost.Process_No || ''}</td>
+                                      <td>${cost.OdPt_No || ''}</td>
+                                    </tr>
+                                  `).join('')
+                                ).join('')}
+                                </tbody>
+                              </table>
+                              <button onclick="window.close()">Close</button>
+                            </body>
+                          </html>
+                        `;
+                  
+        console.log("data:",qrCostListData);
+        // ใส่ HTML เข้าไปในหน้าต่างใหม่
+        newWindow.document.write(tableHTML);
+        newWindow.document.close();
+      });
+    };
   
   const handleF11Click = () => {
     window.location.reload();
@@ -699,32 +995,8 @@ export default function CostList() {
       <Sidebar />
       <div className="flex flex-col w-screen mr-2 ml-2">
         <Navbar />
-
         <div className="flex-1 flex-col overflow-x-auto flex-grow p-2">
           <div className="bg-stone-300 grid grid-cols-1">
-          {isTableVisible && costListData.length > 0 && (
-            <table className="border-collapse border border-gray-400 w-full">
-              <thead>
-                <tr>
-                  <th className="border border-gray-400 px-4 py-2">Order No</th>
-                  <th className="border border-gray-400 px-4 py-2">Product Name</th>
-                  <th className="border border-gray-400 px-4 py-2">Quantity</th>
-                  <th className="border border-gray-400 px-4 py-2">Customer</th>
-                </tr>
-              </thead>
-              <tbody>
-                {costListData.map((item, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-400 px-4 py-2">{item.Order_No}</td>
-                    <td className="border border-gray-400 px-4 py-2">{item.Product_Name}</td>
-                    <td className="border border-gray-400 px-4 py-2">{item.Quantity}</td>
-                    <td className="border border-gray-400 px-4 py-2">{item.TM_Customer.Customer_Name}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-
             <div className="bg-white w-11/12 mt-5 rounded-2xl mx-auto shadow-xl">
               <div className="flex justify-center py-4">
                 <label className="text-xl font-bold">Cost List</label>
@@ -3524,7 +3796,890 @@ export default function CostList() {
                   Change_View
                 </button>
               </div>
+              <hr className="my-6 h-0.5 bg-gray-500 opacity-100 dark:opacity-50 border-y-[1px] border-gray-300" />
+
+              <div className="overflow-x-auto w-full mt-4">
+                <table className="min-w-full table-auto border-collapse border border-gray-800 shadow-md rounded-lg">
+                  <thead className="bg-gray-200 text-black">
+                    <tr>
+                      {columnsVisibility.Product_Delivery && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Product_Delivery
+                        </th>
+                      )}
+                      {columnsVisibility.Order_No && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Order_No
+                        </th>
+                      )}
+                      {columnsVisibility.Parts_No && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[150px]">
+                          Parts_No
+                        </th>
+                      )}
+                      {columnsVisibility.Product_Grp && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Product_Grp
+                        </th>
+                      )}
+                      {columnsVisibility.Customer_CD && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[200px]">
+                          Customer_CD
+                        </th>
+                      )}
+                      {columnsVisibility.Customer_Abb && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[250px]">
+                          Customer_Abb
+                        </th>
+                      )}
+                      {columnsVisibility.Product_Name && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[400px]">
+                          Product_Name
+                        </th>
+                      )}
+                      {columnsVisibility.Product_Size && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[400px]">
+                          Product_Size
+                        </th>
+                      )}
+                      {columnsVisibility.Product_Draw && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[250px]">
+                          Product_Draw
+                        </th>
+                      )}
+                      {columnsVisibility.Quantity && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Quantity
+                        </th>
+                      )}
+                      {columnsVisibility.Pd_Calc_Qty && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Pd_Calc_Qty
+                        </th>
+                      )}
+                      {columnsVisibility.Unit && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[200px]">
+                          Unit
+                        </th>
+                      )}
+                      {columnsVisibility.Target && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[150px]">
+                          Target
+                        </th>
+                      )}
+                      {columnsVisibility.Product_Docu && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium min-w-[400px]">
+                          Product_Docu
+                        </th>
+                      )}
+                      {columnsVisibility.Sales_Grp && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Sales_Grp
+                        </th>
+                      )}
+                      {columnsVisibility.Sales_Person && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Sales_Person
+                        </th>
+                      )}
+                      {columnsVisibility.Request1 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Request1
+                        </th>
+                      )}
+                      {columnsVisibility.Request2 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Request2
+                        </th>
+                      )}
+                      {columnsVisibility.Request3 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Request3
+                        </th>
+                      )}
+                      {columnsVisibility.Material1 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Material1
+                        </th>
+                      )}
+                      {columnsVisibility.Material2 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Material2
+                        </th>
+                      )}
+                      {columnsVisibility.Coating_CD && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Coating_CD
+                        </th>
+                      )}
+                      {columnsVisibility.Item1 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Item1
+                        </th>
+                      )}
+                      {columnsVisibility.Item2 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Item2
+                        </th>
+                      )}
+                      {columnsVisibility.Item3 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Item3
+                        </th>
+                      )}
+                      {columnsVisibility.Item4 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Item4
+                        </th>
+                      )}
+                      {columnsVisibility.Price && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Price
+                        </th>
+                      )}
+                      {columnsVisibility.Unit_Price && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Unit_Price
+                        </th>
+                      )}
+                      {columnsVisibility.Pd_Received_Date && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Pd_Received_Date
+                        </th>
+                      )}
+                      {columnsVisibility.Request_Delivery && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Request_Delivery
+                        </th>
+                      )}
+                      {columnsVisibility.NAV_Delivery && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          NAV_Delivery
+                        </th>
+                      )}
+                      {columnsVisibility.I_Completed_Date && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          I_Completed_Date
+                        </th>
+                      )}
+                      {columnsVisibility.Pd_Calc_Date && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Pd_Calc_Date
+                        </th>
+                      )}
+                      {columnsVisibility.Shipment_Date && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Shipment_Date
+                        </th>
+                      )}
+                      {columnsVisibility.Specific && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Specific
+                        </th>
+                      )}
+                      {columnsVisibility.Confirm_Delivery && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Confirm_Delivery
+                        </th>
+                      )}
+                      {columnsVisibility.Delivery && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Delivery
+                        </th>
+                      )}
+                      {columnsVisibility.Schedule && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Schedule
+                        </th>
+                      )}
+                      {columnsVisibility.Od_Progress && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Od_Progress
+                        </th>
+                      )}
+                      {columnsVisibility.Sl_Instructions && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Sl_Instructions
+                        </th>
+                      )}
+                      {columnsVisibility.Pd_Instructions && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Pd_Instructions
+                        </th>
+                      )}
+                      {columnsVisibility.Pd_Remark && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Pd_Remark
+                        </th>
+                      )}
+                      {columnsVisibility.I_Remark && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          I_Remark
+                        </th>
+                      )}
+                      {columnsVisibility.Pd_Complete_Date && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Pd_Complete_Date
+                        </th>
+                      )}
+                      {columnsVisibility.Supple_Docu && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Supple_Docu
+                        </th>
+                      )}
+                      {columnsVisibility.Process1 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process1
+                        </th>
+                      )}
+                      {columnsVisibility.Process2 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process2
+                        </th>
+                      )}
+                      {columnsVisibility.Process3 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process3
+                        </th>
+                      )}
+                      {columnsVisibility.Process4 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process4
+                        </th>
+                      )}
+                      {columnsVisibility.Process5 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process5
+                        </th>
+                      )}
+                      {columnsVisibility.Process6 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process6
+                        </th>
+                      )}
+                      {columnsVisibility.Process7 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process7
+                        </th>
+                      )}
+                      {columnsVisibility.Process8 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process8
+                        </th>
+                      )}
+                      {columnsVisibility.Process9 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process9
+                        </th>
+                      )}
+                      {columnsVisibility.Process10 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process10
+                        </th>
+                      )}
+                      {columnsVisibility.Process11 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process11
+                        </th>
+                      )}
+                      {columnsVisibility.Process12 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process12
+                        </th>
+                      )}
+                      {columnsVisibility.Process13 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process13
+                        </th>
+                      )}
+                      {columnsVisibility.Process14 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process14
+                        </th>
+                      )}
+                      {columnsVisibility.Process15 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process15
+                        </th>
+                      )}
+                      {columnsVisibility.Process16 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process16
+                        </th>
+                      )}
+                      {columnsVisibility.Process17 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process17
+                        </th>
+                      )}
+                      {columnsVisibility.Process18 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process18
+                        </th>
+                      )}
+                      {columnsVisibility.Process19 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process19
+                        </th>
+                      )}
+                      {columnsVisibility.Process20 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process20
+                        </th>
+                      )}
+                      {columnsVisibility.Process21 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process21
+                        </th>
+                      )}
+                      {columnsVisibility.Process22 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process22
+                        </th>
+                      )}
+                      {columnsVisibility.Process23 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process23
+                        </th>
+                      )}
+                      {columnsVisibility.Process24 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process24
+                        </th>
+                      )}
+                      {columnsVisibility.Process25 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process25
+                        </th>
+                      )}
+                      {columnsVisibility.Process26 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process26
+                        </th>
+                      )}
+                      {columnsVisibility.Process27 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process27
+                        </th>
+                      )}
+                      {columnsVisibility.Process28 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process28
+                        </th>
+                      )}
+                      {columnsVisibility.Process29 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process29
+                        </th>
+                      )}
+                      {columnsVisibility.Process30 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process30
+                        </th>
+                      )}
+                      {columnsVisibility.Process31 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process31
+                        </th>
+                      )}
+                      {columnsVisibility.Process32 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process32
+                        </th>
+                      )}
+                      {columnsVisibility.Process33 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process33
+                        </th>
+                      )}
+                      {columnsVisibility.Process34 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process34
+                        </th>
+                      )}
+                      {columnsVisibility.Process35 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process35
+                        </th>
+                      )}
+                      {columnsVisibility.Process36 && (
+                        <th className="border border-gray-300 px-6 py-3 text-center text-sm font-medium">
+                          Process36
+                        </th>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredOrderData.length > 0 &&
+                      filteredOrderData.map((order, index) => {
+                        const customer = Array.isArray(CustomerData)
+                          ? CustomerData.find(
+                              (customer) =>
+                                customer.Customer_CD === order.Customer_CD
+                            )
+                          : null;
+
+                        const plan = Array.isArray(costListData.data)
+                          ? costListData.data.find(
+                              (plan) => plan.Order_No === order.Order_No
+                            )
+                          : null;
+
+                        return (
+                          <tr
+                            key={index}
+                            className="bg-white transition-colors duration-300"
+                          >
+                            {columnsVisibility.Product_Delivery && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Product_Delivery
+                                  ? new Date(
+                                      order.Product_Delivery
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Order_No && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Order_No}
+                              </td>
+                            )}
+                            {columnsVisibility.Parts_No && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {plan ? plan.Parts_No : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Product_Grp && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Product_Grp_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Customer_CD && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Customer_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Customer_Abb && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {customer ? customer.Customer_Abb : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Product_Name && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Product_Name}
+                              </td>
+                            )}
+                            {columnsVisibility.Product_Size && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Product_Size}
+                              </td>
+                            )}
+                            {columnsVisibility.Product_Draw && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Product_Draw}
+                              </td>
+                            )}
+                            {columnsVisibility.Quantity && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Quantity}
+                              </td>
+                            )}
+                            {columnsVisibility.Pd_Calc_Qty && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Pd_Calc_Qty}
+                              </td>
+                            )}
+                            {columnsVisibility.Unit && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Unit_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Target && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Target_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Product_Docu && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Product_Docu}
+                              </td>
+                            )}
+                            {columnsVisibility.Sales_Grp && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Sales_Grp_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Sales_Person && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Sales_Person_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Request1 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Request1_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Request2 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Request2_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Request3 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Request3_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Material1 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Material1}
+                              </td>
+                            )}
+                            {columnsVisibility.Material2 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Material2}
+                              </td>
+                            )}
+                            {columnsVisibility.Coating_CD && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Coating_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Item1 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Item1_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Item2 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Item2_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Item3 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Item3_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Item4 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Item4_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Price && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Price_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Unit_Price && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Unit_Price}
+                              </td>
+                            )}
+                            {columnsVisibility.Pd_Received_Date && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Pd_Received_Date
+                                  ? new Date(
+                                      order.Pd_Received_Date
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Request_Delivery && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Request_Delivery
+                                  ? new Date(
+                                      order.Request_Delivery
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.NAV_Delivery && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.NAV_Delivery
+                                  ? new Date(
+                                      order.NAV_Delivery
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.I_Completed_Date && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.I_Completed_Date
+                                  ? new Date(
+                                      order.I_Completed_Date
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Pd_Calc_Date && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Pd_Calc_Date
+                                  ? new Date(
+                                      order.Pd_Calc_Date
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Shipment_Date && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Shipment_Date
+                                  ? new Date(
+                                      order.Shipment_Date
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Specific && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Specific_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Confirm_Delivery && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Confirm_Delivery
+                                  ? new Date(
+                                      order.Confirm_Delivery
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Delivery && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Delivery_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Schedule && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Schedule_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Od_Progress && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Od_Progress_CD}
+                              </td>
+                            )}
+                            {columnsVisibility.Sl_Instructions && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Sl_Instructions}
+                              </td>
+                            )}
+                            {columnsVisibility.Pd_Instructions && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Pd_Instructions}
+                              </td>
+                            )}
+                            {columnsVisibility.Pd_Remark && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Pd_Remark}
+                              </td>
+                            )}
+                            {columnsVisibility.I_Remark && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.I_Remark}
+                              </td>
+                            )}
+                            {columnsVisibility.Pd_Complete_Date && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Pd_Complete_Date
+                                  ? new Date(
+                                      order.Pd_Complete_Date
+                                    ).toLocaleDateString("en-GB")
+                                  : ""}
+                              </td>
+                            )}
+                            {columnsVisibility.Supple_Docu && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {order.Supple_Docu}
+                              </td>
+                            )}
+                            {columnsVisibility.Process1 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process1 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process2 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process2 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process3 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process3 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process4 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process4 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process5 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process5 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process6 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process6 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process7 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process7 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process8 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process8 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process9 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process9 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process10 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process10 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process11 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process11 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process12 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process12 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process13 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process13 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process14 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process14 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process15 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process15 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process16 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process16 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process17 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process17 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process18 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process18 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process19 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process19 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process20 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process20 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process21 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process21 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process22 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process22 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process23 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process23 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process24 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process24 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process25 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process25 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process26 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process26 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process27 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process27 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process28 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process28 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process29 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process29 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process30 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process30 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process31 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process31 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process32 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process32 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process33 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process33 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process34 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process34 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process35 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process35 */}
+                              </td>
+                            )}
+                            {columnsVisibility.Process36 && (
+                              <td className="border border-gray-300 px-6 py-3 text-sm text-gray-800">
+                                {/* Process36 */}
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
             </div>
+
+
             <div className="bg-white p-3 mt-5">
               <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div className="grid grid-cols-4 gap-2">
@@ -3536,10 +4691,61 @@ export default function CostList() {
                     検索 (F1)
                   </button>
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white disabled:bg-gray-400 disabled:text-gray-200 disabled:cursor-not-allowed"
-                  disabled={!buttonState.F2}>
+                  disabled={!buttonState.F2}
+                  onClick={handleF2Click}>
                     Setting <br />
                     設定 (F2)
                   </button>
+                  {showDialog && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white p-6 rounded-lg shadow-lg w-[300px]">
+                    <h3 className="text-lg font-bold mb-4">Column Settings</h3>
+                    <form className="max-h-[200px] overflow-y-auto">
+                      {/* Check All button */}
+                      <div className="flex items-center mb-2">
+                        <input
+                          type="checkbox"
+                          id="checkAll"
+                          onChange={handleCheckAll}
+                          checked={Object.values(columnsVisibility).every(
+                            (value) => value
+                          )}
+                          className="mr-2"
+                        />
+                        <label htmlFor="checkAll" className="text-sm">
+                          Select All
+                        </label>
+                      </div>
+
+                      <hr className="mb-2" />
+
+                      {Object.keys(columnsVisibility).map((column) => (
+                        <div key={column} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={column}
+                            name={column}
+                            checked={columnsVisibility[column]}
+                            onChange={handleCheckboxChange}
+                            className="mr-2"
+                          />
+                          <label htmlFor={column} className="text-sm">
+                            {column}
+                          </label>
+                        </div>
+                      ))}
+                    </form>
+                    <div className="mt-4 flex justify-end">
+                      <button
+                        onClick={handleCloseDialog}
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
                   onClick={handleF3Click}>
                     Show <br />
@@ -3566,10 +4772,12 @@ export default function CostList() {
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
                     List <br />一 覽 (F7)
                   </button>
-                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
+                  <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white"
+                  onClick={handleF8Click}>
                     Data <br />
                     データ (F8)
                   </button>
+                  
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button className="bg-blue-500 p-3 rounded-lg hover:bg-blue-700 font-medium text-white">
