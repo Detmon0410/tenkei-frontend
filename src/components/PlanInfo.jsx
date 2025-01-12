@@ -478,19 +478,19 @@ export default function PlanInfo() {
       });
     }
   };
-  const confirmWhenSaveNull = async (value, fieldName, defaultValue) => {
-    if (value === null || value === "" || value === undefined) {
-      const displayValue = defaultValue !== undefined ? defaultValue : "N/A"; // ค่าดีฟอลต์ที่แสดงในกรณีที่ไม่มีค่า
-      await Swal.fire({
-        title: `${fieldName} is required!`,
-        text: `Please provide a valid value for ${fieldName}. Default value: ${displayValue}`,
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return false;
-    }
-    return true;
-  };
+  // const confirmWhenSaveNull = async (value, fieldName, defaultValue) => {
+  //   if (value === null || value === "" || value === undefined) {
+  //     const displayValue = defaultValue !== undefined ? defaultValue : "N/A"; // ค่าดีฟอลต์ที่แสดงในกรณีที่ไม่มีค่า
+  //     await Swal.fire({
+  //       title: `${fieldName} is required!`,
+  //       text: `Please provide a valid value for ${fieldName}. Default value: ${displayValue}`,
+  //       icon: "warning",
+  //       confirmButtonText: "OK",
+  //     });
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const handleF9Click = async () => {
     try {
