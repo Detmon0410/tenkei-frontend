@@ -161,6 +161,7 @@ export default function PlanContextProvider({ children }) {
   const [ScheduleData, setScheduleData] = useState(null);
   const [PartsData, setPartsData] = useState(null);
   const [UnitsData, setUnitsData] = useState(null);
+  const [TssetData, setTssetData] = useState(null);
 
 
   const fetch_All_Plan = async () => {
@@ -271,6 +272,18 @@ export default function PlanContextProvider({ children }) {
     }
   };
 
+  const fetchTsset = async () => {
+    try {
+      const response = await axios.get("/plan/ts-set");
+
+      setTssetData(response.data.data.tsSet);
+      return response;
+    } catch (error) {
+      console.error("Error fetching tsSet groups:", error);
+      throw error;
+    }
+  };
+
   const createResult = async () => {
     try {
       const response = await axios.post("/plan/create-result", planData);
@@ -298,6 +311,20 @@ export default function PlanContextProvider({ children }) {
       throw new Error("Failed to create wip");
     }
   };
+
+  const Schedule_Calc = async () => {
+    try {
+      const response = await axios.post("/plan/schedule-calc", planData);
+   
+      console.log("check cal",response.data);
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+      console.error("Error creating Schedule_Calc:", errorMessage);
+      throw new Error("Failed to create Schedule_Calc");
+    }
+  };
+
 
   const createSchedule = async () => {
     try {
@@ -385,6 +412,7 @@ export default function PlanContextProvider({ children }) {
     fetchParts();
     fetchUnits();
     fetch_All_Plan();
+    fetchTsset();
   }, []);
 
   return (
@@ -413,6 +441,8 @@ export default function PlanContextProvider({ children }) {
         deletePlan,
         deleteSchedule,
         deleteWip,
+        Schedule_Calc,
+        TssetData,
       }}
     >
       {children}
