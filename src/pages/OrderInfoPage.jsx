@@ -3,6 +3,7 @@ import OrderInfo from '../components/OrderInfo';
 
 export default function OrderInfoPage() {
   return (
-    <OrderInfo />
+   
+        <OrderInfo />
   )
 }
