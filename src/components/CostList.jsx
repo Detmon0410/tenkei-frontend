@@ -905,61 +905,108 @@ export default function CostList() {
 
     const handleF8Click = () => {
       // เปิดหน้าต่างใหม่
-      const newWindow = window.open('', '_blank', 'width=600,height=400');
-  
       // ดึงข้อมูลจาก API
-      fetchCostList().then(() => {
-        // สร้าง HTML ที่จะแสดงในหน้าต่างใหม่
-        const tableHTML = `
-                          <html>
-                            <head><title>QR_Cs_List_Detail</title></head>
-                            <body>
-                              <h2>QR Cost List Detail</h2>
-                              <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-                                <thead>
-                                  <tr>
-                                    <th>Order No</th>
-                                    <th>Parts_No</th>
-                                    <th>Proccess_No</th>
-                                    <th>Proccess_Name</th>
-                                    <th>ProccessG_Name</th>
-                                    <th>CostG_CD</th>
-                                    <th>Machine_Cost_Time</th>
-                                    <th>Person_Time</th>
-                                    <th>Person_Cost_Time</th>
-                                    <th>CS_Complete_Date</th>
+fetchCostList().then(() => {
+  // เปิดหน้าต่างใหม่ด้วยขนาดเริ่มต้นเล็กๆ
+  const newWindow = window.open('', '_blank', 'width=100,height=100');
 
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                ${qrCostListData.map(item => 
-                                  item.Plan[0].costs.map(cost => `
-                                    <tr>
-                                      <td>${cost.Order_No || ''}</td>
-                                      <td>${cost.Parts_No || ''}</td>
-                                      <td>${cost.Cost_No || ''}</td>
-                                      <td>${cost.Process_No || ''}</td>
-                                      <td>${cost.OdPt_No || ''}</td>
-                                      <td>${cost.Order_No || ''}</td>
-                                      <td>${cost.Parts_No || ''}</td>
-                                      <td>${cost.Cost_No || ''}</td>
-                                      <td>${cost.Process_No || ''}</td>
-                                      <td>${cost.OdPt_No || ''}</td>
-                                    </tr>
-                                  `).join('')
-                                ).join('')}
-                                </tbody>
-                              </table>
-                              <button onclick="window.close()">Close</button>
-                            </body>
-                          </html>
-                        `;
-                  
-        console.log("data:",qrCostListData);
-        // ใส่ HTML เข้าไปในหน้าต่างใหม่
-        newWindow.document.write(tableHTML);
-        newWindow.document.close();
-      });
+  if (newWindow) {
+    // สร้าง HTML ที่จะแสดงในหน้าต่างใหม่
+    const tableHTML = `
+      <html>
+        <head>
+          <title>QR_Cs_List_Detail</title>
+          <style>
+            body {
+              margin: 0;
+              padding: 20px;
+              font-family: Arial, sans-serif;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+            button {
+              margin-top: 20px;
+              padding: 10px 20px;
+              background-color: #007bff;
+              color: #fff;
+              border: none;
+              cursor: pointer;
+              border-radius: 5px;
+            }
+            button:hover {
+              background-color: #0056b3;
+            }
+          </style>
+        </head>
+        <body>
+          <h2>QR Cost List Detail</h2>
+          <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Order No</th>
+                <th>Parts_No</th>
+                <th>Process_No</th>
+                <th>Process_Name</th>
+                <th>ProcessG_Name</th>
+                <th>CostG_CD</th>
+                <th>Machine_Cost_Time</th>
+                <th>Person_Time</th>
+                <th>Person_Cost_Time</th>
+                <th>CS_Complete_Date</th>
+              </tr>
+            </thead>
+            <tbody>
+            ${qrCostListData.map(item =>
+              item.Plan.map(plan =>
+                plan.costs.map(cost => `
+                  <tr>
+                    <td>${cost.Order_No || ''}</td>
+                    <td>${cost.Parts_No || ''}</td>
+                    <td>${cost.Process_No || ''}</td>
+                    <td>${cost.OdPt_No || ''}</td>
+                    <td>${cost.CMC || ''}</td>
+                    <td>${cost.Cost_No || ''}</td>
+                    <td>${cost.CPT || ''}</td>
+                    <td>${cost.CPN || ''}</td>
+                    <td>${cost.Cs_Complete_Qty || ''}</td>
+                    <td>${cost.Cs_Complete_Date ? new Date(cost.Cs_Complete_Date).toLocaleDateString() : ''}</td>
+                  </tr>
+                `).join('')
+              ).join('')
+            ).join('')}
+            
+            </tbody>
+          </table>
+          <button onclick="window.close()">Close</button>
+        </body>
+      </html>
+    `;
+
+    // ใส่ HTML เข้าไปในหน้าต่างใหม่
+    newWindow.document.write(tableHTML);
+    newWindow.document.close();
+
+    // ปรับขนาดหน้าต่างให้พอดีกับเนื้อหาทันทีหลังจากโหลดเสร็จ
+    newWindow.onload = function () {
+      const width = newWindow.document.body.scrollWidth;
+      const height = newWindow.document.body.scrollHeight;
+      newWindow.resizeTo(width + 30, height + 60);
+    };
+  } else {
+    console.error('Failed to open a new window. Please check popup blocker settings.');
+  }
+});
+
     };
   
   const handleF11Click = () => {
@@ -1227,17 +1274,22 @@ export default function CostList() {
                               onChange={handleCostListInputChange}
                               className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                             >
-                              <option value=""></option>
+                              <option value={costListData?.S_Od_Ctl_Person_CD}>
+                                {costListData?.S_Od_Ctl_Person_CD}
+                              </option>
                               {Array.isArray(WorkerData) && 
                               WorkerData.length > 0 ? (
-                                WorkerData.map((item, index) => (
-                                  <option
-                                   key={index} 
-                                   value={item.Worker_CD}
-                                   >
-                                    {item.Worker_CD}
+                                <>
+                                <option disabled>
+                                    Worker_CD | Worker_Abb | Worker_Remark
+                                </option>
+                                {WorkerData.map((item, index) => (
+                                  <option key={index} value={item.Worker_CD}>
+                                    {item.Worker_CD} | {item.Worker_Abb} |{" "}
+                                    {item.Worker_Remark}
                                   </option>
-                                ))
+                                  ))}
+                                </>
                               ) : (
                                 <option value="">ไม่มีข้อมูล</option>
                               )}
@@ -1291,17 +1343,22 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_St_Pd_Grp_CD}>
+                                  {costListData?.S_St_Pd_Grp_CD}
+                                </option>
                                 {Array.isArray(WorkgData) &&
                                       WorkgData.length > 0 ? (
-                                        WorkgData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.WorkG_CD}
-                                          >
-                                            {item.WorkG_CD}
-                                          </option>
-                                        ))
+                                    <>
+                                    <option disabled>
+                                      WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
+                                    </option>
+                                    {WorkgData.map((item, index) => (
+                                      <option key={index} value={item.WorkG_CD}>
+                                        {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                                        {item.WorkG_Name} | {item.WorkG_Remark}
+                                      </option>
+                                    ))}
+                                   </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -1330,17 +1387,22 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_St_Pd_Grp_CD}>
+                                  {costListData?.S_St_Pd_Grp_CD}
+                                </option>
                                 {Array.isArray(WorkgData) &&
                                       WorkgData.length > 0 ? (
-                                        WorkgData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.WorkG_CD}
-                                          >
-                                            {item.WorkG_CD}
-                                          </option>
-                                        ))
+                                    <>
+                                    <option disabled>
+                                      WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
+                                    </option>
+                                    {WorkgData.map((item, index) => (
+                                      <option key={index} value={item.WorkG_CD}>
+                                        {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                                        {item.WorkG_Name} | {item.WorkG_Remark}
+                                      </option>
+                                    ))}
+                                   </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -1369,17 +1431,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(WorkgData) &&
-                                      WorkgData.length > 0 ? (
-                                        WorkgData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.WorkG_CD}
-                                          >
-                                            {item.WorkG_CD}
-                                          </option>
-                                        ))
+                                 <option value={costListData?.S_Sl_Grp_CD}>
+                                    {costListData?.S_Sl_Grp_CD}
+                                  </option>
+                                  {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
+                                    <>
+                                      <option disabled>
+                                        WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
+                                      </option>
+                                      {WorkgData.map((item, index) => (
+                                        <option key={index} value={item.WorkG_CD}>
+                                          {item.WorkG_CD} | {item.WorkG_Abb} | {item.WorkG_Name} | {item.WorkG_Remark}
+                                          
+                                        </option>
+                                      ))}
+                                    </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -1424,17 +1490,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(WorkgData) &&
-                                    WorkgData.length > 0 ? (
-                                      WorkgData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.WorkG_CD}
-                                        >
-                                          {item.WorkG_CD}
-                                        </option>
-                                      ))
+                                <option value={costListData?.S_No_Pd_Grp_CD1?.not}>
+                                  {costListData?.S_No_Pd_Grp_CD1?.not}
+                                </option>
+                                {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
+                                    </option>
+                                    {WorkgData.map((item, index) => (
+                                      <option key={index} value={item.WorkG_CD}>
+                                        {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                                        {item.WorkG_Name} | {item.WorkG_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1467,17 +1537,21 @@ export default function CostList() {
                                     : "bg-white border-gray-500"
                                 }`}
                               >
-                                <option value=""></option>
-                                {Array.isArray(PriceData) &&
-                                    PriceData.length > 0 ? (
-                                      PriceData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Price_CD}
-                                        >
-                                          {item.Price_CD}
-                                        </option>
-                                      ))
+                                <option value={costListData?.S_Price_CD}>
+                                  {costListData?.S_Price_CD}
+                                </option>
+                                {Array.isArray(PriceData) && PriceData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Price_CD | Price_Symbol | Price_Remark
+                                    </option>
+                                    {PriceData.map((item, index) => (
+                                      <option key={index} value={item.Price_CD}>
+                                        {item.Price_CD} | {item.Price_Symbol} |{" "}
+                                        {item.Price_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1505,17 +1579,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(WorkerData) &&
-                                    WorkerData.length > 0 ? (
-                                      WorkerData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Worker_CD}
-                                        >
-                                          {item.Worker_CD}
-                                        </option>
-                                      ))
+                                <option value={costListData?.S_Sl_Person_CD}>
+                                  {costListData?.S_Sl_Person_CD}
+                                </option>
+                                {Array.isArray(WorkerData) && WorkerData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Worker_CD | Worker_Abb | Worker_Remark
+                                    </option>
+                                    {WorkerData.map((item, index) => (
+                                      <option key={index} value={item.Worker_CD}>
+                                        {item.Worker_CD} | {item.Worker_Abb} |{" "}
+                                        {item.Worker_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1565,17 +1643,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(WorkgData) &&
-                                    WorkgData.length > 0 ? (
-                                      WorkgData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.WorkG_CD}
-                                        >
-                                          {item.WorkG_CD}
-                                        </option>
-                                      ))
+                                <option value={costListData?.S_No_Pd_Grp_CD2?.not}>
+                                  {costListData?.S_No_Pd_Grp_CD2?.not}
+                                </option>
+                                {Array.isArray(WorkgData) && WorkgData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      WorkG_CD | WorkG_Abb | WorkG_Name | WorkG_Remark
+                                    </option>
+                                    {WorkgData.map((item, index) => (
+                                      <option key={index} value={item.WorkG_CD}>
+                                        {item.WorkG_CD} | {item.WorkG_Abb} |{" "}
+                                        {item.WorkG_Name} | {item.WorkG_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1608,17 +1690,22 @@ export default function CostList() {
                                     : "bg-white border-gray-500"
                                 }`}
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_Request1_CD}>
+                                  {costListData?.S_Request1_CD}
+                                </option>
                                 {Array.isArray(Request1Data) &&
-                                    Request1Data.length > 0 ? (
-                                      Request1Data.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Request1_CD}
-                                        >
-                                          {item.Request1_CD}
-                                        </option>
-                                      ))
+                                Request1Data.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Request1_CD | Request1_Abb | Request1_Remark
+                                    </option>
+                                    {Request1Data.map((item, index) => (
+                                      <option key={index} value={item.Request1_CD}>
+                                        {item.Request1_CD} | {item.Request1_Abb} |{" "}
+                                        {item.Request1_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1746,17 +1833,23 @@ export default function CostList() {
                                     onChange={handleCostListInputChange}
                                     className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                                   >
-                                    <option value=""></option>
+                                    <option value={costListData?.S_Customer_CD1}>
+                                      {costListData?.S_Customer_CD1}
+                                    </option>
                                     {Array.isArray(CustomerData) &&
                                     CustomerData.length > 0 ? (
-                                      CustomerData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Customer_CD}
-                                        >
-                                          {item.Customer_CD}
+                                      <>
+                                        <option disabled>
+                                          Customer_CD | Customer_Abb | Customer_Name |
+                                          Customer_Remark
                                         </option>
-                                      ))
+                                        {CustomerData.map((item, index) => (
+                                          <option key={index} value={item.Customer_CD}>
+                                            {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                                            {item.Customer_Name} | {item.Customer_Remark}
+                                          </option>
+                                        ))}
+                                      </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1862,17 +1955,23 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_Customer_CD2}>
+                                  {costListData?.S_Customer_CD2}
+                                </option>
                                 {Array.isArray(CustomerData) &&
-                                    CustomerData.length > 0 ? (
-                                      CustomerData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Customer_CD}
-                                        >
-                                          {item.Customer_CD}
-                                        </option>
-                                      ))
+                                CustomerData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Customer_CD | Customer_Abb | Customer_Name |
+                                      Customer_Remark
+                                    </option>
+                                    {CustomerData.map((item, index) => (
+                                      <option key={index} value={item.Customer_CD}>
+                                        {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                                        {item.Customer_Name} | {item.Customer_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -1912,17 +2011,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(Item1Data) &&
-                                      Item1Data.length > 0 ? (
-                                        Item1Data.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.Item1_CD}
-                                          >
-                                            {item.Item1_CD}
-                                          </option>
-                                        ))
+                                <option value={costListData?.S_Item1_CD}>
+                                  {costListData?.S_Item1_CD}
+                                </option>
+                                {Array.isArray(Item1Data) && Item1Data.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Item1_CD | Item1_Abb | Item1_Remark
+                                    </option>
+                                    {Item1Data.map((item, index) => (
+                                      <option key={index} value={item.Item1_CD}>
+                                        {item.Item1_CD} | {item.Item1_Abb} |{" "}
+                                        {item.Item1_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -1972,17 +2075,23 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_Customer_CD3}>
+                                  {costListData?.S_Customer_CD3}
+                                </option>
                                 {Array.isArray(CustomerData) &&
-                                    CustomerData.length > 0 ? (
-                                      CustomerData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Customer_CD}
-                                        >
-                                          {item.Customer_CD}
-                                        </option>
-                                      ))
+                                CustomerData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Customer_CD | Customer_Abb | Customer_Name |
+                                      Customer_Remark
+                                    </option>
+                                    {CustomerData.map((item, index) => (
+                                      <option key={index} value={item.Customer_CD}>
+                                        {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                                        {item.Customer_Name} | {item.Customer_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2071,17 +2180,23 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_No_Customer_CD?.not}>
+                                  {costListData?.S_No_Customer_CD?.not}
+                                </option>
                                 {Array.isArray(CustomerData) &&
-                                    CustomerData.length > 0 ? (
-                                      CustomerData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Customer_CD}
-                                        >
-                                          {item.Customer_CD}
-                                        </option>
-                                      ))
+                                CustomerData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Customer_CD | Customer_Abb | Customer_Name |
+                                      Customer_Remark
+                                    </option>
+                                    {CustomerData.map((item, index) => (
+                                      <option key={index} value={item.Customer_CD}>
+                                        {item.Customer_CD} | {item.Customer_Abb} |{" "}
+                                        {item.Customer_Name} | {item.Customer_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2171,17 +2286,22 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_Specific_CD1}>
+                                  {costListData?.S_Specific_CD1}
+                                </option>
                                 {Array.isArray(SpecificData) &&
-                                    SpecificData.length > 0 ? (
-                                      SpecificData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Specific_CD}
-                                        >
-                                          {item.Specific_CD}
-                                        </option>
-                                      ))
+                                SpecificData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Specific_CD | Specific_Abb | Specific_Remark
+                                    </option>
+                                    {SpecificData.map((item, index) => (
+                                      <option key={index} value={item.Specific_CD}>
+                                        {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                                        {item.Specific_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2209,17 +2329,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="h-6 border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(CoatingData) &&
-                                    CoatingData.length > 0 ? (
-                                      CoatingData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Coating_CD}
-                                        >
-                                          {item.Coating_CD}
-                                        </option>
-                                      ))
+                                <option value={costListData?.S_Coating_CD1}>
+                                  {costListData?.S_Coating_CD1}
+                                </option>
+                                {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Coating_CD | Coating_Symbol | Coating_Remark
+                                    </option>
+                                    {CoatingData.map((item, index) => (
+                                      <option key={index} value={item.Coating_CD}>
+                                        {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                                        {item.Coating_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2298,17 +2422,22 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_Specific_CD2}>
+                                  {costListData?.S_Specific_CD2}
+                                </option>
                                 {Array.isArray(SpecificData) &&
-                                    SpecificData.length > 0 ? (
-                                      SpecificData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Specific_CD}
-                                        >
-                                          {item.Specific_CD}
-                                        </option>
-                                      ))
+                                SpecificData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Specific_CD | Specific_Abb | Specific_Remark
+                                    </option>
+                                    {SpecificData.map((item, index) => (
+                                      <option key={index} value={item.Specific_CD}>
+                                        {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                                        {item.Specific_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2336,17 +2465,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(CoatingData) &&
-                                      CoatingData.length > 0 ? (
-                                        CoatingData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.Coating_CD}
-                                          >
-                                            {item.Coating_CD}
-                                          </option>
-                                        ))
+                                <option value={costListData?.S_Coating_CD2}>
+                                  {costListData?.S_Coating_CD2}
+                                </option>
+                                {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Coating_CD | Coating_Symbol | Coating_Remark
+                                    </option>
+                                    {CoatingData.map((item, index) => (
+                                      <option key={index} value={item.Coating_CD}>
+                                        {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                                        {item.Coating_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -2442,17 +2575,22 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_No_Specific_CD1?.not}>
+                                  {costListData?.S_No_Specific_CD1?.not}
+                                </option>
                                 {Array.isArray(SpecificData) &&
-                                    SpecificData.length > 0 ? (
-                                      SpecificData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Specific_CD}
-                                        >
-                                          {item.Specific_CD}
-                                        </option>
-                                      ))
+                                SpecificData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Specific_CD | Specific_Abb | Specific_Remark
+                                    </option>
+                                    {SpecificData.map((item, index) => (
+                                      <option key={index} value={item.Specific_CD}>
+                                        {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                                        {item.Specific_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2480,17 +2618,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(CoatingData) &&
-                                      CoatingData.length > 0 ? (
-                                        CoatingData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.Coating_CD}
-                                          >
-                                            {item.Coating_CD}
-                                          </option>
-                                        ))
+                                <option value={costListData?.S_Coating_CD3}>
+                                  {costListData?.S_Coating_CD3}
+                                </option>
+                                {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Coating_CD | Coating_Symbol | Coating_Remark
+                                    </option>
+                                    {CoatingData.map((item, index) => (
+                                      <option key={index} value={item.Coating_CD}>
+                                        {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                                        {item.Coating_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -2586,17 +2728,22 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                               >
-                                <option value=""></option>
+                                <option value={costListData?.S_No_Specific_CD2?.not}>
+                                  {costListData?.S_No_Specific_CD2?.not}
+                                </option>
                                 {Array.isArray(SpecificData) &&
-                                    SpecificData.length > 0 ? (
-                                      SpecificData.map((item, index) => (
-                                        <option
-                                          key={index}
-                                          value={item.Specific_CD}
-                                        >
-                                          {item.Specific_CD}
-                                        </option>
-                                      ))
+                                SpecificData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Specific_CD | Specific_Abb | Specific_Remark
+                                    </option>
+                                    {SpecificData.map((item, index) => (
+                                      <option key={index} value={item.Specific_CD}>
+                                        {item.Specific_CD} | {item.Specific_Abb} |{" "}
+                                        {item.Specific_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                     ) : (
                                       <option value="">ไม่มีข้อมูล</option>
                                     )}
@@ -2624,17 +2771,21 @@ export default function CostList() {
                                 onChange={handleCostListInputChange}
                                 className="border-gray-500 border-solid border-2 rounded-md bg-[#ff99cc] w-full"
                               >
-                                <option value=""></option>
-                                {Array.isArray(CoatingData) &&
-                                      CoatingData.length > 0 ? (
-                                        CoatingData.map((item, index) => (
-                                          <option
-                                            key={index}
-                                            value={item.Coating_CD}
-                                          >
-                                            {item.Coating_CD}
-                                          </option>
-                                        ))
+                                <option value={costListData?.S_No_Coating_CD?.not}>
+                                  {costListData?.S_No_Coating_CD?.not}
+                                </option>
+                                {Array.isArray(CoatingData) && CoatingData.length > 0 ? (
+                                  <>
+                                    <option disabled>
+                                      Coating_CD | Coating_Symbol | Coating_Remark
+                                    </option>
+                                    {CoatingData.map((item, index) => (
+                                      <option key={index} value={item.Coating_CD}>
+                                        {item.Coating_CD} | {item.Coating_Symbol} |{" "}
+                                        {item.Coating_Remark}
+                                      </option>
+                                    ))}
+                                  </>
                                       ) : (
                                         <option value="">ไม่มีข้อมูล</option>
                                       )}
@@ -3452,17 +3603,21 @@ export default function CostList() {
                             onChange={handleCostListInputChange}
                             className="border-gray-500 border-solid border-2 rounded-md bg-[#ccffff] w-24 h-6"
                           >
-                            <option value="">
-                              {/* ถ้าค่าที่เลือกไม่มีการกำหนดจะแสดงข้อความนี้ */}
-                              
+                            <option value={costListData?.S_Pl_Reg_Person_CD}>
+                              {costListData?.S_Pl_Reg_Person_CD}
                             </option>
                             {Array.isArray(WorkerData) && WorkerData.length > 0 ? (
-                              WorkerData.map((item, index) => (
+                              <>
+                              <option disabled>
+                                Worker_CD | Worker_Abb | Worker_Remark
+                              </option>
+                               {WorkerData.map((item, index) => (
                                 <option key={index} value={item.Worker_CD}>
                                   {/* แสดงข้อมูลทั้งหมด (Worker_CD - Worker_Abb - Worker_Remark) */}
-                                  {`${item.Worker_CD} - ${item.Worker_Abb} - ${item.Worker_Remark}`}
+                                  {`${item.Worker_CD} | ${item.Worker_Abb} | ${item.Worker_Remark}`}
                                 </option>
-                              ))
+                              ))}
+                              </>
                             ) : (
                               <option value="">ไม่มีข้อมูล</option>
                             )}
